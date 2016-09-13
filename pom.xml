@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -11,12 +8,12 @@
 		<version>26.1.0</version>
 	</parent>
 
-	<groupId>net.trackmate</groupId>
-	<artifactId>trackmate</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<groupId>org.mastodon</groupId>
+	<artifactId>mastodon-graph</artifactId>
+	<version>1.0.0-beta-1-SNAPSHOT</version>
 
-	<name>TrackMate3</name>
-	<description>This is the prototype code for the 3rd version of TrackMate, planned for mid 2017.</description>
+	<name>Mastodon Graphs</name>
+	<description>graph interfaces, object- and pool-based implementations, graph algorithms, undo framework</description>
 
 	<properties>
 		<enforcer.skip>true</enforcer.skip>
@@ -51,27 +48,28 @@
 			<id>tinevez</id>
 			<name>Jean-Yves Tinevez</name>
 			<email>jean-yves.tinevez@pasteur.fr</email>
-			<url>http://www.pasteur.fr/ip/easysite/pasteur/fr/recherche/plates-formes-technologiques/imagopole/plates-formes-imagopole/la-plate-forme-d-imagerie-dynamique/equipe-pfid/equipe-pfid-jyt</url>
-			<organization>Institut Pasteur</organization>
-			<organizationUrl>http://www.pasteur.fr/</organizationUrl>
+			<url>http://imagej.net/User:JeanYvesTinevez</url>
 			<roles>
-				<role>architect</role>
 				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
 			</roles>
-			<timezone>+1</timezone>
 		</developer>
 		<developer>
 			<id>tpietzsch</id>
 			<name>Tobias Pietzsch</name>
 			<email>pietzsch@mpi-cbg.de</email>
-			<url></url>
-			<organization>MPI-CBG</organization>
-			<organizationUrl>http://www.mpi-cbg.de/</organizationUrl>
+			<url>http://imagej.net/User:Pietzsch</url>
 			<roles>
-				<role>architect</role>
+				<role>lead</role>
 				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
 			</roles>
-			<timezone>+1</timezone>
 		</developer>
 	</developers>
 
@@ -83,9 +81,40 @@
 	</repositories>
 
 	<scm>
-		<connection>scm:git:git://github.com/fiji/TrackMate3</connection>
-		<developerConnection>scm:git:git@github.com:fiji/TrackMate3</developerConnection>
+		<connection>scm:git:git://github.com/bigdataviewer/mastodon-graph</connection>
+		<developerConnection>scm:git:git@github.com:bigdataviewer/mastodon-graph</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/fiji/TrackMate3</url>
+		<url>https://github.com/bigdataviewer/mastodon-graph</url>
 	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/bigdataviewer/mastodon-graph/issues</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>BSD 2-Clause License</name>
+			<url>http://opensource.org/licenses/BSD-2-Clause</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<licenseName>bsd_2</licenseName>
+					<copyrightOwners>Tobias Pietzsch, Jean-Yves Tinevez</copyrightOwners>
+					<organizationName>Mastodon authors</organizationName>
+					<projectName>Mastodon Collections</projectName>
+					<roots>
+						<root>src/main/java</root>
+						<root>src/test/java</root>
+					</roots>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
+
