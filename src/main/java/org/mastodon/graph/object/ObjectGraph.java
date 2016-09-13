@@ -14,13 +14,13 @@ public class ObjectGraph< K > extends AbstractObjectGraph< ObjectVertex< K >, Ob
 		@Override
 		public ObjectVertex< K > createVertex()
 		{
-			return new ObjectVertex< K >();
+			return new ObjectVertex<>();
 		}
 
 		@Override
 		public ObjectEdge< K > createEdge( final ObjectVertex< K > source, final ObjectVertex< K > target )
 		{
-			return new ObjectEdge< K >( source, target );
+			return new ObjectEdge<>( source, target );
 		}
 	}
 }

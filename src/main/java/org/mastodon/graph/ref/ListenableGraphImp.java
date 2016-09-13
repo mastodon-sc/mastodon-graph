@@ -27,8 +27,8 @@ public class ListenableGraphImp<
 		super( vertexPool, edgePool );
 		vertexPool.linkNotify( notifyPostInit );
 		edgePool.linkNotify( notifyPostInit );
-		listeners = new ArrayList< GraphListener<V,E> >();
-		changeListeners = new ArrayList< GraphChangeListener >();
+		listeners = new ArrayList<>();
+		changeListeners = new ArrayList<>();
 		emitEvents = true;
 	}
 
@@ -37,8 +37,8 @@ public class ListenableGraphImp<
 		super( edgePool );
 		vertexPool.linkNotify( notifyPostInit );
 		edgePool.linkNotify( notifyPostInit );
-		listeners = new ArrayList< GraphListener<V,E> >();
-		changeListeners = new ArrayList< GraphChangeListener >();
+		listeners = new ArrayList<>();
+		changeListeners = new ArrayList<>();
 		emitEvents = true;
 	}
 

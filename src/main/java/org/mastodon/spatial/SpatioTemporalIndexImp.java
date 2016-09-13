@@ -6,8 +6,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.mastodon.Ref;
 import org.mastodon.RefPool;
-import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefCollections;
+import org.mastodon.collection.RefList;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableReadOnlyGraph;
@@ -75,7 +75,7 @@ public class SpatioTemporalIndexImp<
 	{
 		this.graph = graph;
 		this.vertexPool = vertexPool;
-		timepointToSpatialIndex = new TIntObjectHashMap< SpatialIndexImp< V > >( 10, 0.5f, NO_ENTRY_KEY );
+		timepointToSpatialIndex = new TIntObjectHashMap<>( 10, 0.5f, NO_ENTRY_KEY );
 		graph.addGraphListener( this );
 		if ( graph instanceof VertexPositionChangeProvider )
 		{
@@ -91,7 +91,7 @@ public class SpatioTemporalIndexImp<
 
 	private void init()
 	{
-		final TIntObjectHashMap< RefList< V > > timepointToVertices = new TIntObjectHashMap< RefList< V > >( 10, 0.5f, NO_ENTRY_KEY );
+		final TIntObjectHashMap< RefList< V > > timepointToVertices = new TIntObjectHashMap<>( 10, 0.5f, NO_ENTRY_KEY );
 		for ( final V v : graph.vertices() )
 		{
 			RefList< V > vs = timepointToVertices.get( v.getTimepoint() );
@@ -108,7 +108,7 @@ public class SpatioTemporalIndexImp<
 		{
 			i.advance();
 			final int timepoint = i.key();
-			final SpatialIndexImp< V > data = new SpatialIndexImp< V >( i.value(), vertexPool );
+			final SpatialIndexImp< V > data = new SpatialIndexImp<>( i.value(), vertexPool );
 			timepointToSpatialIndex.put( timepoint, data );
 		}
 	}
@@ -234,7 +234,7 @@ public class SpatioTemporalIndexImp<
 		SpatialIndexImp< V > index = timepointToSpatialIndex.get( timepoint );
 		if ( index == null )
 		{
-			index = new SpatialIndexImp< V >( RefCollections.createRefSet( graph.vertices() ), vertexPool );
+			index = new SpatialIndexImp<>( RefCollections.createRefSet( graph.vertices() ), vertexPool );
 			timepointToSpatialIndex.put( timepoint, index );
 		}
 		return index;

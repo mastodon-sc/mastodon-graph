@@ -31,7 +31,7 @@ public class SpatialIndexImp< O extends RealLocalizable > implements SpatialInde
 
 	public SpatialIndexImp( final Collection< O > objs, final RefPool< O > objPool )
 	{
-		data = new SpatialIndexData< O >( objs, objPool );
+		data = new SpatialIndexData<>( objs, objPool );
 		final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
 	    readLock = rwl.readLock();
 	    writeLock = rwl.writeLock();
@@ -42,7 +42,7 @@ public class SpatialIndexImp< O extends RealLocalizable > implements SpatialInde
 		readLock.lock();
 		try
 		{
-			data = new SpatialIndexData< O >( data );
+			data = new SpatialIndexData<>( data );
 		}
 		finally
 		{

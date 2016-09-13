@@ -96,7 +96,7 @@ class SpatialIndexData< O extends RealLocalizable >
 		this.objPool = objPool;
 		kdtree = KDTree.kdtree( objs, objPool );
 		nodeMap = KDTree.createRefToKDTreeNodeMap( kdtree );
-		added = new RefSetImp< O >( objPool );
+		added = new RefSetImp<>( objPool );
 		node = kdtree.createRef();
 	    size = kdtree.size();
 	}
@@ -124,7 +124,7 @@ class SpatialIndexData< O extends RealLocalizable >
 		};
 		kdtree = KDTree.kdtree( collection, objPool );
 		nodeMap = KDTree.createRefToKDTreeNodeMap( kdtree );
-		added = new RefSetImp< O >( objPool );
+		added = new RefSetImp<>( objPool );
 		node = kdtree.createRef();
 	    size = kdtree.size();
 	}
@@ -141,7 +141,7 @@ class SpatialIndexData< O extends RealLocalizable >
 	{
 		final Iterator< O > kdtreeIter = KDTreeValidIterator.create( kdtree );
 		final Iterator< O > addedIter = added.iterator();
-		return new Iter< O >( objPool, kdtreeIter, addedIter );
+		return new Iter<>( objPool, kdtreeIter, addedIter );
 	}
 
 	public NearestNeighborSearch< O > getNearestNeighborSearch()
@@ -300,7 +300,7 @@ class SpatialIndexData< O extends RealLocalizable >
 
 		public NNS()
 		{
-			search = new NearestValidNeighborSearchOnKDTree< O, DoubleMappedElement >( kdtree );
+			search = new NearestValidNeighborSearchOnKDTree<>( kdtree );
 			bestVertexIndex = -1;
 			ref = objPool.createRef();
 			n = search.numDimensions();
@@ -402,8 +402,8 @@ class SpatialIndexData< O extends RealLocalizable >
 		public CCP()
 		{
 			clip = new ClipConvexPolytopeKDTree<>( kdtree );
-			inside = new RefArrayList< O >( objPool );
-			outside = new RefArrayList< O >( objPool );
+			inside = new RefArrayList<>( objPool );
+			outside = new RefArrayList<>( objPool );
 			n = clip.numDimensions();
 		}
 
@@ -437,7 +437,7 @@ class SpatialIndexData< O extends RealLocalizable >
 				{
 					final Iterator< O > kdtreeIter = clip.getValidInsideValues().iterator();
 					final Iterator< O > addedIter = inside.iterator();
-					return new Iter< O >( objPool, kdtreeIter, addedIter );
+					return new Iter<>( objPool, kdtreeIter, addedIter );
 				}
 			};
 		}
@@ -452,7 +452,7 @@ class SpatialIndexData< O extends RealLocalizable >
 				{
 					final Iterator< O > kdtreeIter = clip.getValidOutsideValues().iterator();
 					final Iterator< O > addedIter = outside.iterator();
-					return new Iter< O >( objPool, kdtreeIter, addedIter );
+					return new Iter<>( objPool, kdtreeIter, addedIter );
 				}
 			};
 		}

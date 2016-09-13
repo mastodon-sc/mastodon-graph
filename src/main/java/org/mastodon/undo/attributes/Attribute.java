@@ -34,6 +34,6 @@ public class Attribute< O >
 	@Override
 	public String toString()
 	{
-		return "Attribute(\"" + name + "\"";
+		return "Attribute(\"" + name + "\")";
 	}
 }

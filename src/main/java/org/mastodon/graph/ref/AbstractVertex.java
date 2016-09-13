@@ -86,9 +86,9 @@ public class AbstractVertex< V extends AbstractVertex< V, E, T >, E extends Abst
 		if ( this.edgePool != edgePool )
 		{
 			this.edgePool = edgePool;
-			incomingEdges = new IncomingEdges< E >( this, edgePool );
-			outgoingEdges = new OutgoingEdges< E >( this, edgePool );
-			edges = new AllEdges< E >( this, edgePool );
+			incomingEdges = new IncomingEdges<>( this, edgePool );
+			outgoingEdges = new OutgoingEdges<>( this, edgePool );
+			edges = new AllEdges<>( this, edgePool );
 		}
 	}
 }
