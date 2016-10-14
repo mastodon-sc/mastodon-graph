@@ -49,7 +49,7 @@ public class InverseDepthFirstCrossComponentIterator< V extends Vertex< E >, E e
 	 *            the vertex to start iteration with.
 	 * @param graph
 	 *            the graph to iterate over.
-	 * @param roots
+	 * @param leaves
 	 *            an iterable over the collection of leaves.
 	 */
 	public InverseDepthFirstCrossComponentIterator( final V start, final Graph< V, E > graph, final Iterable< V > leaves )
