@@ -16,8 +16,8 @@ import org.mastodon.graph.TestGraph;
 import org.mastodon.graph.TestVertex;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.traversal.GraphSearch;
-import org.mastodon.graph.algorithm.traversal.SearchListener;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
+import org.mastodon.graph.algorithm.traversal.SearchListener;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectGraph;
 import org.mastodon.graph.object.ObjectVertex;
@@ -505,6 +505,76 @@ public class GraphsForTests
 		bundle.edges.add( eFG );
 
 		bundle.name = "Two components standard objects";
+		return bundle;
+	}
+
+	public static final GraphTestBundle< ObjectVertex< Integer >, ObjectEdge< Integer > > multipleComponentsStdObjects()
+	{
+		final GraphTestBundle< ObjectVertex< Integer >, ObjectEdge< Integer > > bundle = new GraphTestBundle<>();
+
+		final ObjectGraph< Integer > graph = new ObjectGraph<>();
+		bundle.graph = graph;
+		bundle.vertices = new ArrayList<>( 0 );
+		bundle.edges = new ArrayList<>( 0 );
+
+		// Create 4 diamonds.
+		for ( int i = 0; i < 4; i++ )
+		{
+			final ObjectVertex< Integer > A = graph.addVertex().init( 0 + 4 * i );
+			final ObjectVertex< Integer > B = graph.addVertex().init( 1 + 4 * i );
+			final ObjectVertex< Integer > C = graph.addVertex().init( 2 + 4 * i );
+			final ObjectVertex< Integer > D = graph.addVertex().init( 3 + 4 * i );
+			bundle.vertices.add( A );
+			bundle.vertices.add( B );
+			bundle.vertices.add( C );
+			bundle.vertices.add( D );
+
+			final ObjectEdge< Integer > eAB = graph.addEdge( A, B );
+			final ObjectEdge< Integer > eAC = graph.addEdge( A, C );
+			final ObjectEdge< Integer > eBD = graph.addEdge( B, D );
+			final ObjectEdge< Integer > eCD = graph.addEdge( C, D );
+			bundle.edges.add( eAB );
+			bundle.edges.add( eAC );
+			bundle.edges.add( eBD );
+			bundle.edges.add( eCD );
+		}
+
+		bundle.name = "Multiple components std objects";
+		return bundle;
+	}
+
+	public static final GraphTestBundle< TestVertex, TestEdge > multipleComponentsPoolObjects()
+	{
+		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+
+		final TestGraph graph = new TestGraph();
+		bundle.graph = graph;
+		bundle.vertices = new ArrayList<>( 0 );
+		bundle.edges = new ArrayList<>( 0 );
+
+		// Create 4 diamonds.
+		for ( int i = 0; i < 4; i++ )
+		{
+			final TestVertex A = graph.addVertex().init( 0 + 4 * i );
+			final TestVertex B = graph.addVertex().init( 1 + 4 * i );
+			final TestVertex C = graph.addVertex().init( 2 + 4 * i );
+			final TestVertex D = graph.addVertex().init( 3 + 4 * i );
+			bundle.vertices.add( A );
+			bundle.vertices.add( B );
+			bundle.vertices.add( C );
+			bundle.vertices.add( D );
+
+			final TestEdge eAB = graph.addEdge( A, B );
+			final TestEdge eAC = graph.addEdge( A, C );
+			final TestEdge eBD = graph.addEdge( B, D );
+			final TestEdge eCD = graph.addEdge( C, D );
+			bundle.edges.add( eAB );
+			bundle.edges.add( eAC );
+			bundle.edges.add( eBD );
+			bundle.edges.add( eCD );
+		}
+
+		bundle.name = "Multiple components pool objects";
 		return bundle;
 	}
 
