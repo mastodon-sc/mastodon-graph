@@ -26,45 +26,6 @@ public class BreadthFirstCrossComponentIteratorTest
 	{}
 
 	@Test
-	public void testTwoComponentsComeBackOnFirst()
-	{
-		final GraphTestBundle< ObjectVertex< Integer >, ObjectEdge< Integer > > bundle = GraphsForTests.twoComponentsStdObjects();
-		final Graph< ObjectVertex< Integer >, ObjectEdge< Integer > > graph = bundle.graph;
-		// Start with B.
-		final ObjectVertex< Integer > start = bundle.vertices.get( 1 );
-
-		final RefList< ObjectVertex< Integer > > expected = RefCollections.createRefList( bundle.graph.vertices() );
-		expected.add( bundle.vertices.get( 1 ) );
-		expected.add( bundle.vertices.get( 3 ) );
-		expected.add( bundle.vertices.get( 5 ) );
-		expected.add( bundle.vertices.get( 4 ) ); // Jump here.
-		expected.add( bundle.vertices.get( 7 ) );
-		expected.add( bundle.vertices.get( 8 ) );
-		expected.add( bundle.vertices.get( 9 ) );
-		expected.add( bundle.vertices.get( 10 ) );
-		expected.add( bundle.vertices.get( 11 ) );
-		expected.add( bundle.vertices.get( 12 ) );
-		expected.add( bundle.vertices.get( 13 ) );
-		expected.add( bundle.vertices.get( 0 ) ); // Come back on first
-		expected.add( bundle.vertices.get( 2 ) );
-		expected.add( bundle.vertices.get( 6 ) );
-
-		final Iterator< ObjectVertex< Integer > > eit = expected.iterator();
-		final Iterator< ObjectVertex< Integer > > it =
-				new BreadthFirstCrossComponentIterator<>( start, graph );
-
-		while ( eit.hasNext() )
-		{
-			assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
-			final ObjectVertex< Integer > a = it.next();
-			final ObjectVertex< Integer > e = eit.next();
-			assertEquals( "Unexpected vertex met during iteration.", e, a );
-		}
-
-		assertFalse( "Iteration should be finished, but is not.", it.hasNext() );
-	}
-
-	@Test
 	public void testTwoComponentsStartOnRoot()
 	{
 		final GraphTestBundle< ObjectVertex< Integer >, ObjectEdge< Integer > > bundle = GraphsForTests.twoComponentsStdObjects();
@@ -385,7 +346,7 @@ public class BreadthFirstCrossComponentIteratorTest
 		expected.add( bundle.vertices.get( 5 ) );
 		expected.add( bundle.vertices.get( 6 ) );
 		expected.add( bundle.vertices.get( 7 ) );
-		
+
 
 		final Iterator< ObjectVertex< Integer > > eit = expected.iterator();
 		// Use constructor with specified roots.
