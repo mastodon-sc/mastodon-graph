@@ -3,7 +3,6 @@ package org.mastodon.graph.algorithm.traversal;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
-import org.mastodon.graph.traversal.AbstractBreadthFirstSearch;
 
 /**
  * Breadth-first search for directed or undirected graph, following the

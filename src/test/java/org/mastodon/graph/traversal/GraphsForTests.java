@@ -15,6 +15,7 @@ import org.mastodon.graph.TestEdge;
 import org.mastodon.graph.TestGraph;
 import org.mastodon.graph.TestVertex;
 import org.mastodon.graph.Vertex;
+import org.mastodon.graph.algorithm.traversal.AbstractBreadthFirstSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
 import org.mastodon.graph.algorithm.traversal.SearchListener;

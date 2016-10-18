@@ -1,4 +1,4 @@
-package org.mastodon.graph.traversal;
+package org.mastodon.graph.algorithm.traversal;
 
 import org.mastodon.collection.RefDeque;
 import org.mastodon.collection.RefIntMap;
@@ -6,7 +6,6 @@ import org.mastodon.graph.Edge;
 import org.mastodon.graph.Edges;
 import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
-import org.mastodon.graph.algorithm.traversal.GraphSearch;
 import org.mastodon.graph.algorithm.util.Graphs;
 
 /**

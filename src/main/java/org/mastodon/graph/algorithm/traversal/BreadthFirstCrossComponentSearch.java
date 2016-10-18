@@ -6,7 +6,6 @@ import org.mastodon.graph.Edge;
 import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.RootFinder;
-import org.mastodon.graph.traversal.AbstractBreadthFirstSearch;
 
 public class BreadthFirstCrossComponentSearch< V extends Vertex< E >, E extends Edge< V > > extends AbstractBreadthFirstSearch< BreadthFirstCrossComponentSearch< V, E >, V, E >
 {
