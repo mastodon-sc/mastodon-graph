@@ -10,4 +10,6 @@ public interface SearchListener< V extends Vertex< E >, E extends Edge< V >, G e
 	public void processVertexEarly( final V vertex, G search );
 
 	public void processEdge( final E edge, final V from, final V to, G search );
+
+	public void crossComponent( V from, V to, G search );
 }

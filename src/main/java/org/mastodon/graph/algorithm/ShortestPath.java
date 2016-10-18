@@ -5,8 +5,8 @@ import org.mastodon.graph.Edge;
 import org.mastodon.graph.Graph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.traversal.BreadthFirstSearch;
-import org.mastodon.graph.algorithm.traversal.SearchListener;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
+import org.mastodon.graph.algorithm.traversal.SearchListener;
 
 /**
  * A plain shortest path for unweighted graphs, directed or not. Simply based on
@@ -105,6 +105,10 @@ public class ShortestPath< V extends Vertex< E >, E extends Edge< V > > extends 
 
 		@Override
 		public void processEdge( final E edge, final V from, final V to, final BreadthFirstSearch< V, E > search )
+		{}
+
+		@Override
+		public void crossComponent( final V from, final V to, final BreadthFirstSearch< V, E > search )
 		{}
 
 	}

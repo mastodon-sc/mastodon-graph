@@ -24,7 +24,7 @@ import org.mastodon.graph.object.ObjectVertex;
 
 public class GraphsForTests
 {
-	public static final class TraversalTester< V extends Vertex< E >, E extends Edge< V >, T extends GraphSearch< T, V, E > > implements SearchListener< V, E, T >
+	public static class TraversalTester< V extends Vertex< E >, E extends Edge< V >, T extends GraphSearch< T, V, E > > implements SearchListener< V, E, T >
 	{
 
 		private final Iterator< V > expectedDiscoveredVertexIterator;
@@ -71,6 +71,64 @@ public class GraphsForTests
 			assertFalse( "Did not cross all the expected edges.", expectedEdgeIterator.hasNext() );
 			assertFalse( "Did not assess all edge classes.", expectedEdgeClassIterator.hasNext() );
 		}
+
+		@Override
+		public void crossComponent( final V from, final V to, final T search )
+		{}
+	}
+
+	public static final class VerboseTraversalTester< V extends Vertex< E >, E extends Edge< V >, T extends GraphSearch< T, V, E > > extends TraversalTester< V, E, T >
+	{
+
+		public VerboseTraversalTester( final Iterator< V > expectedDiscoveredVertexIterator, final Iterator< V > expectedProcessedVertexIterator, final Iterator< E > expectedEdgeIterator, final Iterator< EdgeClass > expectedEdgeClassIterator )
+		{
+			super( expectedDiscoveredVertexIterator, expectedProcessedVertexIterator, expectedEdgeIterator, expectedEdgeClassIterator );
+		}
+
+		@Override
+		public void processEdge( final E edge, final V from, final V to, final T search )
+		{
+			System.out.println( " - Process edge " + from + " -> " + to + ", with class " + search.edgeClass( from, to ) );
+			super.processEdge( edge, from, to, search );
+		}
+
+		@SuppressWarnings( { "unchecked", "rawtypes" } )
+		@Override
+		public void processVertexEarly( final V vertex, final T search )
+		{
+			System.out.print( " - Discovered vertex " + vertex );
+			if ( search instanceof AbstractBreadthFirstSearch )
+			{
+				final AbstractBreadthFirstSearch adfs = ( AbstractBreadthFirstSearch ) search;
+				System.out.println( ", depth = " + adfs.depthOf( vertex ) );
+			}
+			else
+			{
+				System.out.println();
+			}
+			super.processVertexEarly( vertex, search );
+		}
+
+		@Override
+		public void processVertexLate( final V vertex, final T search )
+		{
+			System.out.println( " - Finished dealing with vertex " + vertex );
+			super.processVertexLate( vertex, search );
+		}
+
+		@Override
+		public void crossComponent( final V from, final V to, final T search )
+		{
+			System.out.println( " - Jumping to another component from " + from + " -> " + to );
+			super.crossComponent( from, to, search );
+		}
+
+		@Override
+		public void searchDone()
+		{
+			System.out.println( " - Search complete." );
+			super.searchDone();
+		}
 	}
 
 	public static final < V extends Vertex< E >, E extends Edge< V >, T extends GraphSearch< T, V, E > > SearchListener< V, E, T > traversalPrinter( final Graph< V, E > graph )
@@ -83,16 +141,32 @@ public class GraphsForTests
 				System.out.println( " - Finished processing " + vertex );
 			}
 
+			@SuppressWarnings( { "rawtypes", "unchecked" } )
 			@Override
 			public void processVertexEarly( final V vertex, final T search )
 			{
-				System.out.println( " - Discovered " + vertex );
+				System.out.print( " - Discovered " + vertex );
+				if ( search instanceof AbstractBreadthFirstSearch )
+				{
+					final AbstractBreadthFirstSearch adfs = ( AbstractBreadthFirstSearch ) search;
+					System.out.println( ", depth = " + adfs.depthOf( vertex ) );
+				}
+				else
+				{
+					System.out.println();
+				}
 			}
 
 			@Override
 			public void processEdge( final E edge, final V from, final V to, final T search )
 			{
 				System.out.println( " - Crossing " + edge + " from " + from + " to " + to + ". Edge class = " + search.edgeClass( from, to ) );
+			}
+
+			@Override
+			public void crossComponent( final V from, final V to, final T search )
+			{
+				System.out.println( " - Jumping to another component from " + from + " -> " + to );
 			}
 		};
 	}
