@@ -19,11 +19,18 @@ public class AbstractDepthFirstSearch< T extends AbstractDepthFirstSearch< T, V,
 
 	protected int time;
 
+	/**
+	 * Keeps track of the last vertex when reaching the end of a connected
+	 * component.
+	 */
+	protected V unqueued;
+
 	public AbstractDepthFirstSearch( final ReadOnlyGraph< V, E > graph, final SearchDirection directivity )
 	{
 		super( graph );
 		this.directivity = directivity;
 		this.entryTime = createVertexIntMap( NO_ENTRY_VALUE );
+		this.unqueued = vertexRef();
 	}
 
 	@Override
@@ -139,6 +146,7 @@ public class AbstractDepthFirstSearch< T extends AbstractDepthFirstSearch< T, V,
 			searchListener.processVertexLate( vertex, ( T ) this );
 		time++;
 
+		unqueued = assign( vertex, unqueued );
 		processed.add( vertex );
 		releaseRef( target );
 		releaseRef( edge );
