@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
+import org.mastodon.graph.algorithm.LeafFinder;
 import org.mastodon.graph.algorithm.RootFinder;
 
 public class BreadthFirstCrossComponentSearch< V extends Vertex< E >, E extends Edge< V > > extends AbstractBreadthFirstSearch< BreadthFirstCrossComponentSearch< V, E >, V, E >
@@ -14,8 +15,7 @@ public class BreadthFirstCrossComponentSearch< V extends Vertex< E >, E extends 
 
 	public BreadthFirstCrossComponentSearch( final ReadOnlyGraph< V, E > graph, final SearchDirection directed )
 	{
-		this( graph, directed, RootFinder.getRoots( graph ) );
-
+		this( graph, directed, directed.equals( SearchDirection.REVERSED ) ? LeafFinder.getLeaves( graph ) : RootFinder.getRoots( graph ) );
 	}
 
 	public BreadthFirstCrossComponentSearch( final ReadOnlyGraph< V, E > graph, final SearchDirection directed, final Iterable< V > roots )
