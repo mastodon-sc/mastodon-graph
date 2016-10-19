@@ -1,20 +1,24 @@
 package org.mastodon.graph.traversal;
 
+import static org.junit.Assert.assertEquals;
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.BACK;
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.TREE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 import org.mastodon.collection.RefCollections;
+import org.mastodon.collection.RefIntMap;
 import org.mastodon.collection.RefList;
 import org.mastodon.graph.TestEdge;
 import org.mastodon.graph.TestVertex;
 import org.mastodon.graph.algorithm.traversal.DepthFirstCrossComponentSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
+import org.mastodon.graph.algorithm.traversal.SearchListener;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
 import org.mastodon.graph.traversal.GraphsForTests.GraphTestBundle;
@@ -364,4 +368,45 @@ public class DepthFirstCrossComponentSearchUndirectedTest
 		traversalTester.searchDone();
 	}
 
+	@Test
+	public void testIterateWholeGraph()
+	{
+		// Test that we iterate the whole graph.
+		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
+		final RefIntMap< TestVertex > map = RefCollections.createRefIntMap( bundle.graph.vertices(), -1 );
+		for ( final TestVertex v : bundle.graph.vertices() )
+			map.put( v, 0 );
+
+		final DepthFirstCrossComponentSearch< TestVertex, TestEdge > bfs =
+				new DepthFirstCrossComponentSearch<>( bundle.graph, SearchDirection.UNDIRECTED );
+
+		final AtomicInteger iter = new AtomicInteger( 0 );
+		bfs.setTraversalListener( new SearchListener< TestVertex, TestEdge, DepthFirstCrossComponentSearch< TestVertex, TestEdge > >()
+		{
+
+			@Override
+			public void processVertexLate( final TestVertex vertex, final DepthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			{}
+
+			@Override
+			public void processVertexEarly( final TestVertex vertex, final DepthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			{
+				map.adjustValue( vertex, 1 );
+				iter.incrementAndGet();
+			}
+
+			@Override
+			public void processEdge( final TestEdge edge, final TestVertex from, final TestVertex to, final DepthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			{}
+
+			@Override
+			public void crossComponent( final TestVertex from, final TestVertex to, final DepthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			{}
+		} );
+		bfs.start( bundle.graph.vertices().iterator().next() );
+
+		assertEquals( "Did not iterate over all vertices.", bundle.graph.vertices().size(), iter.get() );
+		for ( final TestVertex v : map.keySet() )
+			assertEquals( "Vertex was not iterated exactly once.", 1, map.get( v ) );
+	}
 }
