@@ -8,7 +8,7 @@ import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.RootFinder;
 
 /**
- * A Cross-component, Depth-first iterator, that iterates through a whole graph,
+ * A cross-component, depth-first iterator, that iterates through a whole graph,
  * traversing edges only following their direction.
  * <p>
  * With {@code A -> B}, the iterator will move from A to B, but not from B to A.
@@ -121,6 +121,6 @@ public class DepthFirstCrossComponentIterator< V extends Vertex< E >, E extends 
 
 	static < V extends Vertex< E >, E extends Edge< V > > DepthFirstIterator< V, E > create( final V root, final Graph< V, E > graph )
 	{
-		return new DepthFirstIterator< V, E >( root, graph );
+		return new DepthFirstIterator< >( root, graph );
 	}
 }
