@@ -90,6 +90,11 @@ public class AttributesImp< O > implements Attributes< O >
 	 * <p>
 	 * Notify listeners that {@code attribute} of {@code object} is about to
 	 * change.
+	 *
+	 * @param attribute
+	 *            the attribute that will change.
+	 * @param object
+	 *            the object to which the attribute belongs to.
 	 */
 	public void notifyBeforeAttributeChange( final Attribute< O > attribute, final O object )
 	{

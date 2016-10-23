@@ -13,6 +13,13 @@ import org.mastodon.pool.SingleArrayMemPool;
 import gnu.trove.map.TIntObjectArrayMap;
 
 // TODO: truncating earliest UndoableEdits in the list to avoid growing without bounds
+/**
+ * Data structure that manages a list of undoable edits.
+ * <p>
+ * As itself, this class only deals with general undoable edits, that need to
+ * implement {@link UndoableEdit}. Derived classes may offer more specific
+ * undoable edits.
+ */
 public class UndoableEditList extends Pool< UndoableEditRef, ByteMappedElement >
 {
 	protected final UndoDataStack dataStack;
@@ -264,6 +271,7 @@ public class UndoableEditList extends Pool< UndoableEditRef, ByteMappedElement >
 	 * example {@link GraphUndoableEditList#recordAddVertex(Vertex)}.)
 	 *
 	 * @param undoableEdit
+	 *            the edit to record.
 	 */
 	public void recordOther( final UndoableEdit undoableEdit )
 	{

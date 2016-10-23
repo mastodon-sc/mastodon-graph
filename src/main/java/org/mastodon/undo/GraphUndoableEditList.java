@@ -1,11 +1,11 @@
 package org.mastodon.undo;
 
-import org.mastodon.graph.Edge;
-import org.mastodon.graph.ListenableGraph;
-import org.mastodon.graph.Vertex;
 import org.mastodon.features.Feature;
 import org.mastodon.features.FeatureRegistry;
 import org.mastodon.features.Features;
+import org.mastodon.graph.Edge;
+import org.mastodon.graph.ListenableGraph;
+import org.mastodon.graph.Vertex;
 import org.mastodon.undo.attributes.Attribute;
 import org.mastodon.undo.attributes.Attributes;
 
@@ -14,10 +14,18 @@ import gnu.trove.map.TIntObjectMap;
 
 /**
  * TODO: javadoc
+ */
+/**
  * TODO: move to package model.undo (?)
+ */
+/**
+ * Data structure that manages a list of undoable edits made to a listenable
+ * graph.
  *
  * @param <V>
+ *            the type of vertex.
  * @param <E>
+ *            the type of edges.
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
