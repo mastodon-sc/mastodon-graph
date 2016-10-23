@@ -12,9 +12,10 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
- *
- * Partially stolen from {@link ByteArrayOutputStream} and
- * {@link ByteArrayInputStream}.
+ * Stack data structure that backs storage of undo actions.
+ * <p>
+ * Undo actions are written to a {@code byte[]} array. Partially stolen from
+ * {@link ByteArrayOutputStream} and {@link ByteArrayInputStream}.
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
@@ -33,7 +34,9 @@ public class UndoDataStack
 	}
 
 	/**
-	 * Get the byte offset at which {@link #out} will write next.
+	 * Gets the byte offset at which {@link #out} will write next.
+	 *
+	 * @return the offset.
 	 */
 	public long getWriteDataIndex()
 	{
@@ -41,7 +44,9 @@ public class UndoDataStack
 	}
 
 	/**
-	 * Get the byte offset at which {@link #in} will read next.
+	 * Gets the byte offset at which {@link #in} will read next.
+	 *
+	 * @return the offset.
 	 */
 	public long getReadDataIndex()
 	{
@@ -49,7 +54,10 @@ public class UndoDataStack
 	}
 
 	/**
-	 * Set the byte offset at which {@link #out} will write next.
+	 * Sets the byte offset at which {@link #out} will write next.
+	 *
+	 * @param i
+	 *            the offset.
 	 */
 	public void setReadDataIndex( final long i )
 	{
@@ -57,7 +65,10 @@ public class UndoDataStack
 	}
 
 	/**
-	 * Set the byte offset at which {@link #in} will read next.
+	 * Sets the byte offset at which {@link #in} will read next.
+	 *
+	 * @param i
+	 *            the offset.
 	 */
 	public void setWriteDataIndex( final long i )
 	{
@@ -324,15 +335,23 @@ public class UndoDataStack
 		}
 
 		/**
-		 * skip {@code len} bytes.
+		 * Skip {@code len} bytes.
 		 *
 		 * @param len
+		 *            the number of bytes to skip.
 		 */
 		public void skip( final int len )
 		{
 			out.skip( len );
 		}
 
+		/**
+		 * Writes the eight low-order bits of the argument b. The 24 high-order
+		 * bits of b are ignored.
+		 *
+		 * @param b
+		 *            the byte to write, as an int.
+		 */
 		public void write( final int b )
 		{
 			try
@@ -346,6 +365,17 @@ public class UndoDataStack
 			}
 		}
 
+		/**
+		 * Writes all the bytes in array {@code b}.
+		 * <p>
+		 * If b is <code>null</code>, a NullPointerException is thrown. If
+		 * {@code b.length} is zero, then no bytes are written. Otherwise, the
+		 * byte {@code b[0]} is written first, then {@code b[1]}, and so on; the
+		 * last byte written is {@code b[b.length-1]}.
+		 *
+		 * @param b
+		 *            the byte array to write.
+		 */
 		public void write( final byte[] b )
 		{
 			try
@@ -359,6 +389,24 @@ public class UndoDataStack
 			}
 		}
 
+		/**
+		 * Writes {@code len} bytes from array {@code b}, in order.
+		 * <p>
+		 * If {@code b} is <code>null</code>, a NullPointerException is thrown.
+		 * If {@code off} is negative, or {@code len} is negative, or
+		 * {@code off+len} is greater than the length of the array {@code b},
+		 * then an IndexOutOfBoundsException is thrown. If {@code len} is zero,
+		 * then no bytes are written. Otherwise, the byte {@code b[off]} is
+		 * written first, then {@code b[off+1]}, and so on; the last byte
+		 * written is {@code b[off+len-1]}.
+		 *
+		 * @param b
+		 *            the byte array to write.
+		 * @param off
+		 *            the offset in b to start writing.
+		 * @param len
+		 *            the number of bytes to write.
+		 */
 		public void write( final byte[] b, final int off, final int len )
 		{
 			try
@@ -424,6 +472,24 @@ public class UndoDataStack
 			}
 		}
 
+		/**
+		 * Writes an {@code int} value, which is comprised of four bytes, to the
+		 * output stream. The byte values to be written, in the order shown,
+		 * are:
+		 * <ul>
+		 * <li>(byte) (0xff &amp; (v &gt;&gt; 24))
+		 * <li>(byte) (0xff &amp; (v &gt;&gt; 16))
+		 * <li>(byte) (0xff &amp; (v &gt;&gt; 8))
+		 * <li>(byte) (0xff &amp; v)
+		 * </ul>
+		 *
+		 * The bytes written by this method may be read by the {@code readInt}
+		 * method of interface DataInput , which will then return an int equal
+		 * to v.
+		 *
+		 * @param v
+		 *            the {@code int} to write.
+		 */
 		public void writeInt( final int v )
 		{
 			try
@@ -528,6 +594,18 @@ public class UndoDataStack
 			this.dataInput = dataInput;
 		}
 
+		/**
+		 * Reads some bytes and stores them into the buffer array {@code b}. The
+		 * number of bytes read is equal to the length of {@code b}.
+		 * <p>
+		 * If {@code b} is <code>null</code>, a NullPointerException is thrown.
+		 * If {@code b.length} is zero, then no bytes are read. Otherwise, the
+		 * first byte read is stored into element {@code b[0]}, the next one
+		 * into {@code b[1]}, and so on.
+		 *
+		 * @param b
+		 *            the byte array in which to store the data.
+		 */
 		public void readFully( final byte[] b )
 		{
 			try
@@ -652,6 +730,20 @@ public class UndoDataStack
 			return 0;
 		}
 
+		/**
+		 * Reads four input bytes and returns an int value. Let a-d be the first
+		 * through fourth bytes read. The value returned is:
+		 *
+		 * <pre>
+		 * ( ( ( a &amp; 0xff ) &lt;&lt; 24 ) | ( ( b &amp; 0xff ) &lt;&lt; 16 ) |
+		 * 		( ( c &amp; 0xff ) &lt;&lt; 8 ) | ( d &amp; 0xff ) )
+		 * </pre>
+		 *
+		 * This method is suitable for reading bytes written by the writeInt
+		 * method of interface DataOutput.
+		 *
+		 * @return the {@code int} value.
+		 */
 		public int readInt()
 		{
 			try
