@@ -7,17 +7,17 @@ import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 
 /**
- * TODO javadoc
+ * Bidirectional map that links objects in an undoable edit stack and some undo
+ * IDs.
  *
  * @param <O>
+ *            the object type
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
 public class UndoIdBimap< O > implements RefPool< O >
 {
-	/**
-	 * value used to declare that the requested value is not in the map.
-	 */
+	/** Value used to declare that the requested value is not in the map. */
 	public static final int NO_ENTRY_VALUE = -1;
 
 	private final TIntIntMap undoIdToObjectId;
@@ -29,9 +29,11 @@ public class UndoIdBimap< O > implements RefPool< O >
 	private int idgen;
 
 	/**
-	 * TODO
+	 * Create a bidirectional undo IDs - objects map for the specified object
+	 * pool.
 	 *
 	 * @param idmap
+	 *            the object pool.
 	 */
 	public UndoIdBimap( final RefPool< O > idmap )
 	{
@@ -42,12 +44,13 @@ public class UndoIdBimap< O > implements RefPool< O >
 	}
 
 	/**
-	 * TODO
-	 *
-	 * Creates new id if {@code o} is not in map yet.
+	 * Returns the undo ID for the specified object,
+	 * <p>
+	 * Creates new undo ID if {@code o} is not in map yet.
 	 *
 	 * @param o
-	 * @return
+	 *            the object.
+	 * @return its undo ID.
 	 */
 	@Override
 	public synchronized int getId( final O o )
@@ -64,10 +67,12 @@ public class UndoIdBimap< O > implements RefPool< O >
 	}
 
 	/**
-	 * TODO
+	 * Stores the specified undo ID for the specified object.
 	 *
 	 * @param undoId
+	 *            the undo ID.
 	 * @param o
+	 *            the object.
 	 */
 	public synchronized void put( final int undoId, final O o )
 	{
@@ -77,11 +82,14 @@ public class UndoIdBimap< O > implements RefPool< O >
 	}
 
 	/**
-	 * TODO
+	 * Returns the object mapped to the specified undo ID.
 	 *
 	 * @param undoId
+	 *            the undo ID.
 	 * @param ref
-	 * @return
+	 *            a pool reference that might be used for object retrieval.
+	 * @return the object mapped to the specified undo ID, or <code>null</code>
+	 *         is there are no such undo ID stored in this map.
 	 */
 	@Override
 	public O getObject( final int undoId, final O ref )
