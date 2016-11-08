@@ -2,22 +2,24 @@ package org.mastodon.graph.ref;
 
 import org.mastodon.graph.Graph;
 import org.mastodon.graph.GraphListener;
+import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.ListenableReadOnlyGraph;
+import org.mastodon.graph.Vertex;
 import org.mastodon.pool.MappedElement;
 
 /**
- * TODO: javadoc
- *
+ * Base class for vertices used in {@link ListenableGraph}s. This class is
+ * required to notify listeners of the vertex addition to the graph.
  * <p>
  * <em>Important:</em> Derived classes need to define "constructor" methods
  * (preferably called {@code init(...)} and users <em>must</em> call one of
  * these immediately after creating vertices. The {@code init(...)} methods
- * <em>must</em> call {@link #initDone()} as their last step.
+ * <em>must</em> call {@code initDone()} as their last step.
  * <p>
  * The reason: {@link ListenableReadOnlyGraph} should emit the
  * {@link GraphListener#vertexAdded(Vertex)} event only after some basic
  * initialization has happened on the newly created vertex. It is therefore not
- * emitted in {@link Graph#addVertex()} but instead in {@link #initDone()}.
+ * emitted in {@link Graph#addVertex()} but instead in {@code initDone()}.
  * <p>
  * Idiomatically, adding a vertex to a graph should look like this:<br>
  * {@code MyVertex v = graph.addVertex().init(...);}<br>
@@ -32,10 +34,14 @@ import org.mastodon.pool.MappedElement;
  * TODO: It would be nice to be able to enforce this at compile time, but I
  * couldn't find a good solution to achieve that.
  *
- *
  * @param <V>
+ *            the vertex type.
  * @param <E>
+ *            the edge type.
  * @param <T>
+ *            the {@code MappedElement} type, for example
+ *            {@code ByteMappedElement}, used for internal representation of the
+ *            vertex.
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */

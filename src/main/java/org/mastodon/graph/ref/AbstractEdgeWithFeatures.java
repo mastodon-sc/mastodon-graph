@@ -9,6 +9,23 @@ import org.mastodon.features.Features;
 import org.mastodon.graph.EdgeWithFeatures;
 import org.mastodon.pool.MappedElement;
 
+/**
+ * Base class for edge with features implementations.
+ * <p>
+ * Build on {@link AbstractEdge} and adds the capacity to return
+ * {@link FeatureValue}s.
+ *
+ * @param <E>
+ *            the edge type.
+ * @param <V>
+ *            the vertex type.
+ * @param <T>
+ *            the {@code MappedElement} type, for example
+ *            {@code ByteMappedElement}, used for internal representation of the
+ *            vertex.
+ *
+ * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ */
 public class AbstractEdgeWithFeatures< E extends AbstractEdgeWithFeatures< E, V, T >, V extends AbstractVertex< V, ?, ? >, T extends MappedElement >
 		extends AbstractEdge< E, V, T >
 		implements EdgeWithFeatures< E, V >

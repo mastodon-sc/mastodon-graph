@@ -138,7 +138,6 @@ public class UndoableEditList extends Pool< UndoableEditRef, ByteMappedElement >
 			return SingleArrayMemPool.factory( ByteMappedElementArray.factory );
 		}
 
-		@SuppressWarnings( { "unchecked", "rawtypes" } )
 		@Override
 		public Class< UndoableEditRef > getRefClass()
 		{

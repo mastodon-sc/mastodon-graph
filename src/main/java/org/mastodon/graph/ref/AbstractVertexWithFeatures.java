@@ -10,11 +10,19 @@ import org.mastodon.graph.VertexWithFeatures;
 import org.mastodon.pool.MappedElement;
 
 /**
- * TODO: javadoc
+ * Base class for vertex with features implementations.
+ * <p>
+ * Build on {@link AbstractVertex} and adds the capacity to return
+ * {@link FeatureValue}s.
  *
  * @param <V>
+ *            the vertex type.
  * @param <E>
+ *            the edge type.
  * @param <T>
+ *            the {@code MappedElement} type, for example
+ *            {@code ByteMappedElement}, used for internal representation of the
+ *            vertex.
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */

@@ -82,10 +82,9 @@ public class ConnectedComponents< V extends Vertex< E >, E extends Edge< V > > e
 	 * Returns the set of connected components of the graph. Edges are traversed
 	 * regardless of their direction.
 	 * <p>
-	 * Unless they belong to a component of size below
-	 * {@link ConnectedComponents#minimalSize}, it is ensured that all the
-	 * vertices of the graph will be found exactly once in the connected
-	 * component set.
+	 * Unless they belong to a component of size below {code minimalSize}, it is
+	 * ensured that all the vertices of the graph will be found exactly once in
+	 * the connected component set.
 	 * <p>
 	 * The returned connected components are a snapshot of the graph
 	 * connectivity when this method is called. Subsequent calls to this method

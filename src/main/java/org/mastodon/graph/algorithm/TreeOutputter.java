@@ -21,6 +21,10 @@ import org.mastodon.graph.algorithm.traversal.DepthFirstIterator;
  * descending from the specified root will be plainly ignored.
  *
  * @author Jean-Yves Tinevez
+ * @param <V>
+ *            the vertex type.
+ * @param <E>
+ *            the edge type.
  */
 public class TreeOutputter< V extends Vertex< E >, E extends Edge< V > > extends AbstractGraphAlgorithm< V, E >
 {
