@@ -52,7 +52,11 @@ class UndoFeatureStore< O >
 	 * {@code undoId}.
 	 *
 	 * @param undoId
+	 *            the key of the undo event.
+	 * @param feature
+	 *            the feature to store.
 	 * @param object
+	 *            the object the feature belongs to.
 	 */
 	public void store( final int undoId, final Feature< ?, O, ? > feature, final O object )
 	{
@@ -65,7 +69,9 @@ class UndoFeatureStore< O >
 	 * {@code undoId}, clear the feature in {@code object}.
 	 *
 	 * @param undoId
+	 *            the key of the undo event.
 	 * @param object
+	 *            the object to set.
 	 */
 	public void retrieveAll( final int undoId, final O object )
 	{
@@ -78,7 +84,11 @@ class UndoFeatureStore< O >
 	 * with {@code undoId}, clear the feature in {@code object}.
 	 *
 	 * @param undoId
+	 *            the key of the undo event.
+	 * @param feature
+	 *            the feature to retrieve.
 	 * @param object
+	 *            the object to set.
 	 */
 	public void retrieve( final int undoId, final Feature< ?, O, ? > feature, final O object )
 	{
@@ -92,7 +102,11 @@ class UndoFeatureStore< O >
 	 * {@code undoId}, clear the feature in {@code object}.
 	 *
 	 * @param undoId
+	 *            the key of the undo event.
+	 * @param feature
+	 *            the feature to swap.
 	 * @param object
+	 *            the object to put the feature in.
 	 */
 	public void swap( final int undoId, final Feature< ?, O, ? > feature, final O object )
 	{

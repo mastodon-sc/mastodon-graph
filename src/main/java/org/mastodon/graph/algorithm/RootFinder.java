@@ -9,6 +9,10 @@ import org.mastodon.graph.Vertex;
  * Small algorithm that returns a set of vertices that have no incoming edges.
  *
  * @author Jean-Yves Tinevez
+ * @param <V>
+ *            the vertex type.
+ * @param <E>
+ *            the edge type.
  */
 public class RootFinder< V extends Vertex< E >, E extends Edge< V > > extends AbstractGraphAlgorithm< V, E >
 {

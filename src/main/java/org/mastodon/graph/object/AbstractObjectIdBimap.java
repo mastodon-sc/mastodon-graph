@@ -12,6 +12,7 @@ import gnu.trove.map.TIntObjectMap;
  * IDs are assigned to objects when first requested ({@link #getId(Object)}).
  *
  * @param <O>
+ *            the type of objects in the pool.
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */

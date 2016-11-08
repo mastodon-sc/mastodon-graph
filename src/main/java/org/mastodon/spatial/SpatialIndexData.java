@@ -27,20 +27,21 @@ import net.imglib2.neighborsearch.NearestNeighborSearch;
 /**
  * Spatial index of {@link RealLocalizable} objects.
  * <p>
- * When the index is {@link #SpatialIndexData(Collection, RefPool) constructed},
+ * When the index is {@code SpatialIndexData(Collection, RefPool)} constructed,
  * a KDTree of objects is built. The index can be modified by adding, changing,
  * and removing objects. These changes do not trigger a rebuild of the KDTree.
  * Instead, affected nodes in the KDTree are marked as invalid and the modified
  * objects are maintained in a separate set.
  * <p>
- * The idea is that a new {@link SpatialIndexData} is built after a certain
+ * The idea is that a new {@code SpatialIndexData} is built after a certain
  * number of modifications.
  * <p>
  * This class is not threadsafe!
  *
  *
- *
- * TODO: the added set should not simply store refs to the original objects. It should have refs and copies of their locations, similar to KDTreeNode.
+ * <p>
+ * TODO: the added set should not simply store refs to the original objects. It
+ * should have refs and copies of their locations, similar to KDTreeNode.
  *
  *
  *

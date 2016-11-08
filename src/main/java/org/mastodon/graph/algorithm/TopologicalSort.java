@@ -17,7 +17,9 @@ import org.mastodon.graph.Vertex;
  * @author Jean-Yves Tinevez
  *
  * @param <V>
- *            the vertices type.
+ *            the vertex type.
+ * @param <E>
+ *            the edge type.
  */
 public class TopologicalSort< V extends Vertex< E >, E extends Edge< V > > extends AbstractGraphAlgorithm< V, E >
 {

@@ -13,6 +13,10 @@ import org.mastodon.graph.Vertex;
  *
  * @author Florian Jug
  * @author Jean-Yves Tinevez &lt;jeanyves.tinevez@gmail.com&gt;
+ * @param <V>
+ *            the vertex type.
+ * @param <E>
+ *            the edge type
  */
 public class InverseBreadthFirstIterator< V extends Vertex< E >, E extends Edge< V > > extends BreadthFirstIterator< V, E >
 {

@@ -7,11 +7,20 @@ import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
 
 /**
- * TODO: javadoc
+ * Base class for vertex implementations.
+ * <p>
+ * Vertex classes derived from this abstract class are pool objects with the
+ * minimal information to be used in a graph. This class only manages the edges
+ * of the vertex.
  *
  * @param <V>
+ *            the vertex type.
  * @param <E>
+ *            the edge type.
  * @param <T>
+ *            the {@code MappedElement} type, for example
+ *            {@code ByteMappedElement}, used for internal representation of the
+ *            vertex.
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */

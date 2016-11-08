@@ -24,10 +24,13 @@ import gnu.trove.map.hash.TIntIntHashMap;
 public class RawGraphIO
 {
 	/**
-	 * Provides serialization of vertices and edges to a byte array, for a specific {@link Graph} class.
+	 * Provides serialization of vertices and edges to a byte array, for a
+	 * specific {@link Graph} class.
 	 *
 	 * @param <V>
+	 *            the vertex type.
 	 * @param <E>
+	 *            the edge type.
 	 *
 	 * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
 	 */

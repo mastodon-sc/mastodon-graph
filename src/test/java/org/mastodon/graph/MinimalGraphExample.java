@@ -1,6 +1,5 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.Graph;
 import org.mastodon.graph.ref.AbstractEdge;
 import org.mastodon.graph.ref.AbstractEdgePool;
 import org.mastodon.graph.ref.AbstractVertex;
@@ -125,6 +124,6 @@ public class MinimalGraphExample
 		final int initialCapacity = 1000;
 		final MyVertexPool vertexPool = new MyVertexPool( initialCapacity );
 		final MyEdgePool edgePool = new MyEdgePool( initialCapacity, vertexPool );
-		final Graph< MyVertex, MyEdge > graph = new GraphImp<>( edgePool );
+		new GraphImp<>( edgePool );
 	}
 }
