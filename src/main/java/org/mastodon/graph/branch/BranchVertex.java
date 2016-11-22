@@ -31,6 +31,6 @@ public class BranchVertex extends AbstractVertex< BranchVertex, BranchEdge, Byte
 	@Override
 	public String toString()
 	{
-		return "bv->id=" + getLinkedVertexId();
+		return "bv(" + getInternalPoolIndex() + ") -> id=" + getLinkedVertexId();
 	}
 }

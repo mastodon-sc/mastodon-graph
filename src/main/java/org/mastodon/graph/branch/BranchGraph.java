@@ -10,8 +10,9 @@ import org.mastodon.graph.algorithm.Assigner;
 import org.mastodon.graph.ref.GraphImp;
 import org.mastodon.pool.ByteMappedElement;
 
-
-public class BranchGraph< V extends Vertex< E >, E extends Edge< V > > extends GraphImp< BranchVertexPool, BranchEdgePool, BranchVertex, BranchEdge, ByteMappedElement >
+public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
+		extends GraphImp< BranchVertexPool, BranchEdgePool, BranchVertex, BranchEdge, ByteMappedElement >
+		implements GraphListener< V, E >
 {
 
 	private final ListenableGraph< V, E > graph;
@@ -41,10 +42,9 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > > extends G
 
 	private final Assigner< V > assigner;
 
-
 	public BranchGraph( final ListenableGraph< V, E > graph, final GraphIdBimap< V, E > idBimap )
 	{
-		super( new BranchEdgePool( graph.edges().size() / 50, new BranchVertexPool( graph.vertices().size() / 50 ) ) );
+		super( new BranchEdgePool( 1000, new BranchVertexPool( 1000 ) ) );
 		this.graph = graph;
 		this.idBimap = idBimap;
 		this.vbvMap = new IntRefHashMap<>( vertexPool, -1 );
@@ -53,7 +53,8 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > > extends G
 		final V vertexRef = graph.vertexRef();
 		this.assigner = Assigner.getFor( vertexRef );
 		graph.releaseRef( vertexRef );
-		graph.addGraphListener( new MyGraphListener() );
+		graphRebuilt();
+		graph.addGraphListener( this );
 	}
 
 	/*
@@ -175,55 +176,54 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > > extends G
 		}
 	}
 
-	private BranchVertex split( final V v )
+	private BranchVertex split( final V v, final BranchVertex ref )
 	{
-		assert !v.isBranchGraphVertex();
+		final int vertexId = idBimap.getVertexId( v );
+		assert !vbvMap.containsKey( vertexId ) && vbeMap.containsKey( vertexId );
 
-		final SE f = skeletonEdgePool.createRef();
-		final SE f1 = skeletonEdgePool.createRef();
-		final SE f2 = skeletonEdgePool.createRef();
-		final E e = createRef();
-		final E fe = createRef();
-		final SV w = skeletonVertexPool.createRef();
-		final SV ws = skeletonVertexPool.createRef();
-		final SV wt = skeletonVertexPool.createRef();
-		final V v1 = vertexPool.createRef();
-		final V v2 = vertexPool.createRef();
+		final BranchEdge f = edgeRef();
+		final BranchEdge f1 = edgeRef();
+		final BranchEdge f2 = edgeRef();
+		E e = graph.edgeRef();
+		E fe = graph.edgeRef();
+		final BranchVertex ws = vertexRef();
+		final BranchVertex wt = vertexRef();
+		V v1 = graph.vertexRef();
+		V v2 = graph.vertexRef();
 
-		v.getBranchGraphEdge( f );
-		v.outgoingEdges().get( 0, e );
-		f.getSourceGraphEdge( fe );
+		vbeMap.get( vertexId, f );
+		e = v.outgoingEdges().get( 0, e );
+
+		fe = idBimap.getEdge( f.getLinkedEdgeId(), fe );
 		f.getSource( ws );
 		f.getTarget( wt );
-		fe.getTarget( v1 );
-		wt.getSourceGraphVertex( v2 );
+		v1 = fe.getTarget( v1 );
+		v2 = idBimap.getVertex( wt.getLinkedVertexId(), v2 );
 
-		skeletonEdgePool.delete( f );
+		super.remove( f );
+		final BranchVertex w = super.addVertex( ref );
+		w.setLinkedVertexId( idBimap.getVertexId( v ) );
 
-		skeletonVertexPool.create( w );
-		w.setLinkedVertexIndex( v.getInternalPoolIndex() );
-
-		skeletonEdgePool.addEdge( ws, w, f1 );
-		f1.setLinkedEdgeIndex( fe.getInternalPoolIndex() );
+		super.addEdge( ws, w, f1 );
+		f1.setLinkedEdgeId( idBimap.getEdgeId( fe ) );
 		linkBranchEdge( v1, v, f1 );
 
-		skeletonEdgePool.addEdge( w, wt, f2 );
-		f2.setLinkedEdgeIndex( e.getInternalPoolIndex() );
+		super.addEdge( w, wt, f2 );
+		f2.setLinkedEdgeId( idBimap.getEdgeId( e ) );
 		linkBranchEdge( v, v2, f2 );
 
-		vertexPool.releaseRef( v2 );
-		vertexPool.releaseRef( v1 );
-		skeletonVertexPool.releaseRef( wt );
-		skeletonVertexPool.releaseRef( ws );
-//			skeletonVertexPool.releaseRef( w );
-		releaseRef( fe );
-		releaseRef( e );
-		skeletonEdgePool.releaseRef( f2 );
-		skeletonEdgePool.releaseRef( f1 );
-		skeletonEdgePool.releaseRef( f );
+		graph.releaseRef( v2 );
+		graph.releaseRef( v1 );
+		releaseRef( wt );
+		releaseRef( ws );
+		graph.releaseRef( fe );
+		graph.releaseRef( e );
+		releaseRef( f2 );
+		releaseRef( f1 );
+		releaseRef( f );
 
-		v.setIsBranchGraphVertex( true );
-		v.setBranchGraphIndex( w.getInternalPoolIndex() );
+		vbvMap.put( vertexId, w );
+		vbeMap.remove( vertexId );
 
 		return w;
 	}
@@ -256,131 +256,183 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > > extends G
 		graph.releaseRef( v );
 	}
 
+	private void releaseBranchEdgeFor( final E edge )
+	{
+		final V source = edge.getSource();
+		final int sourceId = idBimap.getVertexId( source );
+
+		final BranchVertex vertexRef1 = vertexRef();
+		final BranchVertex svs;
+		if ( vbvMap.containsKey( sourceId ) )
+			svs = vbvMap.get( sourceId, vertexRef1 );
+		else
+			svs = split( source, vertexRef1 );
+
+		final V target = edge.getTarget();
+		final int targetId = idBimap.getVertexId( target );
+
+		final BranchVertex vertexRef2 = vertexRef();
+		final BranchVertex svt;
+		if ( vbvMap.containsKey( targetId ) )
+			svt = vbvMap.get( targetId, vertexRef2 );
+		else
+			svt = split( target, vertexRef2 );
+
+		for ( final BranchEdge se : svs.outgoingEdges() )
+			if ( se.getTarget().equals( svt ) )
+				super.remove( se );
+
+		releaseRef( vertexRef1 );
+		releaseRef( vertexRef2 );
+	}
+
 	/*
 	 * Graph listener.
 	 */
 
-	private class MyGraphListener implements GraphListener< V, E >
+	@Override
+	public void graphRebuilt()
 	{
-
-		@Override
-		public void graphRebuilt()
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void vertexAdded( final V vertex )
-		{
-			final int id = idBimap.getVertexId( vertex );
-			final BranchVertex ref = vertexRef();
-			final BranchVertex branchVertex = vertexPool.create( ref );
-			branchVertex.setLinkedVertexId( id );
-			vbvMap.put( id, branchVertex );
-			releaseRef( ref );
-		}
-
-		@Override
-		public void vertexRemoved( final V vertex )
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void edgeAdded( final E edge )
-		{
-			final int edgeId = idBimap.getEdgeId( edge );
-
-			final V ref1 = graph.vertexRef();
-			final V ref2 = graph.vertexRef();
-			final V source = edge.getSource( ref1 );
-			final V target = edge.getSource( ref1 );
-			final BranchVertex vref1 = vertexRef();
-			final BranchVertex vref2 = vertexRef();
-
-			final BranchVertex sourceBranchVertex = vbvMap.get( idBimap.getVertexId( source ), vref1 );
-			final BranchVertex targetBranchVertex = vbvMap.get( idBimap.getVertexId( target ), vref2 );
-
-			if ( null != sourceBranchVertex && null != targetBranchVertex )
-			{
-				final BranchEdge edgeRef = edgeRef();
-				final BranchEdge branchEdge = edgePool.addEdge( sourceBranchVertex, targetBranchVertex, edgeRef );
-				branchEdge.setLinkedEdgeId( edgeId );
-				ebeMap.put( edgeId, branchEdge );
-
-				checkFuse( sourceBranchVertex );
-				checkFuse( targetBranchVertex );
-
-				releaseRef( edgeRef );
-
-			}
-			else if ( null == sourceBranchVertex && null != targetBranchVertex )
-			{
-				final SV svs = split( source );
-
-				final int idt = t.getBranchGraphIndex();
-				final SV svt = skeletonVertexPool.createRef();
-				skeletonVertexPool.getObject( idt, svt );
-
-				SE se = skeletonEdgePool.createRef();
-				se = skeletonEdgePool.addEdge( svs, svt, se );
-				se.setLinkedEdgeIndex( edge.getInternalPoolIndex() );
-
-				checkFuse( svt );
-
-				skeletonEdgePool.releaseRef( se );
-				skeletonVertexPool.releaseRef( svt );
-				skeletonVertexPool.releaseRef( svs );
-			}
-//			else if ( s.isBranchGraphVertex() && !t.isBranchGraphVertex() )
-//			{
-//				final SV svt = split( t );
-//
-//				final int ids = s.getBranchGraphIndex();
-//				final SV svs = skeletonVertexPool.createRef();
-//				skeletonVertexPool.getObject( ids, svs );
-//
-//				SE se = skeletonEdgePool.createRef();
-//				se = skeletonEdgePool.addEdge( svs, svt, se );
-//				se.setLinkedEdgeIndex( edge.getInternalPoolIndex() );
-//
-//				checkFuse( svs );
-//
-//				skeletonEdgePool.releaseRef( se );
-//				skeletonVertexPool.releaseRef( svs );
-//				skeletonVertexPool.releaseRef( svt );
-//			}
-//			else
-//			{
-//				final SV svs = split( s );
-//				final SV svt = split( t );
-//
-//				SE se = skeletonEdgePool.createRef();
-//				se = skeletonEdgePool.addEdge( svs, svt, se );
-//				se.setLinkedEdgeIndex( edge.getInternalPoolIndex() );
-//
-//				checkFuse( svs );
-//				checkFuse( svt );
-//
-//				skeletonEdgePool.releaseRef( se );
-//			}
-
-			graph.releaseRef( ref1 );
-			graph.releaseRef( ref2 );
-			releaseRef( vref1 );
-			releaseRef( vref2 );
-		}
-
-		@Override
-		public void edgeRemoved( final E edge )
-		{
-			// TODO Auto-generated method stub
-
-		}
+		// TODO Auto-generated method stub
 
 	}
 
+	@Override
+	public void vertexAdded( final V vertex )
+	{
+		final int id = idBimap.getVertexId( vertex );
+		final BranchVertex ref = vertexRef();
+		final BranchVertex branchVertex = super.addVertex( ref );
+		branchVertex.setLinkedVertexId( id );
+		vbvMap.put( id, branchVertex );
+		releaseRef( ref );
+	}
 
+	@Override
+	public void vertexRemoved( final V vertex )
+	{
+		final BranchVertex vertexRef = vertexRef();
+		final BranchVertex w = vbvMap.get( idBimap.getVertexId( vertex ), vertexRef );
+		super.remove( w );
+		releaseRef( vertexRef );
+	}
+
+	@Override
+	public void edgeAdded( final E edge )
+	{
+		final int edgeId = idBimap.getEdgeId( edge );
+
+		final V ref1 = graph.vertexRef();
+		final V ref2 = graph.vertexRef();
+		final BranchVertex vref1 = vertexRef();
+		final BranchVertex vref2 = vertexRef();
+
+		final V source = edge.getSource( ref1 );
+		final V target = edge.getSource( ref2 );
+		final BranchVertex sourceBranchVertex = vbvMap.get( idBimap.getVertexId( source ), vref1 );
+		final BranchVertex targetBranchVertex = vbvMap.get( idBimap.getVertexId( target ), vref2 );
+
+		if ( null != sourceBranchVertex && null != targetBranchVertex )
+		{
+			final BranchEdge edgeRef = edgeRef();
+			final BranchEdge branchEdge = super.addEdge( sourceBranchVertex, targetBranchVertex, edgeRef );
+			branchEdge.setLinkedEdgeId( edgeId );
+			ebeMap.put( edgeId, branchEdge );
+
+			checkFuse( sourceBranchVertex );
+			checkFuse( targetBranchVertex );
+
+			releaseRef( edgeRef );
+
+		}
+		else if ( null == sourceBranchVertex && null != targetBranchVertex )
+		{
+			final BranchVertex vertexRef = vertexRef();
+			final BranchVertex newSourceBranchVertex = split( source, vertexRef );
+
+			final BranchEdge edgeRef = edgeRef();
+			final BranchEdge se = super.addEdge( newSourceBranchVertex, targetBranchVertex, edgeRef );
+			se.setLinkedEdgeId( edgeId );
+
+			checkFuse( targetBranchVertex );
+
+			releaseRef( edgeRef );
+			releaseRef( vertexRef );
+		}
+		else if ( null != sourceBranchVertex && null == targetBranchVertex )
+		{
+			final BranchVertex vertexRef = vertexRef();
+			final BranchVertex newTargetBranchVertex = split( target, vertexRef );
+
+			final BranchEdge edgeRef = edgeRef();
+			final BranchEdge se = super.addEdge( sourceBranchVertex, newTargetBranchVertex, edgeRef );
+			se.setLinkedEdgeId( edgeId );
+
+			checkFuse( sourceBranchVertex );
+
+			releaseRef( edgeRef );
+			releaseRef( vertexRef );
+		}
+		else
+		{
+			final BranchVertex vertexRef1 = vertexRef();
+			final BranchVertex vertexRef2 = vertexRef();
+
+			final BranchVertex newSourceBranchVertex = split( source, vertexRef1 );
+			final BranchVertex newTargetBranchVertex = split( target, vertexRef2 );
+
+			final BranchEdge edgeRef = edgeRef();
+
+			final BranchEdge se = super.addEdge( newSourceBranchVertex, newTargetBranchVertex, edgeRef );
+			se.setLinkedEdgeId( edgeId );
+
+			checkFuse( newSourceBranchVertex );
+			checkFuse( newTargetBranchVertex );
+
+			releaseRef( edgeRef );
+			releaseRef( vertexRef1 );
+			releaseRef( vertexRef2 );
+		}
+
+		graph.releaseRef( ref1 );
+		graph.releaseRef( ref2 );
+		releaseRef( vref1 );
+		releaseRef( vref2 );
+	}
+
+	@Override
+	public void edgeRemoved( final E edge )
+	{
+		releaseBranchEdgeFor( edge );
+	}
+
+	/*
+	 * Display. Mainly for debug.
+	 */
+
+	@Override
+	public String toString()
+	{
+		final StringBuffer sb = new StringBuffer( "BranchGraph {\n" );
+		sb.append( "  vertices = {\n" );
+
+		for ( final BranchVertex bv : vertexPool )
+			sb.append( "    " + str( bv ) + "\n" );
+		sb.append( "  },\n" );
+		sb.append( "  edges = {\n" );
+
+		for ( final BranchEdge be : edgePool )
+			sb.append( "    " + be + "\n" );
+		sb.append( "  }\n" );
+		sb.append( "}" );
+		return sb.toString();
+	}
+
+	private String str( final BranchVertex bv )
+	{
+		final V ref = graph.vertexRef();
+		final String str = "bv(" + bv.getInternalPoolIndex() + ")->" + idBimap.getVertex( bv.getLinkedVertexId(), ref );
+		graph.releaseRef( ref );
+		return str;
+	};
 }

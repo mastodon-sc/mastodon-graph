@@ -5,7 +5,6 @@ import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.PoolObject;
-import org.mastodon.pool.PoolObject.Factory;
 import org.mastodon.pool.SingleArrayMemPool;
 
 public class BranchVertexPool extends AbstractVertexPool< BranchVertex, BranchEdge, ByteMappedElement >
@@ -15,9 +14,10 @@ public class BranchVertexPool extends AbstractVertexPool< BranchVertex, BranchEd
 		this( initialCapacity, new BranchVertexFactory() );
 	}
 
-	private BranchVertexPool( final int initialCapacity, final Factory< BranchVertex, ByteMappedElement > vertexFactory )
+	private BranchVertexPool( final int initialCapacity, final BranchVertexFactory vertexFactory )
 	{
 		super( initialCapacity, vertexFactory );
+		vertexFactory.vertexPool = this;
 	}
 
 	private static class BranchVertexFactory implements PoolObject.Factory< BranchVertex, ByteMappedElement >
