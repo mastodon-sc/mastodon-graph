@@ -145,8 +145,11 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 	 */
 	private void checkFuse( final BranchVertex w )
 	{
+		System.out.println( "  Check fuse for " + w + ", Nin = " + w.incomingEdges().size() + ", Nout = " + w.outgoingEdges().size() ); // DEBUG
+
 		if ( w.incomingEdges().size() == 1 && w.outgoingEdges().size() == 1 )
 		{
+			System.out.println( "    Stuff to do with " + w ); // DEBUG
 			// Careful for syntax: we know that the BranchGraph pools are actual
 			// pool objects.
 			final BranchEdge f1 = edgeRef();
@@ -183,10 +186,10 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 			final int f1linkedEdgeIndex = f1.getLinkedEdgeId();
 
 			// remove w, f1, f2 from branch graph
-			remove( w );
+			super.remove( w );
 
 			// f3 := new branch edge between f1s and f2t
-			addEdge( f1s, f2t, f3 );
+			super.addEdge( f1s, f2t, f3 );
 
 			// reference f3 from every source graph vertex on the path
 			linkBranchEdge( v1, v2, f3 );
@@ -230,6 +233,7 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 		v2 = idBimap.getVertex( wt.getLinkedVertexId(), v2 );
 
 		super.remove( f );
+
 		final BranchVertex w = super.addVertex( ref );
 		w.setLinkedVertexId( idBimap.getVertexId( v ) );
 
@@ -271,16 +275,30 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 	 */
 	private void linkBranchEdge( final V begin, final V end, final BranchEdge branchEdge )
 	{
-		final E e = graph.edgeRef();
+		System.out.println( "    linkBranchEdge from " + begin + " to " + end + " with " + branchEdge ); // DEBUG
+
+		E e = graph.edgeRef();
 		V v = graph.vertexRef();
+
 		v = assigner.assign( begin, v );
-		while ( !v.equals( end ) )
+		do
 		{
+			e = v.outgoingEdges().get( 0, e );
+			// Map edge to common branch edge.
+			System.out.println( "      mapping " + e + " to " + branchEdge ); // DEBUG
+			ebeMap.put( idBimap.getEdgeId( e ), branchEdge );
+
 			final int vertexId = idBimap.getVertexId( v );
+			System.out.println( "      mapping " + v + " to " + branchEdge ); // DEBUG
+			// Map vertex to common branch edge.
 			vbeMap.put( vertexId, branchEdge );
+			// Unmap vertex to branch vertex.
 			vbvMap.remove( vertexId );
-			v = v.outgoingEdges().get( 0, e ).getTarget( v );
+
+			v = e.getTarget( v );
 		}
+		while ( !v.equals( end ) );
+
 		graph.releaseRef( e );
 		graph.releaseRef( v );
 	}
@@ -349,6 +367,7 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 	@Override
 	public void edgeAdded( final E edge )
 	{
+		System.out.println( "Adding edge " + edge ); // DEBUG
 		final int edgeId = idBimap.getEdgeId( edge );
 
 		final V ref1 = graph.vertexRef();
@@ -357,9 +376,11 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 		final BranchVertex vref2 = vertexRef();
 
 		final V source = edge.getSource( ref1 );
-		final V target = edge.getSource( ref2 );
+		final V target = edge.getTarget( ref2 );
 		final BranchVertex sourceBranchVertex = vbvMap.get( idBimap.getVertexId( source ), vref1 );
 		final BranchVertex targetBranchVertex = vbvMap.get( idBimap.getVertexId( target ), vref2 );
+
+		System.out.println( "Branch source & target are " + sourceBranchVertex + " and " + targetBranchVertex ); // DEBUG
 
 		if ( null != sourceBranchVertex && null != targetBranchVertex )
 		{
@@ -451,10 +472,25 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 		sb.append( "  edges = {\n" );
 
 		for ( final BranchEdge be : edgePool )
-			sb.append( "    " + be + "\n" );
+			sb.append( "    " + str( be ) + "\n" );
 		sb.append( "  }\n" );
 		sb.append( "}" );
 		return sb.toString();
+	}
+
+	private String str( final BranchEdge be )
+	{
+		final BranchVertex v1 = vertexRef();
+		final BranchVertex v2 = vertexRef();
+		be.getSource( v1 );
+		be.getTarget( v2 );
+		final E e = graph.edgeRef();
+		final String str = "be(" + v1.getInternalPoolIndex() + " -> " + v2.getInternalPoolIndex() +
+				")->" + idBimap.getEdge( be.getLinkedEdgeId(), e );
+		releaseRef( v1 );
+		releaseRef( v2 );
+		graph.releaseRef( e );
+		return str;
 	}
 
 	private String str( final BranchVertex bv )
