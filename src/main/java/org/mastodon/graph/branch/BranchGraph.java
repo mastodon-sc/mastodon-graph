@@ -104,6 +104,35 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 	}
 
 	/*
+	 * Query branch graph.
+	 */
+
+	public BranchVertex getBranchVertex( final V vertex, final BranchVertex ref )
+	{
+		return vbvMap.get( idBimap.getVertexId( vertex ), ref );
+	}
+
+	public BranchEdge getBranchVertex( final V vertex, final BranchEdge ref )
+	{
+		return vbeMap.get( idBimap.getVertexId( vertex ), ref );
+	}
+
+	public BranchEdge getBranchEdge( final E edge, final BranchEdge ref )
+	{
+		return ebeMap.get( idBimap.getEdgeId( edge ), ref );
+	}
+
+	public V getLinkedVertex( final BranchVertex bv, final V ref )
+	{
+		return idBimap.getVertex( bv.getLinkedVertexId(), ref );
+	}
+
+	public E getLinkedEdge( final BranchEdge be, final E ref )
+	{
+		return idBimap.getEdge( be.getLinkedEdgeId(), ref );
+	}
+
+	/*
 	 * Private methods (do the work).
 	 */
 
