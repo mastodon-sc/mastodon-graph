@@ -16,9 +16,10 @@ public class ListenableTestEdge extends AbstractListenableEdge< ListenableTestEd
 		creatingPool = pool;
 	}
 
-	public void init()
+	public ListenableTestEdge init()
 	{
 		initDone();
+		return this;
 	}
 
 	@Override
