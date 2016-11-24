@@ -112,7 +112,7 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 		return vbvMap.get( idBimap.getVertexId( vertex ), ref );
 	}
 
-	public BranchEdge getBranchVertex( final V vertex, final BranchEdge ref )
+	public BranchEdge getBranchEdge( final V vertex, final BranchEdge ref )
 	{
 		return vbeMap.get( idBimap.getVertexId( vertex ), ref );
 	}
