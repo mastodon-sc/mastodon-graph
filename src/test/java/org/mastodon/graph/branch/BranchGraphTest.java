@@ -210,4 +210,72 @@ public class BranchGraphTest
 		graph.releaseRef( eref );
 		bg.releaseRef( beref );
 	}
+
+	@Test
+	public void testRemoveOneEdge()
+	{
+		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
+		for ( int i = 0; i < 6; i++ )
+			vlist.add( graph.addVertex().init( i ) );
+		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
+		final ListenableTestVertex ref1 = graph.vertexRef();
+		final ListenableTestVertex ref2 = graph.vertexRef();
+		final ListenableTestEdge eref = graph.edgeRef();
+		for ( int i = 0; i < vlist.size() - 1; i++ )
+		{
+			final ListenableTestVertex source = vlist.get( i, ref1 );
+			final ListenableTestVertex target = vlist.get( i + 1, ref2 );
+			final ListenableTestEdge edge = graph.addEdge( source, target, eref ).init();
+			elist.add( edge );
+		}
+
+		// Remove middle edge.
+		final ListenableTestEdge removedEdge = elist.get( elist.size() / 2 );
+		final ListenableTestVertex oldSource = removedEdge.getSource();
+		final ListenableTestVertex oldTarget = removedEdge.getTarget();
+		graph.remove( removedEdge );
+
+		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
+
+		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
+
+		// Does stuff link to new branch vertex?
+		final BranchVertex newBVsource = bg.getBranchVertex( oldSource, bg.vertexRef() );
+		assertNotNull( "Old source linked vertex should link to a branch vertex.", newBVsource );
+		assertEquals( "New branch vertex should link to old source linked vertex.", oldSource, bg.getLinkedVertex( newBVsource, ref1 ) );
+
+		final BranchVertex newBVtarget = bg.getBranchVertex( oldTarget, bg.vertexRef() );
+		assertNotNull( "Old target linked vertex should link to a branch vertex.", newBVtarget );
+		assertEquals( "New branch vertex should link to old target linked vertex.", oldTarget, bg.getLinkedVertex( newBVtarget, ref2 ) );
+
+		// Does stuff link to branch edge?
+		final BranchEdge newIncomingBE = newBVsource.incomingEdges().get( 0 );
+		assertEquals( "New incoming branch edge should link to first linked edge in the branch.",
+				elist.get( 0 ), bg.getLinkedEdge( newIncomingBE, graph.edgeRef() ) );
+		for ( int i = 0; i < elist.size() / 2; i++ )
+			assertEquals( "Linked edge in the new first branch should link to new incoming branch edge.",
+					newIncomingBE, bg.getBranchEdge( elist.get( i ), bg.edgeRef() ) );
+		for ( int i = 1; i < vlist.size() / 2 - 1; i++ )
+			assertEquals( "Middle vertex in the new first branch should link to new incoming branch edge.",
+					newIncomingBE, bg.getBranchEdge( vlist.get( i ), bg.edgeRef() ) );
+
+		final BranchEdge newOutgoingBE = newBVtarget.outgoingEdges().get( 0 );
+		assertEquals( "New outgoing branch edge should link to first linked edge in the second branch.",
+				elist.get( elist.size() / 2 + 1 ), bg.getLinkedEdge( newOutgoingBE, graph.edgeRef() ) );
+		for ( int i = elist.size() / 2 + 1; i < elist.size(); i++ )
+			assertEquals( "Linked edge in the new second branch should link to new ougoing branch edge.",
+					newOutgoingBE, bg.getBranchEdge( elist.get( i ), bg.edgeRef() ) );
+		for ( int i = vlist.size() / 2 + 1; i < vlist.size() - 1; i++ )
+			assertEquals( "Middle vertex in the new second branch should link to new outgoing branch edge.",
+					newOutgoingBE, bg.getBranchEdge( vlist.get( i ), bg.edgeRef() ) );
+
+		graph.releaseRef( ref1 );
+		graph.releaseRef( ref2 );
+		graph.releaseRef( eref );
+	}
+
 }
