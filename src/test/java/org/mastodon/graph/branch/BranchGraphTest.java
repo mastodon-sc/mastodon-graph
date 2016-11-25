@@ -440,4 +440,68 @@ public class BranchGraphTest
 		graph.releaseRef( ref2 );
 		graph.releaseRef( eref );
 	}
+
+	@Test
+	public void testRemoveLastVertex()
+	{
+		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
+		for ( int i = 0; i < 6; i++ )
+			vlist.add( graph.addVertex().init( i ) );
+		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
+		final ListenableTestVertex ref1 = graph.vertexRef();
+		final ListenableTestVertex ref2 = graph.vertexRef();
+		final ListenableTestEdge eref = graph.edgeRef();
+		for ( int i = 0; i < vlist.size() - 1; i++ )
+		{
+			final ListenableTestVertex source = vlist.get( i, ref1 );
+			final ListenableTestVertex target = vlist.get( i + 1, ref2 );
+			final ListenableTestEdge edge = graph.addEdge( source, target, eref ).init();
+			elist.add( edge );
+		}
+
+		// Remove last vertex.
+		graph.remove( vlist.get( vlist.size() - 1 ) );
+
+		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 2 vertices.", 2, vSize );
+
+		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
+
+		final ListenableTestVertex v0 = vlist.get( 0 );
+		final BranchVertex bv0 = bg.getBranchVertex( v0, bg.vertexRef() );
+		assertNotNull( "First linked vertex should link to a branch vertex.", bv0 );
+		assertEquals( "First branch vertex should link to first linked vertex in the branch.",
+				v0, bg.getLinkedVertex( bv0, graph.vertexRef() ) );
+
+		final ListenableTestVertex vforetolast = vlist.get( vlist.size() - 2 );
+		final BranchVertex bvlast = bg.getBranchVertex( vforetolast, bg.vertexRef() );
+		assertNotNull( "Last linked vertex should link to a branch vertex.", bvlast );
+		assertEquals( "Last branch vertex should link to last linked vertex in the branch.",
+				vforetolast, bg.getLinkedVertex( bvlast, graph.vertexRef() ) );
+
+		final BranchEdge be = bg.edges().iterator().next();
+		final ListenableTestEdge e0 = elist.get( 0 );
+		assertEquals( "Branch edge should link to first linked edge in the branch.",
+				e0, bg.getLinkedEdge( be, graph.edgeRef() ) );
+
+		final BranchEdge beref = bg.edgeRef();
+		for ( int i = 1; i < vlist.size() - 2; i++ )
+		{
+			final ListenableTestVertex vi = vlist.get( i, ref1 );
+			assertNull( "Middle vertex should not link to a branch vertex.", bg.getBranchVertex( vi, bg.vertexRef() ) );
+			final BranchEdge bei = bg.getBranchEdge( vi, beref );
+			assertNotNull( "Middle vertex should link to a branch edge.", bei );
+			assertEquals( "Middle vertex shoud link to the branch edge.", be, bei );
+		}
+
+		for ( int i = 0; i < elist.size() - 1; i++ )
+			assertEquals( "Linked edge should link to the branch edge.", be, bg.getBranchEdge( elist.get( i ), beref ) );
+
+		graph.releaseRef( ref1 );
+		graph.releaseRef( ref2 );
+		graph.releaseRef( eref );
+	}
 }
