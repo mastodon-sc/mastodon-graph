@@ -191,16 +191,16 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 
 			/*
 			 * beNew := new branch edge between bvSource and bvTarget.
-			 * 
+			 *
 			 * If there is already an edge between bvSource and bvTarget (e.g.
 			 * when the linked graph as a diamond shape), the returned edge
 			 * beNew will be null and later the linkBranchEdge will generate a
 			 * NPE.
-			 * 
+			 *
 			 * This is expected because as of now, the graph implementation
 			 * supporting the branch graph is a simple directed graph, which
 			 * does not allow for multiple edges between two vertices.
-			 * 
+			 *
 			 * FIXME: Have the branch graph supported by a non-simple directed
 			 * graph.
 			 */
@@ -468,12 +468,12 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 		final StringBuffer sb = new StringBuffer( "BranchGraph {\n" );
 		sb.append( "  vertices = {\n" );
 
-		for ( final BranchVertex bv : vertexPool )
+		for ( final BranchVertex bv : vertices() )
 			sb.append( "    " + str( bv ) + "\n" );
 		sb.append( "  },\n" );
 		sb.append( "  edges = {\n" );
 
-		for ( final BranchEdge be : edgePool )
+		for ( final BranchEdge be : edges() )
 			sb.append( "    " + str( be ) + "\n" );
 		sb.append( "  }\n" );
 		sb.append( "}" );
