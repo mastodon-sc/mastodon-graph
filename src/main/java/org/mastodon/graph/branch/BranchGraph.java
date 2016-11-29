@@ -386,8 +386,6 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 
 		if ( null != sourceBranchVertex && null != targetBranchVertex )
 		{
-			System.out.println( "Joining two branch vertives: " + sourceBranchVertex + " and " + targetBranchVertex ); // DEBUG
-
 			final BranchEdge edgeRef = edgeRef();
 			final BranchEdge branchEdge = super.addEdge( sourceBranchVertex, targetBranchVertex, edgeRef );
 			branchEdge.setLinkedEdgeId( edgeId );
