@@ -504,4 +504,169 @@ public class BranchGraphTest
 		graph.releaseRef( ref2 );
 		graph.releaseRef( eref );
 	}
+
+	@Test
+	public void testBranchingLambda()
+	{
+		// Make a long branch.
+		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
+		for ( int i = 0; i < 7; i++ )
+			vlist.add( graph.addVertex().init( i ) );
+		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
+		final ListenableTestVertex ref1 = graph.vertexRef();
+		final ListenableTestVertex ref2 = graph.vertexRef();
+		final ListenableTestEdge eref = graph.edgeRef();
+		for ( int i = 0; i < vlist.size() - 1; i++ )
+		{
+			final ListenableTestVertex source = vlist.get( i, ref1 );
+			final ListenableTestVertex target = vlist.get( i + 1, ref2 );
+			final ListenableTestEdge edge = graph.addEdge( source, target, eref ).init();
+			elist.add( edge );
+		}
+
+		// Branch from its middle vertex in lambda shape (split event).
+		final ListenableTestVertex middle = vlist.get( vlist.size() / 2 );
+		ListenableTestVertex source = middle;
+		for ( int i = 0; i < vlist.size() / 2; i++ )
+		{
+			final ListenableTestVertex target = graph.addVertex().init( vlist.size() + i );
+			vlist.add( target );
+			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			elist.add( e );
+			source = target;
+		}
+
+		// Basic test on N vertices and N edges.
+		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
+
+		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 3 edges.", 3, eSize );
+
+		// Test that we branched correctly.
+		final BranchVertex middleBV = bg.getBranchVertex( middle, bg.vertexRef() );
+		assertNotNull( "Middle linked vertex should link to a branch vertex.", middleBV );
+		assertEquals( "Middle branch vertex should link to middle linked vertex in the branch.",
+				middle, bg.getLinkedVertex( middleBV, graph.vertexRef() ) );
+
+		final ListenableTestVertex first = vlist.get( 0 );
+		final BranchVertex firstBV = bg.getBranchVertex( first, bg.vertexRef() );
+		final ListenableTestEdge efirst = first.outgoingEdges().get( 0 );
+		final BranchEdge efirstBE = bg.getBranchEdge( efirst, bg.edgeRef() );
+		assertEquals( "Outgoing edge of a BV should link to the first edge of the linked branch.",
+				firstBV.outgoingEdges().get( 0 ), efirstBE );
+
+		// First branch.
+		for ( int i = 1; i < 3; i++ )
+		{
+			final ListenableTestVertex v = vlist.get( i );
+			assertNull( "Vertex in the middle of a branch should not link to a branch vertex.", bg.getBranchVertex( v, bg.vertexRef() ) );
+			assertEquals( "Vertex  in the middle of a branch should link to a branch edge.", efirstBE, bg.getBranchEdge( v, bg.edgeRef() ) );
+		}
+	}
+	
+	@Test
+	public void testBranchingY()
+	{
+		// Make a long branch.
+		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
+		for ( int i = 0; i < 7; i++ )
+			vlist.add( graph.addVertex().init( i ) );
+		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
+		final ListenableTestVertex ref1 = graph.vertexRef();
+		final ListenableTestVertex ref2 = graph.vertexRef();
+		final ListenableTestEdge eref = graph.edgeRef();
+		for ( int i = 0; i < vlist.size() - 1; i++ )
+		{
+			final ListenableTestVertex source = vlist.get( i, ref1 );
+			final ListenableTestVertex target = vlist.get( i + 1, ref2 );
+			final ListenableTestEdge edge = graph.addEdge( source, target, eref ).init();
+			elist.add( edge );
+		}
+		final ListenableTestVertex middle = vlist.get( vlist.size() / 2 );
+
+		// Branch from its middle vertex in Y shape (merge event).
+		ListenableTestVertex source = graph.addVertex().init( vlist.size() );
+		ListenableTestVertex target = null;
+		vlist.add( source );
+		for ( int i = 1; i < 4; i++ )
+		{
+			target = graph.addVertex().init( vlist.size() );
+			vlist.add( target );
+			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			elist.add( e );
+			source = target;
+		}
+		graph.addEdge( target, middle ).init();
+
+		// Basic test on N vertices and N edges.
+		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
+
+		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 3 edges.", 3, eSize );
+
+		// First branch.
+		final ListenableTestVertex first = vlist.get( 0 );
+		final BranchVertex firstBV = bg.getBranchVertex( first, bg.vertexRef() );
+		final ListenableTestEdge efirst = first.outgoingEdges().get( 0 );
+		final BranchEdge efirstBE = bg.getBranchEdge( efirst, bg.edgeRef() );
+		assertEquals( "Outgoing edge of a BV should link to the first edge of the linked branch.",
+				firstBV.outgoingEdges().get( 0 ), efirstBE );
+
+		for ( int i = 1; i < 3; i++ )
+		{
+			final ListenableTestVertex v = vlist.get( i );
+			assertNull( "Vertex in the middle of a branch should not link to a branch vertex.", bg.getBranchVertex( v, bg.vertexRef() ) );
+			assertEquals( "Vertex  in the middle of a branch should link to a branch edge.", efirstBE, bg.getBranchEdge( v, bg.edgeRef() ) );
+		}
+
+		// Other half, test that we branched correctly.
+		final BranchVertex middleBV = bg.getBranchVertex( middle, bg.vertexRef() );
+		assertNotNull( "Middle linked vertex should link to a branch vertex.", middleBV );
+		assertEquals( "Middle branch vertex should link to middle linked vertex in the branch.",
+				middle, bg.getLinkedVertex( middleBV, graph.vertexRef() ) );
+
+		final ListenableTestEdge emiddle = middle.outgoingEdges().get( 0 );
+		final BranchEdge emiddleBE = bg.getBranchEdge( emiddle, bg.edgeRef() );
+		assertEquals( "Outgoing edge of a BV should link to the first edge of the linked branch.",
+				middleBV.outgoingEdges().get( 0 ), emiddleBE );
+
+		for ( int i = 4; i < 6; i++ )
+		{
+			final ListenableTestVertex v = vlist.get( i );
+			assertNull( "Vertex in the middle of a branch should not link to a branch vertex.", bg.getBranchVertex( v, bg.vertexRef() ) );
+			assertEquals( "Vertex  in the middle of a branch should link to a branch edge.", emiddleBE, bg.getBranchEdge( v, bg.edgeRef() ) );
+		}
+
+		final ListenableTestVertex last = vlist.get( 6 );
+		final BranchVertex lastBV = bg.getBranchVertex( last, bg.vertexRef() );
+		assertNotNull( "Last linked vertex should link to a branch vertex.", lastBV );
+		assertEquals( "Last branch vertex should link to last linked vertex in the branch.",
+				last, bg.getLinkedVertex( lastBV, graph.vertexRef() ) );
+
+		// Half Y branch.
+		final ListenableTestVertex other = vlist.get( 7 );
+		final BranchVertex otherBV = bg.getBranchVertex( other, bg.vertexRef() );
+		assertNotNull( "First linked vertex in the new branch should link to a branch vertex.", otherBV );
+		assertEquals( "Branch vertex should link to new root in the branch.",
+				other, bg.getLinkedVertex( otherBV, graph.vertexRef() ) );
+
+		final ListenableTestEdge eother = other.outgoingEdges().get( 0 );
+		final BranchEdge eotherBE = bg.getBranchEdge( eother, bg.edgeRef() );
+		assertEquals( "Outgoing edge of a BV should link to the first edge of the linked branch.",
+				otherBV.outgoingEdges().get( 0 ), eotherBE );
+
+		for ( int i = 8; i <= 10; i++ )
+		{
+			final ListenableTestVertex v = vlist.get( i );
+			assertNull( "Vertex in the middle of a branch should not link to a branch vertex.", bg.getBranchVertex( v, bg.vertexRef() ) );
+			assertEquals( "Vertex  in the middle of a branch should link to a branch edge.", eotherBE, bg.getBranchEdge( v, bg.edgeRef() ) );
+		}
+	}
+	
 }
