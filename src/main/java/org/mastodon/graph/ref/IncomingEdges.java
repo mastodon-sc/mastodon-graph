@@ -7,13 +7,13 @@ import org.mastodon.graph.Edges;
 public class IncomingEdges< E extends AbstractEdge< E, ?, ? > > implements Edges< E >
 {
 	private final AbstractVertex< ?, ?, ? > vertex;
-	private final AbstractEdgePool< E, ?, ? > edgePool;
+	private final AbstractNonSimpleEdgePool< E, ?, ? > edgePool;
 
 	private IncomingEdgesIterator iterator;
 
 	public IncomingEdges(
 			final AbstractVertex< ?, ?, ? > vertex,
-			final AbstractEdgePool< E, ?, ? > edgePool )
+			final AbstractNonSimpleEdgePool< E, ?, ? > edgePool )
 	{
 		this.vertex = vertex;
 		this.edgePool = edgePool;

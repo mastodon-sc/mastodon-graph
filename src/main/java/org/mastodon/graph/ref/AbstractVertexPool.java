@@ -11,7 +11,7 @@ public class AbstractVertexPool<
 		extends Pool< V, T >
 {
 	// TODO make it private again when we do not need this anymore.
-	protected AbstractEdgePool< E, ?, ? > edgePool;
+	protected AbstractNonSimpleEdgePool< E, ?, ? > edgePool;
 
 	public AbstractVertexPool(
 			final int initialCapacity,
@@ -20,7 +20,7 @@ public class AbstractVertexPool<
 		super( initialCapacity, vertexFactory );
 	}
 
-	public void linkEdgePool( final AbstractEdgePool< E, ?, ? > edgePool )
+	public void linkEdgePool( final AbstractNonSimpleEdgePool< E, ?, ? > edgePool )
 	{
 		this.edgePool = edgePool;
 	}
