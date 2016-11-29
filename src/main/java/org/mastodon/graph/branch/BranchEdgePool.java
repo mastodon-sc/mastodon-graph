@@ -1,13 +1,13 @@
 package org.mastodon.graph.branch;
 
-import org.mastodon.graph.ref.AbstractEdgePool;
+import org.mastodon.graph.ref.AbstractNonSimpleEdgePool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
 
-public class BranchEdgePool extends AbstractEdgePool< BranchEdge, BranchVertex, ByteMappedElement >
+public class BranchEdgePool extends AbstractNonSimpleEdgePool< BranchEdge, BranchVertex, ByteMappedElement >
 {
 
 	public BranchEdgePool( final int initialCapacity, final BranchVertexPool vertexPool )
