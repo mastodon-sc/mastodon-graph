@@ -724,4 +724,40 @@ public class BranchGraphTest
 		}
 	}
 
+	@Test
+	public void testRing()
+	{
+		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
+		for ( int i = 0; i < 4; i++ )
+			vlist.add( graph.addVertex().init( i ) );
+		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
+		final ListenableTestVertex ref1 = graph.vertexRef();
+		final ListenableTestVertex ref2 = graph.vertexRef();
+		final ListenableTestEdge eref = graph.edgeRef();
+		for ( int i = 0; i < vlist.size() - 1; i++ )
+		{
+			final ListenableTestVertex source = vlist.get( i, ref1 );
+			final ListenableTestVertex target = vlist.get( i + 1, ref2 );
+			final ListenableTestEdge edge = graph.addEdge( source, target, eref ).init();
+			elist.add( edge );
+		}
+		final ListenableTestVertex first = vlist.get( 0 );
+		final ListenableTestVertex last = vlist.get( vlist.size() - 1 );
+
+		// Create a ring.
+		graph.addEdge( last, first ).init();
+
+		// Basic test on N vertices and N edges.
+		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
+
+		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 1 vertex.", 1, vSize );
+
+
+
+	}
+
 }
