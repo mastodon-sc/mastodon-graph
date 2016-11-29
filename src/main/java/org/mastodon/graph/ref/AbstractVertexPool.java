@@ -10,7 +10,7 @@ public class AbstractVertexPool<
 			T extends MappedElement >
 		extends Pool< V, T >
 {
-	private AbstractEdgePool< E, ?, ? > edgePool;
+	private AbstractNonSimpleEdgePool< E, ?, ? > edgePool;
 
 	public AbstractVertexPool(
 			final int initialCapacity,
@@ -19,7 +19,7 @@ public class AbstractVertexPool<
 		super( initialCapacity, vertexFactory );
 	}
 
-	public void linkEdgePool( final AbstractEdgePool< E, ?, ? > edgePool )
+	public void linkEdgePool( final AbstractNonSimpleEdgePool< E, ?, ? > edgePool )
 	{
 		this.edgePool = edgePool;
 	}

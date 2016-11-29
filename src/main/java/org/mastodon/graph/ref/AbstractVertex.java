@@ -55,7 +55,7 @@ public class AbstractVertex< V extends AbstractVertex< V, E, T >, E extends Abst
 		setFirstOutEdgeIndex( -1 );
 	}
 
-	private AbstractEdgePool< E, ?, ? > edgePool;
+	private AbstractNonSimpleEdgePool< E, ?, ? > edgePool;
 
 	private IncomingEdges< E > incomingEdges;
 
@@ -81,7 +81,7 @@ public class AbstractVertex< V extends AbstractVertex< V, E, T >, E extends Abst
 		return edges;
 	}
 
-	void linkEdgePool( final AbstractEdgePool< E, ?, ? > edgePool )
+	void linkEdgePool( final AbstractNonSimpleEdgePool< E, ?, ? > edgePool )
 	{
 		if ( this.edgePool != edgePool )
 		{
