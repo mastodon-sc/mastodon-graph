@@ -173,7 +173,7 @@ public class BranchGraphTest
 		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
-		
+
 		final ListenableTestVertex v0 = vlist.get( 0 );
 		final BranchVertex bv0 = bg.getBranchVertex( v0, bg.vertexRef() );
 		assertNotNull( "First linked vertex should link to a branch vertex.", bv0 );
@@ -191,7 +191,7 @@ public class BranchGraphTest
 		assertEquals( "Branch edge should link to first linked edge in the branch.",
 				e0, bg.getLinkedEdge( be, graph.edgeRef() ) );
 
-		
+
 		final BranchEdge beref = bg.edgeRef();
 		for ( int i = 1; i < vlist.size() - 1; i++ )
 		{
@@ -566,7 +566,7 @@ public class BranchGraphTest
 			assertEquals( "Vertex  in the middle of a branch should link to a branch edge.", efirstBE, bg.getBranchEdge( v, bg.edgeRef() ) );
 		}
 	}
-	
+
 	@Test
 	public void testBranchingY()
 	{
@@ -668,7 +668,7 @@ public class BranchGraphTest
 			assertEquals( "Vertex  in the middle of a branch should link to a branch edge.", eotherBE, bg.getBranchEdge( v, bg.edgeRef() ) );
 		}
 	}
-	
+
 	@Test
 	public void testDiamond()
 	{
@@ -711,6 +711,17 @@ public class BranchGraphTest
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
 
+		for ( final BranchEdge be : edges )
+		{
+			ListenableTestEdge e0 = bg.getLinkedEdge( be, graph.edgeRef() );
+			do
+			{
+				assertEquals( "Linked edge in the first branch should link to the right branch edge.",
+						be, bg.getBranchEdge( e0, bg.edgeRef() ) );
+			}
+			while ( ( !e0.getTarget().outgoingEdges().isEmpty() )
+					&& ( e0 = e0.getTarget().outgoingEdges().get( 0 ) ) != null );
+		}
 	}
 
 }
