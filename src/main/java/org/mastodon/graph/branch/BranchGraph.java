@@ -341,8 +341,11 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 	@Override
 	public void graphRebuilt()
 	{
-		// TODO Auto-generated method stub
+		for ( final V v : graph.vertices() )
+			vertexAdded( v );
 
+		for ( final E e : graph.edges() )
+			edgeAdded( e );
 	}
 
 	@Override
