@@ -892,4 +892,58 @@ public class BranchGraphTest
 		graph.releaseRef( target );
 	}
 
+	@Test
+	public void testGraphRebuilt()
+	{
+		// The root.
+		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
+
+		// Make the first branch.
+		final RefList< ListenableTestVertex > vlistA = RefCollections.createRefList( graph.vertices() );
+		final RefList< ListenableTestEdge > elistA = RefCollections.createRefList( graph.edges() );
+		final ListenableTestVertex source = graph.vertexRef();
+		source.refTo( v0 );
+		for ( int i = 0; i < 7; i++ )
+		{
+			final ListenableTestVertex target = graph.addVertex().init( i + 10 );
+			vlistA.add( target );
+			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			elistA.add( e );
+			source.refTo( target );
+		}
+
+		// Make the second branch.
+		final RefList< ListenableTestVertex > vlistB = RefCollections.createRefList( graph.vertices() );
+		final RefList< ListenableTestEdge > elistB = RefCollections.createRefList( graph.edges() );
+		source.refTo( v0 );
+		for ( int i = 0; i < 7; i++ )
+		{
+			final ListenableTestVertex target = graph.addVertex().init( i + 100 );
+			vlistB.add( target );
+			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			elistB.add( e );
+			source.refTo( target );
+		}
+
+		// Build a new branch graph from this one.
+		final BranchGraph< ListenableTestVertex, ListenableTestEdge > bg2 = new BranchGraph<>( graph,
+				new GraphIdBimap<>( graph.getVertexPool(), graph.getEdgePool() ) );
+
+		// Basic test on N vertices and N edges.
+		final PoolCollectionWrapper< BranchEdge > edges = bg2.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
+
+		final PoolCollectionWrapper< BranchVertex > vertices = bg2.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 3 vertices.", 3, vSize );
+
+		// Remove the root.
+		graph.remove( v0 );
+
+		// Basic test on N vertices and N edges.
+		assertEquals( "Expected the branch graph to have 2 edges.", 2, bg2.edges().size() );
+		assertEquals( "Expected the branch graph to have 4 vertices.", 4, bg2.vertices().size() );
+	}
+
 }
