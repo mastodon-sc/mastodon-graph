@@ -197,21 +197,7 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 				// Remove bv, beIn, beOut from branch graph.
 				super.remove( bv );
 
-				/*
-				 * beNew := new branch edge between bvSource and bvTarget.
-				 *
-				 * If there is already an edge between bvSource and bvTarget
-				 * (e.g. when the linked graph as a diamond shape), the returned
-				 * edge beNew will be null and later the linkBranchEdge will
-				 * generate a NPE.
-				 *
-				 * This is expected because as of now, the graph implementation
-				 * supporting the branch graph is a simple directed graph, which
-				 * does not allow for multiple edges between two vertices.
-				 *
-				 * FIXME: Have the branch graph supported by a non-simple
-				 * directed graph.
-				 */
+				// beNew := new branch edge between bvSource and bvTarget.
 				final BranchEdge beNew = super.addEdge( bvSource, bvTarget, refBE3 );
 
 				// reference f3 from every source graph vertex on the path
