@@ -164,53 +164,63 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 			// beOut := branch edge from bv.
 			final BranchEdge beOut = bv.outgoingEdges().get( 0, refBE2 );
 
-			// bvSource := source branch vertex of beIn.
-			final BranchVertex bvSource = beIn.getSource( refBV1 );
-			// bvTarget := target branch vertex of beOut
-			final BranchVertex bvTarget = beOut.getTarget( refBV2 );
-
-			// le := edge linked to beIn.
-			final E le = idBimap.getEdge( beIn.getLinkedEdgeId(), refLE );
 			/*
-			 * lv1 := target vertex of le ==> first source vertex on new branch
-			 * edge.
+			 * Only fuse the branch vertex if we do not have a loop. Loop are
+			 * edges that have the same vertex as source and target. They
+			 * represent a loop in the linked graph.
 			 */
-			final V lv1 = le.getTarget( refLV1 );
+			if ( !beIn.equals( beOut ) )
+			{
 
-			/*
-			 * lv2 := source vertex corresponding to bvTarget ==> terminates new
-			 * branch edge.
-			 */
-			final V lv2 = idBimap.getVertex( bvTarget.getLinkedVertexId(), refLV2 );
+				// bvSource := source branch vertex of beIn.
+				final BranchVertex bvSource = beIn.getSource( refBV1 );
+				// bvTarget := target branch vertex of beOut
+				final BranchVertex bvTarget = beOut.getTarget( refBV2 );
 
-			// Remember source edge linked from beIn.
-			final int beInLinkedEdgeIndex = beIn.getLinkedEdgeId();
+				// le := edge linked to beIn.
+				final E le = idBimap.getEdge( beIn.getLinkedEdgeId(), refLE );
+				/*
+				 * lv1 := target vertex of le ==> first source vertex on new
+				 * branch edge.
+				 */
+				final V lv1 = le.getTarget( refLV1 );
 
-			// Remove bv, beIn, beOut from branch graph.
-			super.remove( bv );
+				/*
+				 * lv2 := source vertex corresponding to bvTarget ==> terminates
+				 * new branch edge.
+				 */
+				final V lv2 = idBimap.getVertex( bvTarget.getLinkedVertexId(), refLV2 );
 
-			/*
-			 * beNew := new branch edge between bvSource and bvTarget.
-			 *
-			 * If there is already an edge between bvSource and bvTarget (e.g.
-			 * when the linked graph as a diamond shape), the returned edge
-			 * beNew will be null and later the linkBranchEdge will generate a
-			 * NPE.
-			 *
-			 * This is expected because as of now, the graph implementation
-			 * supporting the branch graph is a simple directed graph, which
-			 * does not allow for multiple edges between two vertices.
-			 *
-			 * FIXME: Have the branch graph supported by a non-simple directed
-			 * graph.
-			 */
-			final BranchEdge beNew = super.addEdge( bvSource, bvTarget, refBE3 );
+				// Remember source edge linked from beIn.
+				final int beInLinkedEdgeIndex = beIn.getLinkedEdgeId();
 
-			// reference f3 from every source graph vertex on the path
-			linkBranchEdge( lv1, lv2, beNew );
+				// Remove bv, beIn, beOut from branch graph.
+				super.remove( bv );
 
-			// link from f3 to source edge that was previously linked from f1
-			beNew.setLinkedEdgeId( beInLinkedEdgeIndex );
+				/*
+				 * beNew := new branch edge between bvSource and bvTarget.
+				 *
+				 * If there is already an edge between bvSource and bvTarget
+				 * (e.g. when the linked graph as a diamond shape), the returned
+				 * edge beNew will be null and later the linkBranchEdge will
+				 * generate a NPE.
+				 *
+				 * This is expected because as of now, the graph implementation
+				 * supporting the branch graph is a simple directed graph, which
+				 * does not allow for multiple edges between two vertices.
+				 *
+				 * FIXME: Have the branch graph supported by a non-simple
+				 * directed graph.
+				 */
+				final BranchEdge beNew = super.addEdge( bvSource, bvTarget, refBE3 );
+
+				// reference f3 from every source graph vertex on the path
+				linkBranchEdge( lv1, lv2, beNew );
+
+				// link from f3 to source edge that was previously linked from
+				// f1
+				beNew.setLinkedEdgeId( beInLinkedEdgeIndex );
+			}
 
 			graph.releaseRef( refLV1 );
 			graph.releaseRef( refLV2 );
