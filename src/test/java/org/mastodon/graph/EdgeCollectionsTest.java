@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -131,4 +132,10 @@ public class EdgeCollectionsTest
 		graph.releaseRef( edgeRef );
 	}
 
+	@Test( expected = NoSuchElementException.class )
+	public void testNormalIterator()
+	{
+		final Iterator< Object > it = Collections.emptyList().iterator();
+		it.next();
+	}
 }
