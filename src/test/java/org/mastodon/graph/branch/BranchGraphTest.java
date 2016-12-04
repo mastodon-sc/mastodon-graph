@@ -756,8 +756,29 @@ public class BranchGraphTest
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 1 vertex.", 1, vSize );
 
+		final BranchVertex bv0 = bg.vertices().iterator().next();
+		final ListenableTestVertex v0 = bg.getLinkedVertex( bv0, graph.vertexRef() );
+		final BranchEdge be0 = bg.edges().iterator().next();
 
+		assertNotNull( "The branch vertex linked to this vertex should not be null.", bg.getBranchVertex( v0, bg.vertexRef() ) );
+		assertNull( "The branch edge linked to this vertex should be null.", bg.getBranchEdge( v0, bg.edgeRef() ) );
 
+		vlist.remove( v0 );
+		for ( final ListenableTestVertex lv : vlist )
+		{
+			assertNull( "The branch vertex linked to this vertex should be null.", bg.getBranchVertex( lv, bg.vertexRef() ) );
+			assertEquals( "The branch edge linked to this vertex should be the one branch edge.",
+					be0, bg.getBranchEdge( lv, bg.edgeRef() ) );
+		}
+		for ( final ListenableTestEdge le : elist )
+		{
+			assertEquals( "The branch edge linked to any edge in the loop should be the one branch edge.",
+					be0, bg.getBranchEdge( le, bg.edgeRef() ) );
+		}
+
+		final ListenableTestEdge le0 = bg.getLinkedEdge( be0, graph.edgeRef() );
+		assertEquals( "The one branch vertex should link to an edge that has the one branch vertex linked vertex as a source.",
+				v0, le0.getSource() );
 	}
 
 }
