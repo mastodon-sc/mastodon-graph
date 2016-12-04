@@ -781,4 +781,115 @@ public class BranchGraphTest
 				v0, le0.getSource() );
 	}
 
+	@Test
+	public void testTwoSplittingBranches()
+	{
+		// The root.
+		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
+
+		// Make the first branch.
+		final RefList< ListenableTestVertex > vlistA = RefCollections.createRefList( graph.vertices() );
+		final RefList< ListenableTestEdge > elistA = RefCollections.createRefList( graph.edges() );
+		final ListenableTestVertex source = graph.vertexRef();
+		source.refTo( v0 );
+		for ( int i = 0; i < 7; i++ )
+		{
+			final ListenableTestVertex target = graph.addVertex().init( i + 10 );
+			vlistA.add( target );
+			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			elistA.add( e );
+			source.refTo( target );
+		}
+
+		// Make the second branch.
+		final RefList< ListenableTestVertex > vlistB = RefCollections.createRefList( graph.vertices() );
+		final RefList< ListenableTestEdge > elistB = RefCollections.createRefList( graph.edges() );
+		source.refTo( v0 );
+		for ( int i = 0; i < 7; i++ )
+		{
+			final ListenableTestVertex target = graph.addVertex().init( i + 100 );
+			vlistB.add( target );
+			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			elistB.add( e );
+			source.refTo( target );
+		}
+
+		// Remove the root.
+		graph.remove( v0 );
+
+		// Basic test on N vertices and N edges.
+		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
+
+		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
+		graph.releaseRef( source );
+	}
+
+	@Test
+	public void testTwoMergingBranches()
+	{
+		// The root.
+		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
+
+		// Make the first branch.
+		final RefList< ListenableTestVertex > vlistA = RefCollections.createRefList( graph.vertices() );
+		final RefList< ListenableTestEdge > elistA = RefCollections.createRefList( graph.edges() );
+		ListenableTestVertex target = null;
+		for ( int i = 0; i < 7; i++ )
+		{
+			final ListenableTestVertex source = graph.addVertex().init( i + 10 );
+			vlistA.add( source );
+			if ( target == null )
+			{
+				target = graph.vertexRef();
+				target.refTo( source );
+			}
+			else
+			{
+				final ListenableTestEdge e = graph.addEdge( source, target ).init();
+				elistA.add( e );
+				target.refTo( source );
+			}
+		}
+		elistA.add( graph.addEdge( target, v0 ).init() );
+
+		// Make the second branch.
+		final RefList< ListenableTestVertex > vlistB = RefCollections.createRefList( graph.vertices() );
+		final RefList< ListenableTestEdge > elistB = RefCollections.createRefList( graph.edges() );
+		target = null;
+		for ( int i = 0; i < 7; i++ )
+		{
+			final ListenableTestVertex source = graph.addVertex().init( i + 100 );
+			vlistB.add( source );
+			if ( target == null )
+			{
+				target = graph.vertexRef();
+				target.refTo( source );
+			}
+			else
+			{
+				final ListenableTestEdge e = graph.addEdge( source, target ).init();
+				elistB.add( e );
+				target.refTo( source );
+			}
+		}
+		elistA.add( graph.addEdge( target, v0 ).init() );
+
+		// Remove the root.
+		graph.remove( v0 );
+
+		// Basic test on N vertices and N edges.
+		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final int eSize = edges.size();
+		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
+
+		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final int vSize = vertices.size();
+		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
+		graph.releaseRef( target );
+	}
+
 }
