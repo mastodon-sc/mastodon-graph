@@ -1,6 +1,7 @@
 package org.mastodon.graph.ref;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.mastodon.graph.Edges;
 
@@ -146,6 +147,9 @@ public class AllEdges< E extends AbstractEdge< E, ?, ? > > implements Edges< E >
 		@Override
 		public E next()
 		{
+			if ( edgeIndex < 0 )
+				throw new NoSuchElementException();
+
 			edgePool.getObject( edgeIndex, edge );
 			if ( in )
 			{
