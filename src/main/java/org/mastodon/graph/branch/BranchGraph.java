@@ -568,6 +568,8 @@ public class BranchGraph< V extends Vertex< E >, E extends Edge< V > >
 	@Override
 	public void graphRebuilt()
 	{
+		clear();
+
 		for ( final V v : graph.vertices() )
 			vertexAdded( v );
 
