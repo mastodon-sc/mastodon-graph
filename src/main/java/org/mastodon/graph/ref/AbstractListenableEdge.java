@@ -1,5 +1,6 @@
 package org.mastodon.graph.ref;
 
+import org.mastodon.graph.Edge;
 import org.mastodon.graph.Graph;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableReadOnlyGraph;
@@ -36,10 +37,13 @@ import org.mastodon.pool.MappedElement;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractListenableEdge< E extends AbstractListenableEdge< E, V, T >, V extends AbstractVertex< V, ?, ? >, T extends MappedElement >
-		extends AbstractEdgeWithFeatures< E, V, T >
+public class AbstractListenableEdge< 
+	E extends AbstractListenableEdge< E, V, T >, 
+	V extends AbstractVertex< V, ?, ? >, 
+	T extends MappedElement >
+		extends AbstractNonSimpleEdgeWithFeatures< E, V, T >
 {
-	protected AbstractListenableEdge( final AbstractEdgePool< E, V, T > pool )
+	protected AbstractListenableEdge( final AbstractNonSimpleEdgePool< E, V, T > pool )
 	{
 		super( pool );
 	}
