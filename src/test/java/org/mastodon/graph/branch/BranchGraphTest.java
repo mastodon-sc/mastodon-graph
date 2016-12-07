@@ -800,6 +800,15 @@ public class BranchGraphTest
 		// Remove the root.
 		graph.remove( v0 );
 
+		assertNull( "There should be not branch vertex linked to a removed vertex.",
+				bg.getBranchVertex( v0, bg.vertexRef() ) );
+		assertNull( "There should be not branch edge linked to a removed vertex.",
+				bg.getBranchEdge( v0, bg.edgeRef() ) );
+		assertNull( "There should be not branch edge linked to a removed edge.",
+				bg.getBranchEdge( elistA.get( 0 ), bg.edgeRef() ) );
+		assertNull( "There should be not branch edge linked to a removed edge.",
+				bg.getBranchEdge( elistB.get( 0 ), bg.edgeRef() ) );
+
 		// Basic test on N vertices and N edges.
 		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
@@ -859,10 +868,19 @@ public class BranchGraphTest
 				target.refTo( source );
 			}
 		}
-		elistA.add( graph.addEdge( target, v0 ).init() );
+		elistB.add( graph.addEdge( target, v0 ).init() );
 
 		// Remove the root.
 		graph.remove( v0 );
+
+		assertNull( "There should be not branch vertex linked to a removed vertex.",
+				bg.getBranchVertex( v0, bg.vertexRef() ) );
+		assertNull( "There should be not branch edge linked to a removed vertex.",
+				bg.getBranchEdge( v0, bg.edgeRef() ) );
+		assertNull( "There should be not branch edge linked to a removed edge.",
+				bg.getBranchEdge( elistA.get( elistA.size() - 1 ), bg.edgeRef() ) );
+		assertNull( "There should be not branch edge linked to a removed edge.",
+				bg.getBranchEdge( elistB.get( elistB.size() - 1 ), bg.edgeRef() ) );
 
 		// Basic test on N vertices and N edges.
 		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
@@ -922,6 +940,15 @@ public class BranchGraphTest
 
 		// Remove the root.
 		graph.remove( v0 );
+
+		assertNull( "There should be not branch vertex linked to a removed vertex.",
+				bg.getBranchVertex( v0, bg.vertexRef() ) );
+		assertNull( "There should be not branch edge linked to a removed vertex.",
+				bg.getBranchEdge( v0, bg.edgeRef() ) );
+		assertNull( "There should be not branch edge linked to a removed edge.",
+				bg.getBranchEdge( elistA.get( 0 ), bg.edgeRef() ) );
+		assertNull( "There should be not branch edge linked to a removed edge.",
+				bg.getBranchEdge( elistB.get( 0 ), bg.edgeRef() ) );
 
 		// Basic test on N vertices and N edges.
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, bg2.edges().size() );
