@@ -82,18 +82,18 @@ implements GraphListener< V, E >
 	{
 		if ( bv.incomingEdges().size() == 1 && bv.outgoingEdges().size() == 1 )
 		{
-			// Careful for syntax: we know that the BranchGraph pools are actual
-			// pool objects.
 			final BE refBE1 = branchGraph.edgeRef();
 			final BE refBE2 = branchGraph.edgeRef();
 			final BE refBE3 = branchGraph.edgeRef();
 			final BV refBV1 = branchGraph.vertexRef();
 			final BV refBV2 = branchGraph.vertexRef();
-			// But the source graph might be an object graph.
 			final V refLV1 = graph.vertexRef();
 			final V refLV2 = graph.vertexRef();
+			final V refLV3 = graph.vertexRef();
 			final E refLE1 = graph.edgeRef();
 			final E refLE2 = graph.edgeRef();
+			final E refLE3 = graph.edgeRef();
+			final E refLE4 = graph.edgeRef();
 
 			// beIn := branch edge to bv.
 			final BE beIn = bv.incomingEdges().get( 0, refBE1 );
@@ -128,6 +128,9 @@ implements GraphListener< V, E >
 				final V lv2 = bvvMap.get( bvTarget, refLV2 );
 
 				// Remove bv, beIn, beOut from branch graph.
+				bvvMap.removeWithRef( bv, refLV3 );
+				beeMap.removeWithRef( beIn, refLE3 );
+				beeMap.removeWithRef( beOut, refLE4 );
 				branchGraph.remove( bv );
 
 				// beNew := new branch edge between bvSource and bvTarget.
@@ -143,8 +146,11 @@ implements GraphListener< V, E >
 
 			graph.releaseRef( refLV1 );
 			graph.releaseRef( refLV2 );
+			graph.releaseRef( refLV3 );
 			graph.releaseRef( refLE1 );
 			graph.releaseRef( refLE2 );
+			graph.releaseRef( refLE3 );
+			graph.releaseRef( refLE4 );
 			branchGraph.releaseRef( refBV1 );
 			branchGraph.releaseRef( refBV2 );
 			branchGraph.releaseRef( refBE1 );
@@ -155,21 +161,22 @@ implements GraphListener< V, E >
 
 	private BV split( final V v, final BV ref )
 	{
-		final BE refBE = branchGraph.edgeRef();
-		final E refE = graph.edgeRef();
+		final E refE1 = graph.edgeRef();
 		final E refE2 = graph.edgeRef();
-		final BV refBV1 = branchGraph.vertexRef();
-		final BV refBV2 = branchGraph.vertexRef();
+		final E refE3 = graph.edgeRef();
+		final E refE4 = graph.edgeRef();
+		final E refE5 = graph.edgeRef();
 		final V refV1 = graph.vertexRef();
 		final V refV2 = graph.vertexRef();
+		final BE refBE0 = branchGraph.edgeRef();
+		final BV refBV1 = branchGraph.vertexRef();
+		final BV refBV2 = branchGraph.vertexRef();
 		final BE refBE1 = branchGraph.edgeRef();
-		final E refE3 = graph.edgeRef();
 		final BE refBE2 = branchGraph.edgeRef();
-		final E refE5 = graph.edgeRef();
-		final E refE4 = graph.edgeRef();
+		final BE refBE3 = branchGraph.edgeRef();
 
-		final BE initialBE = vbeMap.get( v, refBE );
-		final E outgoingEdge = v.outgoingEdges().get( 0, refE );
+		final BE initialBE = vbeMap.get( v, refBE0 );
+		final E outgoingEdge = v.outgoingEdges().get( 0, refE1 );
 
 		final E branchStartingEdge = beeMap.get( initialBE, refE2 );
 
@@ -193,20 +200,21 @@ implements GraphListener< V, E >
 
 		bvvMap.put( newVertex, v );
 		vbvMap.put( v, newVertex );
-		vbeMap.remove( v );
+		vbeMap.removeWithRef( v, refBE3 );
 
-		branchGraph.releaseRef( refBE );
-		graph.releaseRef( refE );
+		graph.releaseRef( refE1 );
 		graph.releaseRef( refE2 );
-		branchGraph.releaseRef( refBV1 );
-		branchGraph.releaseRef( refBV2 );
+		graph.releaseRef( refE3 );
+		graph.releaseRef( refE4 );
+		graph.releaseRef( refE5 );
 		graph.releaseRef( refV1 );
 		graph.releaseRef( refV2 );
+		branchGraph.releaseRef( refBV1 );
+		branchGraph.releaseRef( refBV2 );
+		branchGraph.releaseRef( refBE3 );
+		branchGraph.releaseRef( refBE0 );
 		branchGraph.releaseRef( refBE1 );
-		graph.releaseRef( refE3 );
 		branchGraph.releaseRef( refBE2 );
-		graph.releaseRef( refE5 );
-		graph.releaseRef( refE4 );
 
 		return newVertex;
 	}
@@ -250,8 +258,9 @@ implements GraphListener< V, E >
 	{
 		final V vRef1 = graph.vertexRef();
 		final V source = edge.getSource( vRef1 );
-
 		final BV vertexRef1 = branchGraph.vertexRef();
+		final E eRef = graph.edgeRef();
+
 		final BV svs;
 		if ( vbvMap.containsKey( source ) )
 			svs = vbvMap.get( source, vertexRef1 );
@@ -270,10 +279,14 @@ implements GraphListener< V, E >
 
 		for ( final BE se : svs.outgoingEdges() )
 			if ( se.getTarget().equals( svt ) )
+			{
 				branchGraph.remove( se );
+				beeMap.removeWithRef( se, eRef );
+			}
 
 		branchGraph.releaseRef( vertexRef1 );
 		branchGraph.releaseRef( vertexRef2 );
+		graph.releaseRef( eRef );
 		graph.releaseRef( vRef1 );
 		graph.releaseRef( vRef2 );
 	}
@@ -434,5 +447,9 @@ implements GraphListener< V, E >
 	public void edgeRemoved( final E edge )
 	{
 		releaseBranchEdgeFor( edge );
+
+		final BE beRef = branchGraph.edgeRef();
+		ebeMap.removeWithRef( edge, beRef );
+		branchGraph.releaseRef( beRef );
 	}
 }
