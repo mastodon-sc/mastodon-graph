@@ -1,13 +1,13 @@
 package org.mastodon.graph.branch;
 
-import org.mastodon.graph.ref.AbstractVertexPool;
+import org.mastodon.graph.ref.AbstractListenableVertexPool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
 
-public class BranchVertexPool extends AbstractVertexPool< BranchVertex, BranchEdge, ByteMappedElement >
+public class BranchVertexPool extends AbstractListenableVertexPool< BranchVertex, BranchEdge, ByteMappedElement >
 {
 	public BranchVertexPool( final int initialCapacity )
 	{

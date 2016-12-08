@@ -31,7 +31,7 @@ public class BranchGraphTest
 	@Test
 	public void testAddOneVertex()
 	{
-		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
+		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
 
 		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
 		final int size = vertices.size();
@@ -49,8 +49,8 @@ public class BranchGraphTest
 	@Test
 	public void testAddTwoVertices()
 	{
-		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
-		final ListenableTestVertex v1 = graph.addVertex().init( 1 );
+		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
+		final ListenableTestVertex v1 = graph.addVertex().init( 1, 1 );
 
 		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
 		final int size = vertices.size();
@@ -68,8 +68,8 @@ public class BranchGraphTest
 	@Test
 	public void testLinkTwoVertices()
 	{
-		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
-		final ListenableTestVertex v1 = graph.addVertex().init( 1 );
+		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
+		final ListenableTestVertex v1 = graph.addVertex().init( 1, 1 );
 		final ListenableTestEdge e0 = graph.addEdge( v0, v1 ).init();
 
 		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
@@ -97,10 +97,10 @@ public class BranchGraphTest
 	public void testLinkSeveralVertices()
 	{
 		// This order first: 2 vertices - 1 edge - 1 vertex - 1 edge.
-		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
-		final ListenableTestVertex v1 = graph.addVertex().init( 1 );
+		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
+		final ListenableTestVertex v1 = graph.addVertex().init( 1, 1 );
 		final ListenableTestEdge e0 = graph.addEdge( v0, v1 ).init();
-		final ListenableTestVertex v2 = graph.addVertex().init( 2 );
+		final ListenableTestVertex v2 = graph.addVertex().init( 2, 1 );
 		final ListenableTestEdge e1 = graph.addEdge( v1, v2 ).init();
 
 		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
@@ -136,7 +136,7 @@ public class BranchGraphTest
 		// First all vertices then all edges.
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 5; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -199,7 +199,7 @@ public class BranchGraphTest
 	{
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 6; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -266,7 +266,7 @@ public class BranchGraphTest
 	{
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 6; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -330,7 +330,7 @@ public class BranchGraphTest
 	{
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 6; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -429,7 +429,7 @@ public class BranchGraphTest
 	{
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 6; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -494,7 +494,7 @@ public class BranchGraphTest
 		// Make a long branch.
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 7; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -512,9 +512,9 @@ public class BranchGraphTest
 		ListenableTestVertex source = middle;
 		for ( int i = 0; i < vlist.size() / 2; i++ )
 		{
-			final ListenableTestVertex target = graph.addVertex().init( vlist.size() + i );
+			final ListenableTestVertex target = graph.addVertex().init( vlist.size() + i, middle.getTimepoint() + i + 1 );
 			vlist.add( target );
-			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			final ListenableTestEdge e = graph.addEdge( source, target, eref ).init();
 			elist.add( e );
 			source = target;
 		}
@@ -556,7 +556,7 @@ public class BranchGraphTest
 		// Make a long branch.
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 7; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -571,18 +571,18 @@ public class BranchGraphTest
 		final ListenableTestVertex middle = vlist.get( vlist.size() / 2 );
 
 		// Branch from its middle vertex in Y shape (merge event).
-		ListenableTestVertex source = graph.addVertex().init( vlist.size() );
+		ListenableTestVertex source = graph.addVertex().init( vlist.size(), 0 );
 		ListenableTestVertex target = null;
 		vlist.add( source );
 		for ( int i = 1; i < 4; i++ )
 		{
-			target = graph.addVertex().init( vlist.size() );
+			target = graph.addVertex().init( vlist.size(), i );
 			vlist.add( target );
-			final ListenableTestEdge e = graph.addEdge( source, target ).init();
+			final ListenableTestEdge e = graph.addEdge( source, target, eref ).init();
 			elist.add( e );
 			source = target;
 		}
-		graph.addEdge( target, middle ).init();
+		graph.addEdge( target, middle, eref ).init();
 
 		// Basic test on N vertices and N edges.
 		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
@@ -658,7 +658,7 @@ public class BranchGraphTest
 		// Make a branch.
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 4; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -674,11 +674,11 @@ public class BranchGraphTest
 		final ListenableTestVertex last = vlist.get( vlist.size() - 1 );
 
 		// Mess it by running a parallel branch to this one.
-		final ListenableTestVertex v1 = graph.addVertex().init( vlist.size() );
+		final ListenableTestVertex v1 = graph.addVertex().init( vlist.size(), 0 );
 		vlist.add( v1 );
 		final ListenableTestEdge e1 = graph.addEdge( first, v1 ).init();
 		elist.add( e1 );
-		final ListenableTestVertex v2 = graph.addVertex().init( vlist.size() );
+		final ListenableTestVertex v2 = graph.addVertex().init( vlist.size(), 1 );
 		vlist.add( v2 );
 		final ListenableTestEdge e2 = graph.addEdge( v1, v2 ).init();
 		elist.add( e2 );
@@ -712,7 +712,7 @@ public class BranchGraphTest
 	{
 		final RefList< ListenableTestVertex > vlist = RefCollections.createRefList( graph.vertices() );
 		for ( int i = 0; i < 4; i++ )
-			vlist.add( graph.addVertex().init( i ) );
+			vlist.add( graph.addVertex().init( i, i ) );
 		final RefList< ListenableTestEdge > elist = RefCollections.createRefList( graph.edges() );
 		final ListenableTestVertex ref1 = graph.vertexRef();
 		final ListenableTestVertex ref2 = graph.vertexRef();
@@ -768,7 +768,7 @@ public class BranchGraphTest
 	public void testTwoSplittingBranches()
 	{
 		// The root.
-		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
+		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
 
 		// Make the first branch.
 		final RefList< ListenableTestVertex > vlistA = RefCollections.createRefList( graph.vertices() );
@@ -777,7 +777,7 @@ public class BranchGraphTest
 		source.refTo( v0 );
 		for ( int i = 0; i < 7; i++ )
 		{
-			final ListenableTestVertex target = graph.addVertex().init( i + 10 );
+			final ListenableTestVertex target = graph.addVertex().init( i + 10, i + 1 );
 			vlistA.add( target );
 			final ListenableTestEdge e = graph.addEdge( source, target ).init();
 			elistA.add( e );
@@ -790,7 +790,7 @@ public class BranchGraphTest
 		source.refTo( v0 );
 		for ( int i = 0; i < 7; i++ )
 		{
-			final ListenableTestVertex target = graph.addVertex().init( i + 100 );
+			final ListenableTestVertex target = graph.addVertex().init( i + 100, i + 1 );
 			vlistB.add( target );
 			final ListenableTestEdge e = graph.addEdge( source, target ).init();
 			elistB.add( e );
@@ -824,7 +824,7 @@ public class BranchGraphTest
 	public void testTwoMergingBranches()
 	{
 		// The root.
-		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
+		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
 
 		// Make the first branch.
 		final RefList< ListenableTestVertex > vlistA = RefCollections.createRefList( graph.vertices() );
@@ -832,7 +832,7 @@ public class BranchGraphTest
 		ListenableTestVertex target = null;
 		for ( int i = 0; i < 7; i++ )
 		{
-			final ListenableTestVertex source = graph.addVertex().init( i + 10 );
+			final ListenableTestVertex source = graph.addVertex().init( i + 10, i + 1 );
 			vlistA.add( source );
 			if ( target == null )
 			{
@@ -854,7 +854,7 @@ public class BranchGraphTest
 		target = null;
 		for ( int i = 0; i < 7; i++ )
 		{
-			final ListenableTestVertex source = graph.addVertex().init( i + 100 );
+			final ListenableTestVertex source = graph.addVertex().init( i + 100, i + 1 );
 			vlistB.add( source );
 			if ( target == null )
 			{
@@ -897,7 +897,7 @@ public class BranchGraphTest
 	public void testGraphRebuilt()
 	{
 		// The root.
-		final ListenableTestVertex v0 = graph.addVertex().init( 0 );
+		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
 
 		// Make the first branch.
 		final RefList< ListenableTestVertex > vlistA = RefCollections.createRefList( graph.vertices() );
@@ -906,7 +906,7 @@ public class BranchGraphTest
 		source.refTo( v0 );
 		for ( int i = 0; i < 7; i++ )
 		{
-			final ListenableTestVertex target = graph.addVertex().init( i + 10 );
+			final ListenableTestVertex target = graph.addVertex().init( i + 10, i + 1 );
 			vlistA.add( target );
 			final ListenableTestEdge e = graph.addEdge( source, target ).init();
 			elistA.add( e );
@@ -919,7 +919,7 @@ public class BranchGraphTest
 		source.refTo( v0 );
 		for ( int i = 0; i < 7; i++ )
 		{
-			final ListenableTestVertex target = graph.addVertex().init( i + 100 );
+			final ListenableTestVertex target = graph.addVertex().init( i + 100, i + 1 );
 			vlistB.add( target );
 			final ListenableTestEdge e = graph.addEdge( source, target ).init();
 			elistB.add( e );
@@ -927,7 +927,8 @@ public class BranchGraphTest
 		}
 
 		// Build a new branch graph from this one.
-		final BranchGraph< ListenableTestVertex, ListenableTestEdge > bg2 = new BranchGraph<>( graph );
+		final BranchGraph< ListenableTestVertex, ListenableTestEdge > bg2 =
+				new BranchGraph<>( graph );
 
 		// Basic test on N vertices and N edges.
 		final PoolCollectionWrapper< BranchEdge > edges = bg2.edges();
