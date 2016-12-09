@@ -3,6 +3,7 @@ package org.mastodon.graph.branch;
 import org.mastodon.collection.RefMaps;
 import org.mastodon.collection.RefRefMap;
 import org.mastodon.graph.Edge;
+import org.mastodon.graph.GraphIdBimap;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
@@ -178,18 +179,19 @@ public class BranchGraph< V extends Vertex< E > & HasTimepoint, E extends Edge< 
 
 	private final ListenableGraph< V, E > graph;
 
+	private final GraphIdBimap< BranchVertex, BranchEdge > idmap;
+
 	/**
 	 * Instantiates a branch graph linked to the specified graph.
 	 * This instance registers itself as a listener of the linked graph.
 	 * 
 	 * @param graph
 	 *            the graph to link to.
-	 * @param idBimap
-	 *            an id bidirectional map of the linked graph.
 	 */
 	public BranchGraph( final ListenableGraph< V, E > graph )
 	{
 		super( new BranchEdgePool( 1000, new BranchVertexPool( 1000 ) ) );
+		this.idmap = new GraphIdBimap<>( vertexPool, edgePool );
 		this.graph = graph;
 		this.vbvMap = RefMaps.createRefRefMap( graph.vertices(), vertices() );
 		this.vbeMap = RefMaps.createRefRefMap( graph.vertices(), edges() );
@@ -201,6 +203,11 @@ public class BranchGraph< V extends Vertex< E > & HasTimepoint, E extends Edge< 
 		graph.releaseRef( vertexRef );
 		graphRebuilt();
 		graph.addGraphListener( this );
+	}
+
+	public GraphIdBimap< BranchVertex, BranchEdge > getGraphIdBimap()
+	{
+		return idmap;
 	}
 
 	/*
@@ -808,4 +815,5 @@ public class BranchGraph< V extends Vertex< E > & HasTimepoint, E extends Edge< 
 	{
 		return "bv(" + bv.getInternalPoolIndex() + ")->" + getLinkedVertex( bv, vref );
 	}
+
 }
