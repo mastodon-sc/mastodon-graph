@@ -6,12 +6,12 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mastodon.collection.RefCollection;
 import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefList;
 import org.mastodon.graph.ListenableTestEdge;
 import org.mastodon.graph.ListenableTestGraph;
 import org.mastodon.graph.ListenableTestVertex;
-import org.mastodon.pool.PoolCollectionWrapper;
 
 public class BranchGraphTest
 {
@@ -24,7 +24,7 @@ public class BranchGraphTest
 	public void setUp() throws Exception
 	{
 		this.graph = new ListenableTestGraph();
-		this.bg = new BranchGraph<>( graph );
+		this.bg = new DefaultBranchGraph<>( graph );
 
 	}
 
@@ -33,7 +33,7 @@ public class BranchGraphTest
 	{
 		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int size = vertices.size();
 		assertEquals( "Expected the branch graph to have 1 vertex.", 1, size );
 
@@ -52,7 +52,7 @@ public class BranchGraphTest
 		final ListenableTestVertex v0 = graph.addVertex().init( 0, 0 );
 		final ListenableTestVertex v1 = graph.addVertex().init( 1, 1 );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int size = vertices.size();
 		assertEquals( "Expected the branch graph to have 2 vertices.", 2, size );
 
@@ -72,11 +72,11 @@ public class BranchGraphTest
 		final ListenableTestVertex v1 = graph.addVertex().init( 1, 1 );
 		final ListenableTestEdge e0 = graph.addEdge( v0, v1 ).init();
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 2 vertices.", 2, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
 
@@ -103,11 +103,11 @@ public class BranchGraphTest
 		final ListenableTestVertex v2 = graph.addVertex().init( 2, 1 );
 		final ListenableTestEdge e1 = graph.addEdge( v1, v2 ).init();
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 2 vertices.", 2, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
 
@@ -149,11 +149,11 @@ public class BranchGraphTest
 			elist.add( edge );
 		}
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 2 vertices.", 2, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
 
@@ -218,11 +218,11 @@ public class BranchGraphTest
 		final ListenableTestVertex oldTarget = removedEdge.getTarget();
 		graph.remove( removedEdge );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
 
@@ -282,11 +282,11 @@ public class BranchGraphTest
 		// Remove first vertex.
 		graph.remove( vlist.get( 0 ) );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 2 vertices.", 2, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
 
@@ -349,11 +349,11 @@ public class BranchGraphTest
 		final ListenableTestVertex newTarget = vlist.get( vlist.size() / 2 - 1 );
 		final ListenableTestVertex newSource = vlist.get( vlist.size() / 2 + 1 );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
 
@@ -445,11 +445,11 @@ public class BranchGraphTest
 		// Remove last vertex.
 		graph.remove( vlist.get( vlist.size() - 1 ) );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 2 vertices.", 2, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
 
@@ -520,11 +520,11 @@ public class BranchGraphTest
 		}
 
 		// Basic test on N vertices and N edges.
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 3 edges.", 3, eSize );
 
@@ -585,11 +585,11 @@ public class BranchGraphTest
 		graph.addEdge( target, middle, eref ).init();
 
 		// Basic test on N vertices and N edges.
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 3 edges.", 3, eSize );
 
@@ -686,11 +686,11 @@ public class BranchGraphTest
 		elist.add( e3 );
 
 		// Basic test on N vertices and N edges.
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 2 vertices.", 2, vSize );
 
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
 
@@ -731,11 +731,11 @@ public class BranchGraphTest
 		graph.addEdge( last, first ).init();
 
 		// Basic test on N vertices and N edges.
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 1 edge.", 1, eSize );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 1 vertex.", 1, vSize );
 
@@ -810,11 +810,11 @@ public class BranchGraphTest
 				bg.getBranchEdge( elistB.get( 0 ), bg.edgeRef() ) );
 
 		// Basic test on N vertices and N edges.
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
 		graph.releaseRef( source );
@@ -883,11 +883,11 @@ public class BranchGraphTest
 				bg.getBranchEdge( elistB.get( elistB.size() - 1 ), bg.edgeRef() ) );
 
 		// Basic test on N vertices and N edges.
-		final PoolCollectionWrapper< BranchEdge > edges = bg.edges();
+		final RefCollection< BranchEdge > edges = bg.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg.vertices();
+		final RefCollection< BranchVertex > vertices = bg.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 4 vertices.", 4, vSize );
 		graph.releaseRef( target );
@@ -928,14 +928,14 @@ public class BranchGraphTest
 
 		// Build a new branch graph from this one.
 		final BranchGraph< ListenableTestVertex, ListenableTestEdge > bg2 =
-				new BranchGraph<>( graph );
+				new DefaultBranchGraph<>( graph );
 
 		// Basic test on N vertices and N edges.
-		final PoolCollectionWrapper< BranchEdge > edges = bg2.edges();
+		final RefCollection< BranchEdge > edges = bg2.edges();
 		final int eSize = edges.size();
 		assertEquals( "Expected the branch graph to have 2 edges.", 2, eSize );
 
-		final PoolCollectionWrapper< BranchVertex > vertices = bg2.vertices();
+		final RefCollection< BranchVertex > vertices = bg2.vertices();
 		final int vSize = vertices.size();
 		assertEquals( "Expected the branch graph to have 3 vertices.", 3, vSize );
 
