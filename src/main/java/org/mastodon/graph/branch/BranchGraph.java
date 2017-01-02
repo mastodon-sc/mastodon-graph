@@ -1,5 +1,7 @@
 package org.mastodon.graph.branch;
 
+import java.util.Iterator;
+
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.GraphIdBimap;
 import org.mastodon.graph.ListenableGraph;
@@ -115,12 +117,21 @@ import org.mastodon.graph.Vertex;
  * graphs</b> as linked graph. Using any other classes of graphs will result in
  * unexpected behavior.
  *
+ * @param <BV>
+ *            the type of the branch vertices.
+ * @param <BE>
+ *            the type of the branch edges.
  * @param <V>
  *            the type of linked vertices.
  * @param <E>
  *            the type of linked edges.
  */
-public interface BranchGraph< V extends Vertex< E >, E extends Edge< V > > extends ListenableReadOnlyGraph< BranchVertex, BranchEdge >
+public interface BranchGraph<
+	BV extends Vertex< BE >,
+	BE extends Edge< BV >,
+	V extends Vertex< E >,
+	E extends Edge< V > >
+		extends ListenableReadOnlyGraph< BV, BE >
 {
 
 	/**
@@ -135,7 +146,7 @@ public interface BranchGraph< V extends Vertex< E >, E extends Edge< V > > exten
 	 *            object can be cleared, ignored or re-used.
 	 * @return the linked edge.
 	 */
-	public E getLinkedEdge( BranchEdge be, E ref );
+	public E getLinkedEdge( BE be, E ref );
 
 	/**
 	 * Returns the vertex linked to the specified branch vertex. The linked
@@ -149,7 +160,7 @@ public interface BranchGraph< V extends Vertex< E >, E extends Edge< V > > exten
 	 *            object can be cleared, ignored or re-used.
 	 * @return the linked vertex.
 	 */
-	public V getLinkedVertex( BranchVertex bv, V ref );
+	public V getLinkedVertex( BV bv, V ref );
 
 	/**
 	 * Returns the branch edge linked to the specified edge.
@@ -157,10 +168,10 @@ public interface BranchGraph< V extends Vertex< E >, E extends Edge< V > > exten
 	 * @param edge
 	 *            the linked edge.
 	 * @param ref
-	 *            a reference object to {@link BranchEdge} used for retrieval.
+	 *            a reference object to the branch edge used for retrieval.
 	 * @return a branch edge.
 	 */
-	public BranchEdge getBranchEdge( E edge, BranchEdge ref );
+	public BE getBranchEdge( E edge, BE ref );
 
 	/**
 	 * Returns the branch vertex linked to the specified edge if it belongs to a
@@ -170,10 +181,10 @@ public interface BranchGraph< V extends Vertex< E >, E extends Edge< V > > exten
 	 * @param vertex
 	 *            the linked vertex.
 	 * @param ref
-	 *            a reference object to {@link BranchEdge} used for retrieval.
+	 *            a reference object to the branch edge used for retrieval.
 	 * @return a branch edge or <code>null</code>.
 	 */
-	public BranchEdge getBranchEdge( V vertex, BranchEdge ref );
+	public BE getBranchEdge( V vertex, BE ref );
 
 	/**
 	 * Returns the branch vertex linked to the specified vertex if it is a
@@ -183,11 +194,37 @@ public interface BranchGraph< V extends Vertex< E >, E extends Edge< V > > exten
 	 * @param vertex
 	 *            the linked vertex.
 	 * @param ref
-	 *            a reference object to {@link BranchVertex} used for retrieval.
+	 *            a reference object to the branch vertex used for retrieval.
 	 * @return a branch vertex or <code>null</code>.
 	 */
-	public BranchVertex getBranchVertex( V vertex, BranchVertex ref );
+	public BV getBranchVertex( V vertex, BV ref );
 
-	public GraphIdBimap< BranchVertex, BranchEdge > getGraphIdBimap();
+	/**
+	 * Returns a graph id map for the branch graph.
+	 * 
+	 * @return a graph id map.
+	 */
+	public GraphIdBimap< BV, BE > getGraphIdBimap();
+
+	/**
+	 * Returns an iterator that iterates in order over the linked vertices in a
+	 * branch, specified by its branch edge. The first and last vertex iterated
+	 * are the branch nodes.
+	 *
+	 * @param edge
+	 *            the branch edge.
+	 * @return a new iterator.
+	 */
+	public Iterator< V > vertexBranchIterator( BE edge );
+
+	/**
+	 * Returns an iterator that iterates in order over the linked edges of a
+	 * branch, specified by its branch edge.
+	 *
+	 * @param edge
+	 *            the branch edge.
+	 * @return a new iterator.
+	 */
+	public Iterator< E > edgeBranchIterator( BE edge );
 
 }

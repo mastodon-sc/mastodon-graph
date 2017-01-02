@@ -6,28 +6,32 @@ import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
+import org.mastodon.spatial.HasTimepoint;
 
-public class BranchEdgePool
-		extends AbstractListenableEdgePool< 
-			BranchEdge, 
-			BranchVertex, 
+import net.imglib2.RealLocalizable;
+
+public class BranchEdgePool< V extends RealLocalizable & HasTimepoint >
+		extends AbstractListenableEdgePool<
+			BranchEdge< V >,
+			BranchVertex< V >,
 			ByteMappedElement >
 {
 
-	public BranchEdgePool( final int initialCapacity, final BranchVertexPool vertexPool )
+	public BranchEdgePool( final int initialCapacity, final BranchVertexPool< V > vertexPool )
 	{
-		this( initialCapacity, new BranchEdgeFactory(), vertexPool );
+		this( initialCapacity, new BranchEdgeFactory< V >(), vertexPool );
 	}
 
-	private BranchEdgePool( final int initialCapacity, final BranchEdgeFactory edgeFactory, final BranchVertexPool vertexPool )
+	private BranchEdgePool( final int initialCapacity, final BranchEdgeFactory< V > edgeFactory, final BranchVertexPool< V > vertexPool )
 	{
 		super( initialCapacity, edgeFactory, vertexPool );
 		edgeFactory.edgePool = this;
 	}
 
-	private static class BranchEdgeFactory implements PoolObject.Factory< BranchEdge, ByteMappedElement >
+	private static class BranchEdgeFactory< V extends RealLocalizable & HasTimepoint >
+			implements PoolObject.Factory< BranchEdge< V >, ByteMappedElement >
 	{
-		private BranchEdgePool edgePool;
+		private BranchEdgePool< V > edgePool;
 
 		@Override
 		public int getSizeInBytes()
@@ -36,9 +40,9 @@ public class BranchEdgePool
 		}
 
 		@Override
-		public BranchEdge createEmptyRef()
+		public BranchEdge< V > createEmptyRef()
 		{
-			return new BranchEdge( edgePool );
+			return new BranchEdge< V >( edgePool );
 		}
 
 		@Override
@@ -48,9 +52,9 @@ public class BranchEdgePool
 		}
 
 		@Override
-		public Class< BranchEdge > getRefClass()
+		public Class< BranchEdge< V > > getRefClass()
 		{
-			return BranchEdge.class;
+			throw new UnsupportedOperationException();
 		}
 	};
 

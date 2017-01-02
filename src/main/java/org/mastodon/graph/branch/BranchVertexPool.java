@@ -1,28 +1,37 @@
 package org.mastodon.graph.branch;
 
+import org.mastodon.RefPool;
 import org.mastodon.graph.ref.AbstractListenableVertexPool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
+import org.mastodon.spatial.HasTimepoint;
 
-public class BranchVertexPool extends AbstractListenableVertexPool< BranchVertex, BranchEdge, ByteMappedElement >
+import net.imglib2.RealLocalizable;
+
+public class BranchVertexPool< V extends RealLocalizable & HasTimepoint >
+		extends AbstractListenableVertexPool< BranchVertex< V >, BranchEdge< V >, ByteMappedElement >
 {
-	public BranchVertexPool( final int initialCapacity )
+	public BranchVertexPool( final RefPool< V > vertexBimap, final int initialCapacity )
 	{
-		this( initialCapacity, new BranchVertexFactory() );
+		this( vertexBimap, initialCapacity, new BranchVertexFactory< V >() );
 	}
 
-	private BranchVertexPool( final int initialCapacity, final BranchVertexFactory vertexFactory )
+	private BranchVertexPool( final RefPool< V > vertexBimap, final int initialCapacity, final BranchVertexFactory< V > vertexFactory )
 	{
 		super( initialCapacity, vertexFactory );
 		vertexFactory.vertexPool = this;
+		vertexFactory.vertexBimap = vertexBimap;
 	}
 
-	private static class BranchVertexFactory implements PoolObject.Factory< BranchVertex, ByteMappedElement >
+	private static class BranchVertexFactory< V extends RealLocalizable & HasTimepoint >
+			implements PoolObject.Factory< BranchVertex< V >, ByteMappedElement >
 	{
-		private BranchVertexPool vertexPool;
+		private RefPool< V > vertexBimap;
+
+		private BranchVertexPool< V > vertexPool;
 
 		@Override
 		public int getSizeInBytes()
@@ -31,9 +40,9 @@ public class BranchVertexPool extends AbstractListenableVertexPool< BranchVertex
 		}
 
 		@Override
-		public BranchVertex createEmptyRef()
+		public BranchVertex< V > createEmptyRef()
 		{
-			return new BranchVertex( vertexPool );
+			return new BranchVertex< V >( vertexPool, vertexBimap );
 		}
 
 		@Override
@@ -43,9 +52,9 @@ public class BranchVertexPool extends AbstractListenableVertexPool< BranchVertex
 		}
 
 		@Override
-		public Class< BranchVertex > getRefClass()
+		public Class< BranchVertex< V > > getRefClass()
 		{
-			return BranchVertex.class;
+			throw new UnsupportedOperationException();
 		}
 	};
 

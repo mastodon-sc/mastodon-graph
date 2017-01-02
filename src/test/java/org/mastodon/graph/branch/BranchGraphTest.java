@@ -18,13 +18,13 @@ public class BranchGraphTest
 
 	private ListenableTestGraph graph;
 
-	private BranchGraph< ListenableTestVertex, ListenableTestEdge > bg;
+	private BranchGraph< BranchVertex, BranchEdge, ListenableTestVertex, ListenableTestEdge > bg;
 
 	@Before
 	public void setUp() throws Exception
 	{
 		this.graph = new ListenableTestGraph();
-		this.bg = new DefaultBranchGraph<>( graph );
+		this.bg = new BranchGraphImp<>( graph );
 
 	}
 
@@ -927,8 +927,8 @@ public class BranchGraphTest
 		}
 
 		// Build a new branch graph from this one.
-		final BranchGraph< ListenableTestVertex, ListenableTestEdge > bg2 =
-				new DefaultBranchGraph<>( graph );
+		final BranchGraph< BranchVertex, BranchEdge, ListenableTestVertex, ListenableTestEdge > bg2 =
+				new BranchGraphImp<>( graph );
 
 		// Basic test on N vertices and N edges.
 		final RefCollection< BranchEdge > edges = bg2.edges();
