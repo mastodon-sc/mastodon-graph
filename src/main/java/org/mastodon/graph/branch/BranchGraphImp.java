@@ -45,7 +45,7 @@ import org.mastodon.pool.MappedElement;
  *            the type of {@link MappedElement} used for the vertex and edge
  *            pool.
  */
-public class BranchGraphImp<
+public abstract class BranchGraphImp<
 	V extends Vertex< E >,
 	E extends Edge< V >,
 	BV extends AbstractListenableVertex< BV, BE, T >,
@@ -94,10 +94,6 @@ public class BranchGraphImp<
 
 	private final GraphIdBimap< BV, BE > idmap;
 
-	private final Initializer< BV, V > vertexInitializer;
-
-	private final Initializer< BE, E > edgeInitializer;
-
 	/**
 	 * Instantiates a branch graph linked to the specified graph. This instance
 	 * registers itself as a listener of the linked graph.
@@ -106,21 +102,13 @@ public class BranchGraphImp<
 	 *            the graph to link to.
 	 * @param branchEdgePool
 	 *            the branch edge pool used for graph creation.
-	 * @param vertexInitializer
-	 *            an initializer for branch vertices.
-	 * @param edgeInitializer
-	 *            an initializer for branch edges.
 	 */
 	public BranchGraphImp(
 			final ListenableGraph< V, E > graph,
-			final BEP branchEdgePool,
-			final Initializer< BV, V > vertexInitializer,
-			final Initializer< BE, E > edgeInitializer )
+			final BEP branchEdgePool )
 	{
 		super( branchEdgePool );
 		this.graph = graph;
-		this.vertexInitializer = vertexInitializer;
-		this.edgeInitializer = edgeInitializer;
 		this.idmap = new GraphIdBimap<>( vertexPool, edgePool );
 		this.vbvMap = RefMaps.createRefRefMap( graph.vertices(), vertices() );
 		this.vbeMap = RefMaps.createRefRefMap( graph.vertices(), edges() );
@@ -330,7 +318,7 @@ public class BranchGraphImp<
 				beeMap.removeWithRef( beOut, refLE4 );
 
 				// beNew := new branch edge between bvSource and bvTarget.
-				final BE beNew = edgeInitializer.initialize( super.addEdge( bvSource, bvTarget, refBE3 ), le );
+				final BE beNew = init( super.addEdge( bvSource, bvTarget, refBE3 ), le );
 
 				// reference f3 from every source graph vertex on the path
 				linkBranchEdge( lv1, lv2, beNew );
@@ -384,13 +372,13 @@ public class BranchGraphImp<
 		beeMap.removeWithRef( initialBE, refE5 );
 		super.remove( initialBE );
 
-		final BV newVertex = vertexInitializer.initialize( super.addVertex( ref ), v );
+		final BV newVertex = init( super.addVertex( ref ), v );
 
-		final BE newEdge1 = edgeInitializer.initialize( super.addEdge( beSource, newVertex, refBE1 ), branchStartingEdge );
+		final BE newEdge1 = init( super.addEdge( beSource, newVertex, refBE1 ), branchStartingEdge );
 		beeMap.put( newEdge1, branchStartingEdge, refE3 );
 		linkBranchEdge( branchSecondVertex, v, newEdge1 );
 
-		final BE newEdge2 = edgeInitializer.initialize( super.addEdge( newVertex, beTarget, refBE2 ), outgoingEdge );
+		final BE newEdge2 = init( super.addEdge( newVertex, beTarget, refBE2 ), outgoingEdge );
 		beeMap.put( newEdge2, outgoingEdge, refE4 );
 		linkBranchEdge( v, branchLastVertex, newEdge2 );
 
@@ -510,7 +498,7 @@ public class BranchGraphImp<
 		final BV bvRef2 = vertexRef();
 		final V vRef = graph.vertexRef();
 
-		final BV bv = vertexInitializer.initialize( super.addVertex( bvRef1 ), vertex );
+		final BV bv = init( super.addVertex( bvRef1 ), vertex );
 		vbvMap.put( vertex, bv, bvRef2 );
 		bvvMap.put( bv, vertex, vRef );
 
@@ -559,7 +547,7 @@ public class BranchGraphImp<
 			final BE beRef2 = edgeRef();
 			final E eRef = graph.edgeRef();
 
-			final BE be = edgeInitializer.initialize( super.addEdge( sourceBV, targetBV, beRef1 ), edge );
+			final BE be = init( super.addEdge( sourceBV, targetBV, beRef1 ), edge );
 			ebeMap.put( edge, be, beRef2 );
 			beeMap.put( be, edge, eRef );
 
@@ -580,7 +568,7 @@ public class BranchGraphImp<
 
 			final BV newSourceBV = split( source, bvRef );
 
-			final BE se = edgeInitializer.initialize( super.addEdge( newSourceBV, targetBV, beRef1 ), edge );
+			final BE se = init( super.addEdge( newSourceBV, targetBV, beRef1 ), edge );
 			beeMap.put( se, edge, eRef );
 			ebeMap.put( edge, se, beRef2 );
 
@@ -598,7 +586,7 @@ public class BranchGraphImp<
 			final E edgeRef2 = graph.edgeRef();
 
 			final BE edgeRef = edgeRef();
-			final BE se = edgeInitializer.initialize( super.addEdge( sourceBV, newTargetBV, edgeRef ), edge );
+			final BE se = init( super.addEdge( sourceBV, newTargetBV, edgeRef ), edge );
 
 			beeMap.put( se, edge, edgeRef2 );
 
@@ -620,7 +608,7 @@ public class BranchGraphImp<
 			final BE beRef2 = edgeRef();
 			final E eRef = graph.edgeRef();
 
-			final BE se = edgeInitializer.initialize( super.addEdge( newSourceBV, newTargetBV, beRef1 ), edge );
+			final BE se = init( super.addEdge( newSourceBV, newTargetBV, beRef1 ), edge );
 
 			beeMap.put( se, edge, eRef );
 			ebeMap.put( edge, se, beRef2 );
@@ -701,6 +689,36 @@ public class BranchGraphImp<
 	{
 		return new EdgeBranchIterator( edge );
 	}
+
+	/**
+	 * Performs initialization tasks of the specified branch vertex, just after
+	 * it has been added to the branch graph. This method should at least ensure
+	 * that the <code>init()</code> "constructor" method of the vertex is
+	 * called, using fields from the specified linked vertex.
+	 *
+	 * @param bv
+	 *            the branch vertex to initialize.
+	 * @param v
+	 *            the linked vertex corresponding to the branch vertex in the
+	 *            source graph. Used for reading fields, not modified.
+	 * @return the branch vertex instance, properly initialized.
+	 */
+	public abstract BV init( final BV bv, final V v );
+
+	/**
+	 * Performs initialization tasks of the specified branch edge, just after it
+	 * has been added to the branch graph. This method should at least ensure
+	 * that the <code>init()</code> "constructor" method of the edge is called,
+	 * using fields from the specified linked edge.
+	 *
+	 * @param be
+	 *            the branch edge or edge to initialize.
+	 * @param e
+	 *            the linked edge corresponding to the branch edge in the source
+	 *            graph. Used for reading fields, not modified.
+	 * @return the branch edge instance, properly initialized.
+	 */
+	public abstract BE init( final BE be, final E e );
 
 	/*
 	 * INNER CLASSES
@@ -789,37 +807,4 @@ public class BranchGraphImp<
 		}
 
 	}
-
-	/**
-	 * Interface for classes able to initialize an object after it has been
-	 * added to the branch graph, based on the fields taken from the linked
-	 * object in the source graph.
-	 *
-	 * @author Jean-Yves Tinevez
-	 *
-	 * @param <BO>
-	 *            the type of the branch graph object.
-	 * @param <O>
-	 *            the type of the linked graph object.
-	 */
-	public static interface Initializer< BO, O >
-	{
-		/**
-		 * Performs initialization tasks of the specified branch vertex or edge,
-		 * just after it has been added to the branch graph. This method should
-		 * at least ensure that the <code>init()</code> "constructor" method of
-		 * the vertex or edge is called, using fields from the specified linked
-		 * vertex or edge.
-		 *
-		 * @param bo
-		 *            the branch vertex or edge to initialize.
-		 * @param o
-		 *            the linked vertex or edge corresponding to the branch
-		 *            vertex or edge in the source graph. Used for reading
-		 *            fields, not modified.
-		 * @return the branch object instance, properly initialized.
-		 */
-		public BO initialize( BO bo, O o );
-	}
-
 }
