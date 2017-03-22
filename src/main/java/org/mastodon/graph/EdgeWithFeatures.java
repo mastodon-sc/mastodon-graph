@@ -1,9 +1,6 @@
 package org.mastodon.graph;
 
-import org.mastodon.features.Feature;
-import org.mastodon.features.FeatureValue;
+import org.mastodon.features.WithFeatures;
 
-public interface EdgeWithFeatures< E extends EdgeWithFeatures< E, V >, V extends Vertex< ? > > extends Edge< V >
-{
-	public < F extends FeatureValue< ? >, M > F feature( final Feature< M, E, F > feature );
-}
+public interface EdgeWithFeatures< E extends EdgeWithFeatures< E, V >, V extends Vertex< ? > > extends Edge< V >, WithFeatures< E >
+{}
