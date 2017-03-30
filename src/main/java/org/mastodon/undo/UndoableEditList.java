@@ -106,14 +106,8 @@ public class UndoableEditList extends Pool< UndoableEditRef, ByteMappedElement >
 		{
 			getObject( i, ref );
 			ref.clear();
-			deleteByInternalPoolIndex( i );
+			super.delete( ref );
 		}
-	}
-
-	@Override
-	protected void deleteByInternalPoolIndex( final int index )
-	{
-		super.deleteByInternalPoolIndex( index );
 	}
 
 	private static class Factory implements PoolObject.Factory< UndoableEditRef, ByteMappedElement >

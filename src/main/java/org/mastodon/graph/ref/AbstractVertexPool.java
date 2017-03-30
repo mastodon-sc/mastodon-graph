@@ -39,10 +39,11 @@ public class AbstractVertexPool<
 		return super.create( vertex );
 	}
 
+	@Override
 	public void delete( final V vertex )
 	{
 		if ( edgePool != null )
 			edgePool.deleteAllLinkedEdges( vertex );
-		deleteByInternalPoolIndex( vertex.getInternalPoolIndex() );
+		super.delete( vertex );
 	}
 }

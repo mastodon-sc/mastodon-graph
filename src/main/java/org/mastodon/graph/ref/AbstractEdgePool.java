@@ -150,7 +150,7 @@ public class AbstractEdgePool<
 			getObject( index, edge );
 			unlinkFromTarget( edge, tmpEdge, tmpVertex );
 			index = edge.getNextSourceEdgeIndex();
-			deleteByInternalPoolIndex( edge.getInternalPoolIndex() );
+			super.delete( edge );
 		}
 
 		// release all incoming edges
@@ -161,7 +161,7 @@ public class AbstractEdgePool<
 			getObject( index, edge );
 			unlinkFromSource( edge, tmpEdge, tmpVertex );
 			index = edge.getNextTargetEdgeIndex();
-			deleteByInternalPoolIndex( edge.getInternalPoolIndex() );
+			super.delete( edge );
 		}
 
 		vertexPool.releaseRef( tmpVertex );
@@ -169,6 +169,7 @@ public class AbstractEdgePool<
 		releaseRef( tmpEdge );
 	}
 
+	@Override
 	public void delete( final E edge )
 	{
 		final V tmpVertex = vertexPool.createRef();
@@ -176,7 +177,7 @@ public class AbstractEdgePool<
 
 		unlinkFromSource( edge, tmp, tmpVertex );
 		unlinkFromTarget( edge, tmp, tmpVertex );
-		deleteByInternalPoolIndex( edge.getInternalPoolIndex() );
+		super.delete( edge );
 
 		vertexPool.releaseRef( tmpVertex );
 		releaseRef( tmp );
