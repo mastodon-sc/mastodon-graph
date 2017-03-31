@@ -1,6 +1,5 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.Graph;
 import org.mastodon.graph.ref.AbstractEdge;
 import org.mastodon.graph.ref.AbstractEdgePool;
 import org.mastodon.graph.ref.AbstractVertex;
@@ -14,21 +13,21 @@ import org.mastodon.pool.SingleArrayMemPool;
 
 public class MinimalGraphExample
 {
-	static class MyVertex extends AbstractVertex< MyVertex, MyEdge, ByteMappedElement >
+	static class MyVertex extends AbstractVertex< MyVertex, MyEdge, MyVertexPool, ByteMappedElement >
 	{
 		protected static final int SIZE_IN_BYTES = AbstractVertex.SIZE_IN_BYTES;
 
-		protected MyVertex( final AbstractVertexPool< MyVertex, ?, ByteMappedElement > pool )
+		protected MyVertex( final MyVertexPool pool )
 		{
 			super( pool );
 		}
 	}
 
-	static class MyEdge extends AbstractEdge< MyEdge, MyVertex, ByteMappedElement >
+	static class MyEdge extends AbstractEdge< MyEdge, MyVertex, MyEdgePool, ByteMappedElement >
 	{
 		protected static final int SIZE_IN_BYTES = AbstractEdge.SIZE_IN_BYTES;
 
-		protected MyEdge( final AbstractEdgePool< MyEdge, MyVertex, ByteMappedElement > pool )
+		protected MyEdge( final MyEdgePool pool )
 		{
 			super( pool );
 		}

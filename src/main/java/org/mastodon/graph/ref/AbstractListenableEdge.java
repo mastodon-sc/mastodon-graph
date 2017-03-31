@@ -1,5 +1,6 @@
 package org.mastodon.graph.ref;
 
+import org.mastodon.graph.Edge;
 import org.mastodon.graph.Graph;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableReadOnlyGraph;
@@ -36,15 +37,20 @@ import org.mastodon.pool.MappedElement;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractListenableEdge< E extends AbstractListenableEdge< E, V, T >, V extends AbstractVertex< V, ?, ? >, T extends MappedElement >
-		extends AbstractEdgeWithFeatures< E, V, T >
+public class AbstractListenableEdge<
+			E extends AbstractListenableEdge< E, V, EP, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
+			EP extends AbstractListenableEdgePool< E, V, T >,
+			T extends MappedElement >
+		extends AbstractEdgeWithFeatures< E, V, EP, T >
 {
-	protected AbstractListenableEdge( final AbstractEdgePool< E, V, T > pool )
+	protected AbstractListenableEdge( final EP pool )
 	{
 		super( pool );
+		notifyPostInit = pool.notifyPostInit;
 	}
 
-	NotifyPostInit< ?, E > notifyPostInit;
+	private final NotifyPostInit< ?, E > notifyPostInit;
 
 	/**
 	 * Flag to detect missing or duplicate initialization. Is set to

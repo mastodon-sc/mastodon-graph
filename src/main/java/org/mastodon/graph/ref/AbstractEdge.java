@@ -15,8 +15,12 @@ import org.mastodon.pool.PoolObject;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractEdge< E extends AbstractEdge< E, V, T >, V extends AbstractVertex< V, ?, ? >, T extends MappedElement >
-		extends PoolObject< E, T >
+public class AbstractEdge<
+			E extends AbstractEdge< E, V, EP, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
+			EP extends AbstractEdgePool< E, V, T >,
+			T extends MappedElement >
+		extends PoolObject< E, EP, T >
 		implements Edge< V >
 {
 	protected static final int SOURCE_INDEX_OFFSET = 0;
@@ -27,7 +31,7 @@ public class AbstractEdge< E extends AbstractEdge< E, V, T >, V extends Abstract
 
 	protected final AbstractVertexPool< V, ?, ? > vertexPool;
 
-	protected AbstractEdge( final AbstractEdgePool< E, V, T > pool )
+	protected AbstractEdge( final EP pool )
 	{
 		super( pool );
 		this.vertexPool = pool.vertexPool;

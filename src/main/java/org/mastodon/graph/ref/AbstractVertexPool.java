@@ -5,8 +5,8 @@ import org.mastodon.pool.Pool;
 import org.mastodon.pool.PoolObject;
 
 public class AbstractVertexPool<
-			V extends AbstractVertex< V, E, T >,
-			E extends AbstractEdge< E, ?, ? >,
+			V extends AbstractVertex< V, E, ?, T >,
+			E extends AbstractEdge< E, ?, ?, ? >,
 			T extends MappedElement >
 		extends Pool< V, T >
 {

@@ -6,8 +6,8 @@ import org.mastodon.pool.MappedElement;
 public class GraphWithFeaturesImp<
 		VP extends AbstractVertexWithFeaturesPool< V, E, T >,
 		EP extends AbstractEdgeWithFeaturesPool< E, V, T >,
-		V extends AbstractVertexWithFeatures< V, E, T >,
-		E extends AbstractEdgeWithFeatures< E, V, T >,
+		V extends AbstractVertexWithFeatures< V, E, VP, T >,
+		E extends AbstractEdgeWithFeatures< E, V, EP, T >,
 		T extends MappedElement >
 	extends GraphImp< VP, EP, V, E, T >
 {

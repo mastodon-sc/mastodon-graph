@@ -4,8 +4,8 @@ import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
 
 public class AbstractListenableVertexPool<
-			V extends AbstractListenableVertex< V, E, T >,
-			E extends AbstractEdge< E, ?, ? >,
+			V extends AbstractListenableVertex< V, E, ?, T >,
+			E extends AbstractEdge< E, ?, ?, ? >,
 			T extends MappedElement >
 		extends AbstractVertexWithFeaturesPool< V, E, T >
 {
@@ -16,19 +16,11 @@ public class AbstractListenableVertexPool<
 		super( initialCapacity, vertexFactory );
 	}
 
-	private NotifyPostInit< V, ? > notifyPostInit;
+	NotifyPostInit< V, ? > notifyPostInit;
 
 	public void linkNotify( final NotifyPostInit< V, ? > notifyPostInit )
 	{
 		this.notifyPostInit = notifyPostInit;
-	}
-
-	@Override
-	public V createRef()
-	{
-		final V vertex = super.createRef();
-		vertex.notifyPostInit = notifyPostInit;
-		return vertex;
 	}
 
 	/*

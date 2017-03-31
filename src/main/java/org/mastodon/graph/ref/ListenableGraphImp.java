@@ -10,8 +10,8 @@ import org.mastodon.pool.MappedElement;
 public class ListenableGraphImp<
 		VP extends AbstractListenableVertexPool< V, E, T >,
 		EP extends AbstractListenableEdgePool< E, V, T >,
-		V extends AbstractListenableVertex< V, E, T >,
-		E extends AbstractListenableEdge< E, V, T >,
+		V extends AbstractListenableVertex< V, E, VP, T >,
+		E extends AbstractListenableEdge< E, V, EP, T >,
 		T extends MappedElement >
 	extends GraphWithFeaturesImp< VP, EP, V, E, T >
 	implements ListenableGraph< V, E >

@@ -6,7 +6,7 @@ import org.mastodon.graph.ref.AbstractVertex;
 import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.pool.ByteMappedElement;
 
-public class TestVertex extends AbstractVertex< TestVertex, TestEdge, ByteMappedElement >
+public class TestVertex extends AbstractVertex< TestVertex, TestEdge, TestVertexPool, ByteMappedElement >
 {
 	protected static final int ID_OFFSET = AbstractVertex.SIZE_IN_BYTES;
 
@@ -14,7 +14,7 @@ public class TestVertex extends AbstractVertex< TestVertex, TestEdge, ByteMapped
 
 	public final AbstractVertexPool< TestVertex, ?, ByteMappedElement > creatingPool;
 
-	protected TestVertex( final AbstractVertexPool< TestVertex, ?, ByteMappedElement > pool )
+	protected TestVertex( final TestVertexPool pool )
 	{
 		super( pool );
 		creatingPool = pool;

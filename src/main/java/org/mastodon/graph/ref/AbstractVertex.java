@@ -15,15 +15,19 @@ import org.mastodon.pool.PoolObject;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractVertex< V extends AbstractVertex< V, E, T >, E extends AbstractEdge< E, ?, ? >, T extends MappedElement >
-		extends PoolObject< V, T >
+public class AbstractVertex<
+			V extends AbstractVertex< V, E, VP, T >,
+			E extends AbstractEdge< E, ?, ?, ? >,
+			VP extends AbstractVertexPool< V, ?, T >,
+			T extends MappedElement >
+		extends PoolObject< V, VP, T >
 		implements Vertex< E >
 {
 	protected static final int FIRST_IN_EDGE_INDEX_OFFSET = 0;
 	protected static final int FIRST_OUT_EDGE_INDEX_OFFSET = FIRST_IN_EDGE_INDEX_OFFSET + INDEX_SIZE;
 	protected static final int SIZE_IN_BYTES = FIRST_OUT_EDGE_INDEX_OFFSET + INDEX_SIZE;
 
-	protected AbstractVertex( final AbstractVertexPool< V, ?, T > pool )
+	protected AbstractVertex( final VP pool )
 	{
 		super( pool );
 	}

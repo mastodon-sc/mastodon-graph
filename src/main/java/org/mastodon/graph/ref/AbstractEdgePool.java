@@ -5,8 +5,8 @@ import org.mastodon.pool.Pool;
 import org.mastodon.pool.PoolObject;
 
 public class AbstractEdgePool<
-			E extends AbstractEdge< E, V, T >,
-			V extends AbstractVertex< V, ?, ? >,
+			E extends AbstractEdge< E, V, ?, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
 		extends Pool< E, T >
 {
@@ -21,7 +21,7 @@ public class AbstractEdgePool<
 		this.vertexPool = vertexPool;
 	}
 
-	public E addEdge( final AbstractVertex< ?, ?, ? > source, final AbstractVertex< ?, ?, ? > target, final E edge )
+	public E addEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
 		if ( getEdge( source, target, edge ) != null )
 			return null;
@@ -74,7 +74,7 @@ public class AbstractEdgePool<
 		return edge;
 	}
 
-	public E insertEdge( final AbstractVertex< ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ? > target, final int targetInInsertAt, final E edge )
+	public E insertEdge( final AbstractVertex< ?, ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ?, ? > target, final int targetInInsertAt, final E edge )
 	{
 		if ( getEdge( source, target, edge ) != null )
 			return null;
@@ -120,7 +120,7 @@ public class AbstractEdgePool<
 	}
 
 
-	public E getEdge( final AbstractVertex< ?, ?, ? > source, final AbstractVertex< ?, ?, ? > target, final E edge )
+	public E getEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
 		int nextSourceEdgeIndex = source.getFirstOutEdgeIndex();
 		if ( nextSourceEdgeIndex < 0 )
@@ -136,7 +136,7 @@ public class AbstractEdgePool<
 		return null;
 	}
 
-	public void deleteAllLinkedEdges( final AbstractVertex< ?, ?, ? > vertex )
+	public void deleteAllLinkedEdges( final AbstractVertex< ?, ?, ?, ? > vertex )
 	{
 		final V tmpVertex = vertexPool.createRef();
 		final E edge = createRef();

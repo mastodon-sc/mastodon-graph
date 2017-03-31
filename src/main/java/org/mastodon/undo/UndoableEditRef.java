@@ -11,7 +11,7 @@ import org.mastodon.undo.UndoableEditList.UndoableEditType;
 import gnu.trove.map.TIntObjectArrayMap;
 
 public final class UndoableEditRef
-		extends PoolObject< UndoableEditRef, ByteMappedElement >
+		extends PoolObject< UndoableEditRef, UndoableEditList, ByteMappedElement >
 		implements UndoableEdit
 {
 	private static final int IS_UNDO_POINT_OFFSET = 0;

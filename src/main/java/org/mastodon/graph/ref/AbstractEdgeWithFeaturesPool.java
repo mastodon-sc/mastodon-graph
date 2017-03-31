@@ -5,12 +5,12 @@ import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
 
 public class AbstractEdgeWithFeaturesPool<
- 			E extends AbstractEdgeWithFeatures< E, V, T >,
- 			V extends AbstractVertex< V, ?, ? >,
+			E extends AbstractEdgeWithFeatures< E, V, ?, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
 		extends AbstractEdgePool< E, V, T >
 {
-	private Features< E > features;
+	Features< E > features;
 
 	public AbstractEdgeWithFeaturesPool(
 			final int initialCapacity,
@@ -23,14 +23,6 @@ public class AbstractEdgeWithFeaturesPool<
 	public void linkFeatures( final Features< E > features )
 	{
 		this.features = features;
-	}
-
-	@Override
-	public E createRef()
-	{
-		final E edge = super.createRef();
-		edge.features = features;
-		return edge;
 	}
 
 	@Override

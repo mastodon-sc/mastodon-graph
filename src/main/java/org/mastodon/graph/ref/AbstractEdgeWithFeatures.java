@@ -9,18 +9,23 @@ import org.mastodon.features.Features;
 import org.mastodon.graph.EdgeWithFeatures;
 import org.mastodon.pool.MappedElement;
 
-public class AbstractEdgeWithFeatures< E extends AbstractEdgeWithFeatures< E, V, T >, V extends AbstractVertex< V, ?, ? >, T extends MappedElement >
-		extends AbstractEdge< E, V, T >
+public class AbstractEdgeWithFeatures<
+			E extends AbstractEdgeWithFeatures< E, V, EP, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
+			EP extends AbstractEdgeWithFeaturesPool< E, V, T >,
+			T extends MappedElement >
+		extends AbstractEdge< E, V, EP, T >
 		implements EdgeWithFeatures< E, V >
 {
 
-	protected AbstractEdgeWithFeatures( final AbstractEdgePool< E, V, T > pool )
+	protected AbstractEdgeWithFeatures( final EP pool )
 	{
 		super( pool );
+		features = pool.features;
 		featureValues = new UniqueHashcodeArrayMap<>();
 	}
 
-	Features< E > features;
+	final Features< E > features;
 
 	private final Map< Feature< ?, E, ? >, FeatureValue< ? > > featureValues;
 

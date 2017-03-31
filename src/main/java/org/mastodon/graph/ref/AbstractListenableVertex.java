@@ -39,16 +39,21 @@ import org.mastodon.pool.MappedElement;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractListenableVertex< V extends AbstractListenableVertex< V, E, T >, E extends AbstractEdge< E, ?, ? >, T extends MappedElement >
-		extends AbstractVertexWithFeatures< V, E, T >
+public class AbstractListenableVertex<
+			V extends AbstractListenableVertex< V, E, VP, T >,
+			E extends AbstractEdge< E, ?, ?, ? >,
+			VP extends AbstractListenableVertexPool< V, ?, T >,
+			T extends MappedElement >
+		extends AbstractVertexWithFeatures< V, E, VP, T >
 {
-	protected AbstractListenableVertex( final AbstractVertexPool< V, ?, T > pool )
+	protected AbstractListenableVertex( final VP pool )
 	{
 		super( pool );
+		notifyPostInit = pool.notifyPostInit;
 		pendingInitialize = false;
 	}
 
-	NotifyPostInit< V, ? > notifyPostInit;
+	final NotifyPostInit< V, ? > notifyPostInit;
 
 	/**
 	 * Flag to detect missing or duplicate initialization. Is set to

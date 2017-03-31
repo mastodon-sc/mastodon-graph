@@ -18,17 +18,22 @@ import org.mastodon.pool.MappedElement;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractVertexWithFeatures< V extends AbstractVertexWithFeatures< V, E, T >, E extends AbstractEdge< E, ?, ? >, T extends MappedElement >
-		extends AbstractVertex< V, E, T >
+public class AbstractVertexWithFeatures<
+			V extends AbstractVertexWithFeatures< V, E, VP, T >,
+			E extends AbstractEdge< E, ?, ?, ? >,
+			VP extends AbstractVertexWithFeaturesPool< V, ?, T >,
+			T extends MappedElement >
+		extends AbstractVertex< V, E, VP, T >
 		implements VertexWithFeatures< V, E >
 {
-	protected AbstractVertexWithFeatures( final AbstractVertexPool< V, ?, T > pool )
+	protected AbstractVertexWithFeatures( final VP pool )
 	{
 		super( pool );
+		features = pool.features;
 		featureValues = new UniqueHashcodeArrayMap<>();
 	}
 
-	Features< V > features;
+	final Features< V > features;
 
 	private final Map< Feature< ?, V, ? >, FeatureValue< ? > > featureValues;
 
