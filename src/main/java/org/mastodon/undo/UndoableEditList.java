@@ -178,7 +178,7 @@ public class UndoableEditList extends Pool< UndoableEditRef, ByteMappedElement >
 	 * caches a collection of {@link AbstractUndoableEdit} for the specific
 	 * types it has represented.
 	 */
-	protected abstract class AbstractUndoableEdit implements UndoableEdit
+	protected static abstract class AbstractUndoableEdit implements UndoableEdit
 	{
 		protected final UndoableEditRef ref;
 
