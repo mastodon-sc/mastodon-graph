@@ -4,8 +4,18 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * A undo/redo stack for byte arrays of variable size. This is used to record
+ * graph and attribute changes.
+ *
+ * @author Tobias Pietzsch
+ */
 public class ByteArrayUndoRedoStack
 {
+	private static final int DEFAULT_CAPACITY = 1024 * 1024 * 8;
+
+	private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 2;
+
 	/**
 	 * The current data storage. This is changed when the array is
 	 * {@link #resize(int) resized}.
@@ -33,6 +43,18 @@ public class ByteArrayUndoRedoStack
 		{
 			// TODO
 			return ByteBuffer.wrap( pool.buf ).getInt( offset + index );
+		}
+
+		public void putShort( final int index, final short value )
+		{
+			// TODO
+			ByteBuffer.wrap( pool.buf ).putShort( offset + index, value );
+		}
+
+		public short getShort( final int index )
+		{
+			// TODO
+			return ByteBuffer.wrap( pool.buf ).getShort( offset + index );
 		}
 
 		public void putBytes( final int index, final byte[] array )
@@ -137,8 +159,4 @@ public class ByteArrayUndoRedoStack
 			buf = Arrays.copyOf( buf, ( int ) capacity );
 		}
 	}
-
-	private static final int DEFAULT_CAPACITY = 1024 * 1024 * 8;
-
-	private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 2;
 }
