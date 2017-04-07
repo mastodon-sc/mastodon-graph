@@ -16,7 +16,7 @@ public interface AttributeUndoSerializer< O >
 	 * {@code bytes} array passed to {@link #getBytes(Object, byte[])},
 	 * {@link #setBytes(Object, byte[])}.
 	 *
-	 * @return number of bytes are needed for storage.
+	 * @return number of bytes that are needed for storage.
 	 */
 	public int getNumBytes();
 
