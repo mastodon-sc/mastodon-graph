@@ -65,9 +65,10 @@ class IntPropertyBimap< O > extends AbstractPropertyMap< O, Integer >
 
 	public void set( final O key, final int value )
 	{
-		notifyBeforePropertyChange( key );
+//		notifyBeforePropertyChange( key );
 		map.put( key, value );
 		rmap.put( value, key );
+//		notifyPropertyChanged( key );
 	}
 
 	public int getValue( final O key )
@@ -87,19 +88,21 @@ class IntPropertyBimap< O > extends AbstractPropertyMap< O, Integer >
 	@Override
 	public Integer set( final O key, final Integer value )
 	{
-		notifyBeforePropertyChange( key );
+//		notifyBeforePropertyChange( key );
 		final int old = map.put( key, value );
 		rmap.put( value, key );
+//		notifyPropertyChanged( key );
 		return ( old == noEntryValue ) ? null : Integer.valueOf( old );
 	}
 
 	@Override
 	public void remove( final O key )
 	{
-		notifyBeforePropertyChange( key );
+//		notifyBeforePropertyChange( key );
 		final int value = map.remove( key );
 		if ( value != noEntryValue )
 			rmap.remove( value );
+//		notifyPropertyChanged( key );
 	}
 
 	@Override
