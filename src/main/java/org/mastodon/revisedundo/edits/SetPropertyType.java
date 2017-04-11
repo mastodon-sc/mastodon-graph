@@ -39,6 +39,7 @@ public class SetPropertyType< O > extends AbstractUndoableEditType implements Re
 	@Override
 	public void record( final O obj )
 	{
+		recordType();
 		final ByteArrayRef buffer = dataStack.record( SIZE, ref );
 		final int oi = undoIdBimap.getId( obj );
 		buffer.putInt( OBJ_ID_OFFSET, oi );

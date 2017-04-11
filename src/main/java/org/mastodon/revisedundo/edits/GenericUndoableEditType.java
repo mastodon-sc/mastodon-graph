@@ -19,6 +19,7 @@ public class GenericUndoableEditType< E extends UndoableEdit > extends AbstractU
 	@Override
 	public void record( final E edit )
 	{
+		recordType();
 		edits.record( edit );
 	}
 

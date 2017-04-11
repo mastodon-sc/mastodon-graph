@@ -123,6 +123,7 @@ public class GraphUndoRedoStack<
 		@Override
 		public void record( final V vertex )
 		{
+			recordType();
 			addRemoveVertex.initAdd( vertex, dataStack.record( size, ref ) );
 		}
 
@@ -158,6 +159,7 @@ public class GraphUndoRedoStack<
 		@Override
 		public void record( final V vertex )
 		{
+			recordType();
 			addRemoveVertex.initRemove( vertex, dataStack.record( size, ref ) );
 		}
 
@@ -256,6 +258,7 @@ public class GraphUndoRedoStack<
 		@Override
 		public void record( final E edge )
 		{
+			recordType();
 			addRemoveEdge.initAdd( edge, dataStack.record( size, ref ) );
 		}
 
@@ -291,6 +294,7 @@ public class GraphUndoRedoStack<
 		@Override
 		public void record( final E edge )
 		{
+			recordType();
 			addRemoveEdge.initRemove( edge, dataStack.record( size, ref ) );
 		}
 
