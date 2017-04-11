@@ -123,4 +123,12 @@ class IntPropertyBimap< O > extends AbstractPropertyMap< O, Integer >
 		rmap.clear();
 		tryUnregisterPropertyMap();
 	}
+
+	@Override
+	public void beforeDeleteObject( final O key )
+	{
+		final int value = map.remove( key );
+		if ( value != noEntryValue )
+			rmap.remove( value );
+	}
 }

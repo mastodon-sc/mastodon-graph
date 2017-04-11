@@ -12,7 +12,7 @@ import org.mastodon.undo.attributes.Attribute;
 import org.mastodon.undo.attributes.AttributeChangeListener;
 import org.mastodon.undo.attributes.Attributes;
 
-/**TODO: figure out, when mappings can be removed from
+/**TODO: figure out when mappings can be removed from
  * UndoIdBimaps. */
 /**
  * TODO: move to package model.undo (?)

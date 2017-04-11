@@ -6,8 +6,7 @@ package org.mastodon.revisedundo;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.mastodon.revisedundo.UndoRedoStack.Access;
-import org.mastodon.revisedundo.UndoRedoStack.Stack;
+import org.mastodon.undo.UndoPointMarker;
 
 import gnu.trove.list.TByteList;
 import gnu.trove.list.array.TByteArrayList;
@@ -25,56 +24,98 @@ import gnu.trove.list.array.TByteArrayList;
  *
  * @author Tobias Pietzsch
  */
-public class UndoRedoStack
+public class UndoRedoStack implements UndoPointMarker
 {
 	private final ArrayList< AbstractUndoableEditType > editTypes = new ArrayList<>();
 
 	private final Stack stack;
 
-	private final Access access;
+	private final Access ref;
 
 	private int top;
 
 	private int end;
 
-	private final OtherType otherType;
-
 	public UndoRedoStack( final int initialCapacity )
 	{
 		stack = new ByteStack( initialCapacity );
-		access = stack.createRef();
+		ref = stack.createRef();
 		top = 0;
 		end = 0;
-		otherType = new OtherType( this );
 	}
 
 	/**
-	 * Record any generic {@link UndoableEdit} that is not covered by more
-	 * specific more specific {@code record} methods in derived classes.
+	 * Put a new element of the specified {@code type} at the top of the stack,
+	 * expanding the stack if necessary. Then increment top.
 	 *
-	 * @param undoableEdit
-	 *            the edit to record.
+	 * @param type
+	 *            type of the new element to push
 	 */
-	public void record( final UndoableEdit undoableEdit )
+	public void record( final AbstractUndoableEditType type )
 	{
-		this.record( otherType, access );
-		otherType.record( undoableEdit );
+//		final Access ref = stack.createRef();
+		if ( top >= stack.size() )
+			stack.addElement();
+		ref.setIndex( top++ );
+		ref.setValue( type.typeIndex(), false );
+		end = top;
+//		stack.releaseRef( ref );
+	}
+
+	@Override
+	public void setUndoPoint()
+	{
+//		final Access ref = stack.createRef();
+		if ( top > 0 )
+		{
+			ref.setIndex( top - 1 );
+			ref.setUndoPoint( true );
+		}
+//		stack.releaseRef( ref );
 	}
 
 	/**
-	 * TODO: the "real" undo. rolls back to the previous undo point.
+	 * Undo until the next undo-point.
+	 * <p>
+	 * Decrement top. Then undo the element at top. Repeat while the element
+	 * below top is not marked as an undo-point.
+	 * </p>
 	 */
 	public void undo()
 	{
-		// TODO
+//		final Access ref = stack.createRef();
+		boolean first = true;
+		for ( int i = top - 1; i >= 0; --i )
+		{
+			ref.setIndex( i );
+			if ( ref.isUndoPoint() && !first )
+				break;
+			ref.getType().undo();
+			--top;
+			first = false;
+		}
+//		stack.releaseRef( ref );
 	}
 
 	/**
-	 * TODO: the "real" redo. rolls back to the next undo point.
+	 * Redo until the next undo-point.
+	 * <p>
+	 * Redo the element at top. Then increment top. Repeat while the element at
+	 * the top is not marked as an undo-point.
+	 * </p>
 	 */
 	public void redo()
 	{
-		// TODO
+//		final Access ref = stack.createRef();
+		for ( int i = top; i < end; ++i )
+		{
+			ref.setIndex( i );
+			ref.getType().redo();
+			++top;
+			if ( ref.isUndoPoint() )
+				break;
+		}
+//		stack.releaseRef( ref );
 	}
 
 	/**
@@ -86,48 +127,40 @@ public class UndoRedoStack
 		stack.trimToSize();
 	}
 
-	/**
-	 * Put a new element of the specified {@code type} at the top of the stack,
-	 * expanding the stack if necessary. Then increment top.
-	 *
-	 * @param type
-	 *            type of the new element to push
-	 * @param ref
-	 *            access to the newly created element. It will have the
-	 *            specified type and is marked as not being an undo point.
-	 * @return access to the newly created element
-	 */
-	protected Access record( final AbstractUndoableEditType type, final Access ref )
-	{
-		if ( top >= stack.size() )
-			stack.addElement();
-		ref.setIndex( top++ );
-		ref.setValue( type.typeIndex(), false );
-		end = top;
-		return ref;
-	}
-
-	/**
-	 * Decrement top. Then return the element at top.
-	 */
-	protected Access undo( final Access ref )
-	{
-		if ( top <= 0 )
-			return null;
-		ref.setIndex( --top );
-		return ref;
-	}
-
-	/**
-	 * Return the element at top. Then increment top.
-	 */
-	protected Access redo( final Access ref )
-	{
-		if ( top >= end )
-			return null;
-		ref.setIndex( top++ );
-		return ref;
-	}
+//	/**
+//	 * Return the element at {@code top - 1}, i.e., the last recorded element.
+//	 * @param ref
+//	 * @return
+//	 */
+//	protected Access peek( final Access ref )
+//	{
+//		if ( top <= 0 || top >= end )
+//			return null;
+//		ref.setIndex( top );
+//		return ref;
+//	}
+//
+//	/**
+//	 * Decrement top. Then return the element at top.
+//	 */
+//	protected Access undo( final Access ref )
+//	{
+//		if ( top <= 0 )
+//			return null;
+//		ref.setIndex( --top );
+//		return ref;
+//	}
+//
+//	/**
+//	 * Return the element at top. Then increment top.
+//	 */
+//	protected Access redo( final Access ref )
+//	{
+//		if ( top >= end )
+//			return null;
+//		ref.setIndex( top++ );
+//		return ref;
+//	}
 
 	/**
 	 * This is called automatically when instantiating derived {@link AbstractUndoableEditType}s.
@@ -145,39 +178,17 @@ public class UndoRedoStack
 		return index;
 	}
 
-	static class OtherType extends AbstractUndoableEditType
-	{
-		private final UndoableEditUndoRedoStack edits;
-
-		public OtherType( final UndoRedoStack undoRedoStack )
-		{
-			super( undoRedoStack );
-			edits = new UndoableEditUndoRedoStack();
-		}
-
-		public void record( final UndoableEdit edit )
-		{
-			edits.record( edit );
-		}
-
-		@Override
-		public void undo()
-		{
-			edits.undo();
-		}
-
-		@Override
-		public void redo()
-		{
-			edits.redo();
-		}
-	}
-
 	static interface Access
 	{
+		/**
+		 * Point this {@link Access} to the specified index of the {@link Stack}.
+		 * Do not confuse this with {@link #setTypeIndex(int)}!
+		 */
 		void setIndex( int index );
 
 		void setValue( final int typeIndex, final boolean isUndoPoint );
+
+		AbstractUndoableEditType getType();
 
 		int getTypeIndex();
 
@@ -204,111 +215,116 @@ public class UndoRedoStack
 
 		int maxEditTypeIndex();
 	}
-}
 
-class ByteAccess implements Access
-{
-	private int index;
-
-	private final TByteList buf;
-
-	ByteAccess( final TByteList buf )
+	class ByteAccess implements Access
 	{
-		this.buf = buf;
+		private int index;
+
+		private final TByteList buf;
+
+		ByteAccess( final TByteList buf )
+		{
+			this.buf = buf;
+		}
+
+		@Override
+		public void setIndex( final int index )
+		{
+			this.index = index;
+		}
+
+		@Override
+		public void setValue( final int typeIndex, final boolean isUndoPoint )
+		{
+			buf.set( index, ( byte ) ( isUndoPoint ? ( typeIndex | 0x80 ) : typeIndex ) );
+		}
+
+		@Override
+		public AbstractUndoableEditType getType()
+		{
+			return editTypes.get( getTypeIndex() );
+		}
+
+		@Override
+		public int getTypeIndex()
+		{
+			return buf.get( index ) & 0x7F;
+		}
+
+		@Override
+		public void setTypeIndex( final int typeIndex )
+		{
+			setValue( typeIndex, isUndoPoint() );
+		}
+
+		@Override
+		public boolean isUndoPoint()
+		{
+			return buf.get( index ) < 0;
+		}
+
+		@Override
+		public void setUndoPoint( final boolean isUndoPoint )
+		{
+			setValue( getTypeIndex(), isUndoPoint );
+		}
 	}
 
-	@Override
-	public void setIndex( final int index )
+	class ByteStack implements Stack
 	{
-		this.index = index;
+		private final TByteArrayList buf;
+
+		private final ConcurrentLinkedQueue< Access > tmpObjRefs;
+
+		ByteStack( final int initialCapacity )
+		{
+			buf = new TByteArrayList( initialCapacity );
+			tmpObjRefs = new ConcurrentLinkedQueue<>();
+		}
+
+		@Override
+		public Access createRef()
+		{
+			final Access access = tmpObjRefs.poll();
+			return access == null ? new ByteAccess( buf ) : access;
+		}
+
+		@Override
+		public void releaseRef( final Access access )
+		{
+			tmpObjRefs.add( access );
+		}
+
+		@Override
+		public int size()
+		{
+			return buf.size();
+		}
+
+		@Override
+		public void addElement()
+		{
+			buf.add( ( byte ) 0 );
+		}
+
+		@Override
+		public void trimToSize()
+		{
+			buf.trimToSize();
+		}
+
+		@Override
+		public void remove( final int offset, final int length )
+		{
+			buf.remove( offset, length );
+		}
+
+		@Override
+		public int maxEditTypeIndex()
+		{
+			return 127;
+		}
 	}
-
-	@Override
-	public void setValue( final int typeIndex, final boolean isUndoPoint )
-	{
-		buf.set( index, ( byte ) ( isUndoPoint ? ( typeIndex | 0x80 ) : typeIndex ) );
-	}
-
-	@Override
-	public int getTypeIndex()
-	{
-		return buf.get( index ) & 0x7F;
-	}
-
-	@Override
-	public void setTypeIndex( final int typeIndex )
-	{
-		setValue( typeIndex, isUndoPoint() );
-	}
-
-	@Override
-	public boolean isUndoPoint()
-	{
-		return buf.get( index ) < 0;
-	}
-
-	@Override
-	public void setUndoPoint( final boolean isUndoPoint )
-	{
-		setValue( getTypeIndex(), isUndoPoint );
-	}
-}
-
-class ByteStack implements Stack
-{
-	private final TByteArrayList buf;
-
-	private final ConcurrentLinkedQueue< Access > tmpObjRefs;
-
-	ByteStack( final int initialCapacity )
-	{
-		buf = new TByteArrayList( initialCapacity );
-		tmpObjRefs = new ConcurrentLinkedQueue<>();
-	}
-
-	@Override
-	public Access createRef()
-	{
-		final Access access = tmpObjRefs.poll();
-		return access == null ? new ByteAccess( buf ) : access;
-	}
-
-	@Override
-	public void releaseRef( final Access access )
-	{
-		tmpObjRefs.add( access );
-	}
-
-	@Override
-	public int size()
-	{
-		return buf.size();
-	}
-
-	@Override
-	public void addElement()
-	{
-		buf.add( ( byte ) 0 );
-	}
-
-	@Override
-	public void trimToSize()
-	{
-		buf.trimToSize();
-	}
-
-	@Override
-	public void remove( final int offset, final int length )
-	{
-		buf.remove( offset, length );
-	}
-
-	@Override
-	public int maxEditTypeIndex()
-	{
-		return 127;
-	}
-}
 
 //class ShortAccess implements Access
 //{
@@ -319,3 +335,4 @@ class ByteStack implements Stack
 //{
 //	TODO
 //}
+}

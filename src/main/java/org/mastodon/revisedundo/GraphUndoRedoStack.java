@@ -6,9 +6,13 @@ import static org.mastodon.pool.ByteUtils.SHORT_SIZE;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
+import org.mastodon.properties.undo.PropertyUndoRedoStack;
 import org.mastodon.revisedundo.ByteArrayUndoRedoStack.ByteArrayRef;
-import org.mastodon.undo.GraphUndoSerializer;
-import org.mastodon.undo.attributes.Attributes;
+import org.mastodon.revisedundo.attributes.Attribute;
+import org.mastodon.revisedundo.attributes.AttributeSerializer;
+import org.mastodon.revisedundo.edits.GenericUndoableEditType;
+import org.mastodon.revisedundo.edits.SetAttributeType;
+import org.mastodon.revisedundo.edits.SetPropertyType;
 
 /**
  * A undo/redo stack of undoable edits made to a listenable graph.
@@ -27,82 +31,80 @@ public class GraphUndoRedoStack<
 {
 	protected final ListenableGraph< V, E > graph;
 
-	protected final GraphUndoSerializer< V, E > serializer;
-
 	protected final UndoIdBimap< V > vertexUndoIdBimap;
 
 	protected final UndoIdBimap< E > edgeUndoIdBimap;
 
-	protected final Attributes< V > vertexAttributes;
+	protected final AttributeSerializer< V > vertexSerializer;
 
-	protected final Attributes< E > edgeAttributes;
+	protected final AttributeSerializer< E > edgeSerializer;
 
 	protected final ByteArrayUndoRedoStack dataStack;
-
-	private final AddVertexType addVertex;
-
-	private final RemoveVertexType removeVertex;
-
-	private final AddEdgeType addEdge;
-
-	private final RemoveEdgeType removeEdge;
 
 	public GraphUndoRedoStack(
 			final int initialCapacity,
 			final ListenableGraph< V, E > graph,
-			final Attributes< V > vertexAttributes,
-			final Attributes< E > edgeAttributes,
-			final GraphUndoSerializer< V, E > serializer,
+			final AttributeSerializer< V > vertexSerializer,
+			final AttributeSerializer< E > edgeSerializer,
 			final UndoIdBimap< V > vertexUndoIdBimap,
 			final UndoIdBimap< E > edgeUndoIdBimap )
 	{
 		super( initialCapacity );
 		this.graph = graph;
-		this.vertexAttributes = vertexAttributes;
-		this.edgeAttributes = edgeAttributes;
-		this.serializer = serializer;
+		this.vertexSerializer = vertexSerializer;
+		this.edgeSerializer = edgeSerializer;
 		this.vertexUndoIdBimap = vertexUndoIdBimap;
 		this.edgeUndoIdBimap = edgeUndoIdBimap;
 
 		dataStack = new ByteArrayUndoRedoStack( 1024 * 1024 * 32 );
-
-		addVertex = new AddVertexType( this );
-		removeVertex = new RemoveVertexType( this );
-		addEdge = new AddEdgeType( this );
-		removeEdge = new RemoveEdgeType( this );
-//		setVertexFeature = new SetFeatureType<>( vertexUndoIdBimap, vertexFeatureStore );
-//		setEdgeFeature = new SetFeatureType<>( edgeUndoIdBimap, edgeFeatureStore );
-//		setVertexAttribute = new SetAttributeType<>( vertexUndoIdBimap, vertexAttributes );
-//		setEdgeAttribute = new SetAttributeType<>( edgeUndoIdBimap, edgeAttributes );
 	}
 
-
-//	final ByteArrayRef ref = dataStack.createRef();
-//	final ByteArrayRef buffer = dataStack.record( length, ref );
-//	dataStack.releaseRef( ref );
-
-	public void recordAddVertex( final V vertex )
+	public Recorder< V > createAddVertexRecorder()
 	{
-		addVertex.record( vertex );
+		return new AddVertexType( this );
 	}
 
-	public void recordRemoveVertex( final V vertex )
+	public Recorder< V > createRemoveVertexRecorder()
 	{
-		removeVertex.record( vertex );
+		return new RemoveVertexType( this );
 	}
 
-	public void recordAddEdge( final E edge )
+	public Recorder< E > createAddEdgeRecorder()
 	{
-		addEdge.record( edge );
+		return new AddEdgeType( this );
 	}
 
-	public void recordRemoveEdge( final E edge )
+	public Recorder< E > createRemoveEdgeRecorder()
 	{
-		removeEdge.record( edge );
+		return new RemoveEdgeType( this );
 	}
 
+	public Recorder< V > createSetVertexAttributeRecorder( final Attribute< V > attribute )
+	{
+		return new SetAttributeType<>( attribute.getUndoSerializer(), vertexUndoIdBimap, dataStack, this );
+	}
 
-	private class AddVertexType extends AbstractUndoableEditType
+	public Recorder< E > createSetEdgeAttributeRecorder( final Attribute< E > attribute )
+	{
+		return new SetAttributeType<>( attribute.getUndoSerializer(), edgeUndoIdBimap, dataStack, this );
+	}
+
+	public Recorder< V > createSetVertexPropertyRecorder( final PropertyUndoRedoStack< V > propertyUndoRedoStack )
+	{
+		return new SetPropertyType<>( propertyUndoRedoStack, vertexUndoIdBimap, dataStack, this );
+	}
+
+	public Recorder< E > createSetEdgePropertyRecorder( final PropertyUndoRedoStack< E > propertyUndoRedoStack )
+	{
+		return new SetPropertyType<>( propertyUndoRedoStack, edgeUndoIdBimap, dataStack, this );
+	}
+
+	public < T extends UndoableEdit > Recorder< T > createGenericUndoableEditRecorder()
+	{
+		return new GenericUndoableEditType<>( this );
+	}
+
+	private class AddVertexType extends AbstractUndoableEditType implements Recorder< V >
 	{
 		private final AddRemoveVertexRecord addRemoveVertex;
 
@@ -118,6 +120,7 @@ public class GraphUndoRedoStack<
 			ref = dataStack.createRef();
 		}
 
+		@Override
 		public void record( final V vertex )
 		{
 			addRemoveVertex.initAdd( vertex, dataStack.record( size, ref ) );
@@ -136,7 +139,7 @@ public class GraphUndoRedoStack<
 		}
 	}
 
-	private class RemoveVertexType extends AbstractUndoableEditType
+	private class RemoveVertexType extends AbstractUndoableEditType implements Recorder< V >
 	{
 		private final AddRemoveVertexRecord addRemoveVertex;
 
@@ -152,6 +155,7 @@ public class GraphUndoRedoStack<
 			ref = dataStack.createRef();
 		}
 
+		@Override
 		public void record( final V vertex )
 		{
 			addRemoveVertex.initRemove( vertex, dataStack.record( size, ref ) );
@@ -181,8 +185,8 @@ public class GraphUndoRedoStack<
 
 		public AddRemoveVertexRecord()
 		{
-			data = new byte[ serializer.getVertexNumBytes() ];
-			bufferSize = DATA_OFFSET + serializer.getVertexNumBytes();
+			data = new byte[ vertexSerializer.getNumBytes() ];
+			bufferSize = DATA_OFFSET + vertexSerializer.getNumBytes();
 		}
 
 		public void initAdd( final V vertex, final ByteArrayRef buffer )
@@ -194,7 +198,7 @@ public class GraphUndoRedoStack<
 		public void initRemove( final V vertex, final ByteArrayRef buffer )
 		{
 			final int vi = vertexUndoIdBimap.getId( vertex );
-			serializer.getBytes( vertex, data );
+			vertexSerializer.getBytes( vertex, data );
 
 			buffer.putInt( VERTEX_ID_OFFSET, vi );
 			buffer.putBytes( DATA_OFFSET, data );
@@ -206,7 +210,7 @@ public class GraphUndoRedoStack<
 
 			final int vi = buffer.getInt( VERTEX_ID_OFFSET );
 			final V vertex = vertexUndoIdBimap.getObject( vi, vref );
-			serializer.getBytes( vertex, data );
+			vertexSerializer.getBytes( vertex, data );
 			buffer.putBytes( DATA_OFFSET, data );
 			graph.remove( vertex );
 
@@ -221,8 +225,8 @@ public class GraphUndoRedoStack<
 			final V vertex = graph.addVertex( ref );
 			vertexUndoIdBimap.put( vertex, vi );
 			buffer.getBytes( DATA_OFFSET, data );
-			serializer.setBytes( vertex, data );
-			serializer.notifyVertexAdded( vertex );
+			vertexSerializer.setBytes( vertex, data );
+			vertexSerializer.notifySet( vertex );
 
 			graph.releaseRef( ref );
 		}
@@ -233,8 +237,7 @@ public class GraphUndoRedoStack<
 		}
 	}
 
-
-	private class AddEdgeType extends AbstractUndoableEditType
+	private class AddEdgeType extends AbstractUndoableEditType implements Recorder< E >
 	{
 		private final AddRemoveEdgeRecord addRemoveEdge;
 
@@ -250,6 +253,7 @@ public class GraphUndoRedoStack<
 			ref = dataStack.createRef();
 		}
 
+		@Override
 		public void record( final E edge )
 		{
 			addRemoveEdge.initAdd( edge, dataStack.record( size, ref ) );
@@ -268,7 +272,7 @@ public class GraphUndoRedoStack<
 		}
 	}
 
-	private class RemoveEdgeType extends AbstractUndoableEditType
+	private class RemoveEdgeType extends AbstractUndoableEditType implements Recorder< E >
 	{
 		private final AddRemoveEdgeRecord addRemoveEdge;
 
@@ -284,6 +288,7 @@ public class GraphUndoRedoStack<
 			ref = dataStack.createRef();
 		}
 
+		@Override
 		public void record( final E edge )
 		{
 			addRemoveEdge.initRemove( edge, dataStack.record( size, ref ) );
@@ -317,8 +322,8 @@ public class GraphUndoRedoStack<
 
 		public AddRemoveEdgeRecord()
 		{
-			data = new byte[ serializer.getEdgeNumBytes() ];
-			bufferSize = DATA_OFFSET + serializer.getEdgeNumBytes();
+			data = new byte[ edgeSerializer.getNumBytes() ];
+			bufferSize = DATA_OFFSET + edgeSerializer.getNumBytes();
 		}
 
 		public void initAdd( final E edge, final ByteArrayRef buffer )
@@ -342,7 +347,7 @@ public class GraphUndoRedoStack<
 			buffer.putShort( SOURCE_OUT_INDEX_OFFSET, ( short ) sOutIndex );
 			buffer.putShort( TARGET_IN_INDEX_OFFSET, ( short ) tInIndex );
 
-			serializer.getBytes( edge, data );
+			edgeSerializer.getBytes( edge, data );
 			buffer.putBytes( DATA_OFFSET, data );
 
 			graph.releaseRef( vref );
@@ -365,7 +370,7 @@ public class GraphUndoRedoStack<
 			buffer.putShort( SOURCE_OUT_INDEX_OFFSET, ( short ) sOutIndex );
 			buffer.putShort( TARGET_IN_INDEX_OFFSET, ( short ) tInIndex );
 
-			serializer.getBytes( edge, data );
+			edgeSerializer.getBytes( edge, data );
 			buffer.putBytes( DATA_OFFSET, data );
 
 			graph.remove( edge );
@@ -392,8 +397,8 @@ public class GraphUndoRedoStack<
 			edgeUndoIdBimap.put( edge, ei );
 
 			buffer.getBytes( DATA_OFFSET, data );
-			serializer.setBytes( edge, data );
-			serializer.notifyEdgeAdded( edge );
+			edgeSerializer.setBytes( edge, data );
+			edgeSerializer.notifySet( edge );
 
 			graph.releaseRef( ref );
 			graph.releaseRef( vref1 );

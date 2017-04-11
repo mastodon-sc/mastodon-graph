@@ -111,6 +111,7 @@ public class GraphUndoableEditList<
 
 	public void recordSetVertexFeature( final Feature< ?, V, ? > feature, final V vertex )
 	{
+		System.out.println( "recordSetVertexFeature" );
 		final UndoableEditRef ref = createRef();
 		create( ref ).getEdit( setVertexFeature ).init( feature, vertex );
 		releaseRef( ref );
