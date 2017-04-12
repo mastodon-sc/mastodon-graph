@@ -117,6 +117,12 @@ class IntPropertyBimap< O > extends AbstractPropertyMap< O, Integer >
 		return map.containsKey( key );
 	}
 
+	@Override
+	public int size()
+	{
+		return map.size();
+	}
+
 	public void release()
 	{
 		map.clear();
