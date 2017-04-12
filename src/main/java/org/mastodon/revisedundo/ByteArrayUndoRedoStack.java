@@ -1,8 +1,9 @@
 package org.mastodon.revisedundo;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.mastodon.pool.ByteUtils;
 
 /**
  * A undo/redo stack for byte arrays of variable size. This is used to record
@@ -35,26 +36,26 @@ public class ByteArrayUndoRedoStack
 
 		public void putInt( final int index, final int value )
 		{
-			// TODO
-			ByteBuffer.wrap( pool.buf ).putInt( offset + index, value );
+//			System.out.println( "putInt( index = " + index + ", value = " + value + " ) // offset = " + offset );
+			ByteUtils.putInt( value, pool.buf, offset + index );
 		}
 
 		public int getInt( final int index )
 		{
-			// TODO
-			return ByteBuffer.wrap( pool.buf ).getInt( offset + index );
+//			System.out.println( "getInt( index = " + index + " ) = " + ByteBuffer.wrap( pool.buf ).getInt( offset + index ) + " // offset = " + offset );
+			return ByteUtils.getInt( pool.buf, offset + index );
 		}
 
 		public void putShort( final int index, final short value )
 		{
-			// TODO
-			ByteBuffer.wrap( pool.buf ).putShort( offset + index, value );
+//			System.out.println( "putShort( index = " + index + ", value = " + value + " ) // offset = " + offset );
+			ByteUtils.putShort( value, pool.buf, offset + index );
 		}
 
 		public short getShort( final int index )
 		{
-			// TODO
-			return ByteBuffer.wrap( pool.buf ).getShort( offset + index );
+//			System.out.println( "getShort( index = " + index + " ) = " + ByteBuffer.wrap( pool.buf ).getShort( offset + index ) + " // offset = " + offset );
+			return ByteUtils.getShort( pool.buf, offset + index );
 		}
 
 		public void putBytes( final int index, final byte[] array )
@@ -67,20 +68,16 @@ public class ByteArrayUndoRedoStack
 			getBytes( index, array, 0, array.length );
 		}
 
-		public void putBytes( final int index, final byte[] array, final int offset, final int length )
+		public void putBytes( final int index, final byte[] array, final int arrayoffset, final int length )
 		{
-			// TODO
-			final ByteBuffer bb = ByteBuffer.wrap( pool.buf );
-			bb.position( offset + index );
-			bb.put( array, offset, length );
+//			System.out.println( "putBytes( index = " + index + ", arrayoffset = " + arrayoffset + " length = " + length + " ) // offset = " + offset );
+			ByteUtils.copyBytes( array, arrayoffset, pool.buf, offset + index, length );
 		}
 
-		public void getBytes( final int index, final byte[] array, final int offset, final int length )
+		public void getBytes( final int index, final byte[] array, final int arrayoffset, final int length )
 		{
-			// TODO
-			final ByteBuffer bb = ByteBuffer.wrap( pool.buf );
-			bb.position( offset + index );
-			bb.get( array, offset, length );
+//			System.out.println( "getBytes( index = " + index + ", arrayoffset = " + arrayoffset + " length = " + length + " ) // offset = " + offset );
+			ByteUtils.copyBytes( pool.buf, offset + index, array, arrayoffset, length );
 		}
 	}
 
