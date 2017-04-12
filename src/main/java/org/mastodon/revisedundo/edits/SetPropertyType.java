@@ -9,6 +9,7 @@ import org.mastodon.revisedundo.ByteArrayUndoRedoStack.ByteArrayRef;
 import org.mastodon.revisedundo.Recorder;
 import org.mastodon.revisedundo.UndoIdBimap;
 import org.mastodon.revisedundo.UndoRedoStack;
+import org.mastodon.revisedundo.UndoRedoStack.Element;
 
 public class SetPropertyType< O > extends AbstractUndoableEditType implements Recorder< O >
 {
@@ -19,6 +20,8 @@ public class SetPropertyType< O > extends AbstractUndoableEditType implements Re
 	private final ByteArrayUndoRedoStack dataStack;
 
 	private final ByteArrayRef ref;
+
+	private final Element elmtRef;
 
 	private final static int OBJ_ID_OFFSET = 0;
 	private final static int SIZE = OBJ_ID_OFFSET + INT_SIZE;
@@ -34,14 +37,24 @@ public class SetPropertyType< O > extends AbstractUndoableEditType implements Re
 		this.undoIdBimap = undoIdBimap;
 		this.dataStack = dataStack;
 		ref = dataStack.createRef();
+		elmtRef = undoRedoStack.createRef();
 	}
 
 	@Override
 	public void record( final O obj )
 	{
+		final int oi = undoIdBimap.getId( obj );
+
+		final Element peek = undoRedoStack.peek( elmtRef );
+		if ( peek != null && peek.isUndoPoint() == false && peek.getType() == this )
+		{
+			final ByteArrayRef buffer = dataStack.peek( SIZE, ref );
+			if ( buffer != null && buffer.getInt( OBJ_ID_OFFSET ) == oi )
+				return; // fuse with previous edit (of same type and object)
+		}
+
 		recordType();
 		final ByteArrayRef buffer = dataStack.record( SIZE, ref );
-		final int oi = undoIdBimap.getId( obj );
 		buffer.putInt( OBJ_ID_OFFSET, oi );
 		propertyUndoRedoStack.record( obj );
 	}

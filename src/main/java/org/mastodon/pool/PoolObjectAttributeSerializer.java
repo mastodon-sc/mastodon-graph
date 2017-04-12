@@ -1,8 +1,8 @@
 package org.mastodon.pool;
 
-import org.mastodon.undo.attributes.AttributeUndoSerializer;
+import org.mastodon.revisedundo.attributes.AttributeSerializer;
 
-public class PoolObjectAttributeSerializer< O extends PoolObject< O, ?, ? > > implements AttributeUndoSerializer< O >
+public class PoolObjectAttributeSerializer< O extends PoolObject< O, ?, ? > > implements AttributeSerializer< O >
 {
 	private final int offset;
 

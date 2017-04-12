@@ -97,6 +97,15 @@ public class ByteArrayUndoRedoStack
 		top = 0;
 	}
 
+	//  stack[top]
+	public ByteArrayRef peek( final int size, final ByteArrayRef ref )
+	{
+		if ( top - size < 0 )
+			return null;
+		ref.offset = top - size;
+		return ref;
+	}
+
 	//  stack[top++] := e
 	public ByteArrayRef record( final int size, final ByteArrayRef ref )
 	{

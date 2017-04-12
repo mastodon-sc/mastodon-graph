@@ -36,12 +36,15 @@ public class UndoRedoStack implements UndoPointMarker
 
 	private int end;
 
+	private final ConcurrentLinkedQueue< Element > tmpObjRefs;
+
 	public UndoRedoStack( final int initialCapacity )
 	{
 		stack = new ByteStack( initialCapacity );
 		ref = stack.createRef();
 		top = 0;
 		end = 0;
+		tmpObjRefs = new ConcurrentLinkedQueue<>();
 	}
 
 	/**
@@ -53,6 +56,7 @@ public class UndoRedoStack implements UndoPointMarker
 	 */
 	public void record( final AbstractUndoableEditType type )
 	{
+//		System.out.println( "UndoRedoStack.record( " + type + " )" );
 //		final Access ref = stack.createRef();
 		if ( top >= stack.size() )
 			stack.addElement();
@@ -127,19 +131,55 @@ public class UndoRedoStack implements UndoPointMarker
 		stack.trimToSize();
 	}
 
-//	/**
-//	 * Return the element at {@code top - 1}, i.e., the last recorded element.
-//	 * @param ref
-//	 * @return
-//	 */
-//	protected Access peek( final Access ref )
-//	{
-//		if ( top <= 0 || top >= end )
-//			return null;
-//		ref.setIndex( top );
-//		return ref;
-//	}
-//
+	/**
+	 * Read-only access to an element on this {@link UndoRedoStack}.
+	 */
+	public class Element
+	{
+		private final Access ref;
+
+		Element( final Access ref )
+		{
+			this.ref = ref;
+		}
+
+		public AbstractUndoableEditType getType()
+		{
+			return ref.getType();
+		}
+
+		public boolean isUndoPoint()
+		{
+			return ref.isUndoPoint();
+		}
+	}
+
+	public Element createRef()
+	{
+		final Element ref = tmpObjRefs.poll();
+		return ref == null ? new Element( stack.createRef() ) : ref;
+	}
+
+	public void releaseRef( final Element ref )
+	{
+		tmpObjRefs.add( ref );
+	}
+
+	/**
+	 * Return the element at {@code top - 1}, i.e., the last recorded element.
+	 *
+	 * @param ref
+	 *            a reusable {@link Element} ref (will be used as return value).
+	 * @return the element at {@code top - 1} or {@code null} if the stack is empty.
+	 */
+	public Element peek( final Element ref )
+	{
+		if ( top <= 0 )
+			return null;
+		ref.ref.setIndex( top - 1 );
+		return ref;
+	}
+
 //	/**
 //	 * Decrement top. Then return the element at top.
 //	 */

@@ -8,9 +8,9 @@ package org.mastodon.revisedundo;
  */
 public abstract class AbstractUndoableEditType
 {
-	private final UndoRedoStack undoRedoStack;
+	protected final UndoRedoStack undoRedoStack;
 
-	private final int typeIndex;
+	protected final int typeIndex;
 
 	public AbstractUndoableEditType( final UndoRedoStack undoRedoStack )
 	{
@@ -30,6 +30,7 @@ public abstract class AbstractUndoableEditType
 
 	protected void recordType()
 	{
+		System.out.println();
 		undoRedoStack.record( this );
 	}
 

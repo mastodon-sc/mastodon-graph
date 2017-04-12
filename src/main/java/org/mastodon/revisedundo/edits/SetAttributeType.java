@@ -8,6 +8,7 @@ import org.mastodon.revisedundo.ByteArrayUndoRedoStack.ByteArrayRef;
 import org.mastodon.revisedundo.Recorder;
 import org.mastodon.revisedundo.UndoIdBimap;
 import org.mastodon.revisedundo.UndoRedoStack;
+import org.mastodon.revisedundo.UndoRedoStack.Element;
 import org.mastodon.revisedundo.attributes.AttributeSerializer;
 
 public class SetAttributeType< O > extends AbstractUndoableEditType implements Recorder< O >
@@ -21,6 +22,8 @@ public class SetAttributeType< O > extends AbstractUndoableEditType implements R
 	private final int size;
 
 	private final ByteArrayRef ref;
+
+	private final Element elmtRef;
 
 	private final byte[] data;
 
@@ -41,16 +44,26 @@ public class SetAttributeType< O > extends AbstractUndoableEditType implements R
 		this.dataStack = dataStack;
 		size = DATA_OFFSET + serializer.getNumBytes();
 		ref = dataStack.createRef();
-		data = new byte[ size ];
-		swapdata = new byte[ size ];
+		elmtRef = undoRedoStack.createRef();
+		data = new byte[ serializer.getNumBytes() ];
+		swapdata = new byte[ serializer.getNumBytes() ];
 	}
 
 	@Override
 	public void record( final O obj )
 	{
+		final int oi = undoIdBimap.getId( obj );
+
+		final Element peek = undoRedoStack.peek( elmtRef );
+		if ( peek != null && peek.isUndoPoint() == false && peek.getType() == this )
+		{
+			final ByteArrayRef buffer = dataStack.peek( size, ref );
+			if ( buffer != null && buffer.getInt( OBJ_ID_OFFSET ) == oi )
+				return; // fuse with previous edit (of same type and object)
+		}
+
 		recordType();
 		final ByteArrayRef buffer = dataStack.record( size, ref );
-		final int oi = undoIdBimap.getId( obj );
 		buffer.putInt( OBJ_ID_OFFSET, oi );
 		serializer.getBytes( obj, data );
 		buffer.putBytes( DATA_OFFSET, data );
