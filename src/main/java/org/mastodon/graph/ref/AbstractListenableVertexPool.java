@@ -7,7 +7,7 @@ public class AbstractListenableVertexPool<
 			V extends AbstractListenableVertex< V, E, ?, T >,
 			E extends AbstractEdge< E, ?, ?, ? >,
 			T extends MappedElement >
-		extends AbstractVertexWithFeaturesPool< V, E, T >
+		extends AbstractVertexPool< V, E, T >
 {
 	public AbstractListenableVertexPool(
 			final int initialCapacity,

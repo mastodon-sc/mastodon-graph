@@ -1,9 +1,9 @@
-package org.mastodon.undo;
+package org.mastodon.revisedundo;
 
 /**
  * TODO javadoc
  *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ * @author Tobias Pietzsch
  */
 public interface UndoPointMarker
 {

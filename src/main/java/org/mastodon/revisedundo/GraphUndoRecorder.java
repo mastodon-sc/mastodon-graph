@@ -12,7 +12,6 @@ import org.mastodon.properties.PropertyMap;
 import org.mastodon.properties.undo.PropertyUndoRedoStack;
 import org.mastodon.revisedundo.attributes.Attribute;
 import org.mastodon.revisedundo.attributes.AttributeSerializer;
-import org.mastodon.undo.UndoPointMarker;
 
 public class GraphUndoRecorder<
 			V extends Vertex< E >,

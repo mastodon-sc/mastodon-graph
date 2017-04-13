@@ -44,7 +44,7 @@ public class AbstractListenableVertex<
 			E extends AbstractEdge< E, ?, ?, ? >,
 			VP extends AbstractListenableVertexPool< V, ?, T >,
 			T extends MappedElement >
-		extends AbstractVertexWithFeatures< V, E, VP, T >
+		extends AbstractVertex< V, E, VP, T >
 {
 	protected AbstractListenableVertex( final VP pool )
 	{

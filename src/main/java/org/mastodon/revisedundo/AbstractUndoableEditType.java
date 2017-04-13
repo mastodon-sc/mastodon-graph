@@ -4,7 +4,7 @@ package org.mastodon.revisedundo;
  * Abstract base class for the UndoableEdit types to be recorded in {@link UndoRedoStack}.
  *
  * @param <T>
- *            the {@link AbstractUndoableEdit} type.
+ *            the {@link UndoableEdit} type.
  */
 public abstract class AbstractUndoableEditType
 {
@@ -30,7 +30,7 @@ public abstract class AbstractUndoableEditType
 
 	protected void recordType()
 	{
-		System.out.println();
+//		System.out.println( "AbstractUndoableEditType.recordType() " + this );
 		undoRedoStack.record( this );
 	}
 

@@ -148,4 +148,16 @@ class IntPropertyBimap< O > extends AbstractPropertyMap< O, Integer >
 		if ( value != noEntryValue )
 			rmap.remove( value );
 	}
+
+	@Override
+	public void beforeClearPool()
+	{
+		map.clear();
+	}
+
+	@Override
+	public void clear()
+	{
+		throw new UnsupportedOperationException( "TODO" );
+	}
 }

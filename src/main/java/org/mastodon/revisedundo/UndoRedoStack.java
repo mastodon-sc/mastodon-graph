@@ -6,8 +6,6 @@ package org.mastodon.revisedundo;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.mastodon.undo.UndoPointMarker;
-
 import gnu.trove.list.TByteList;
 import gnu.trove.list.array.TByteArrayList;
 
