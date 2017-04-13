@@ -96,13 +96,24 @@ class IntPropertyBimap< O > extends AbstractPropertyMap< O, Integer >
 	}
 
 	@Override
-	public void remove( final O key )
+	public Integer remove( final O key )
 	{
 //		notifyBeforePropertyChange( key );
-		final int value = map.remove( key );
-		if ( value != noEntryValue )
-			rmap.remove( value );
+		final int old = map.remove( key );
+		if ( old != noEntryValue )
+			rmap.remove( old );
 //		notifyPropertyChanged( key );
+		return ( old == noEntryValue ) ? null : Integer.valueOf( old );
+	}
+
+	public int removeInt( final O key )
+	{
+		notifyBeforePropertyChange( key );
+		final int old = map.remove( key );
+		if ( old != noEntryValue )
+			rmap.remove( old );
+		notifyPropertyChanged( key );
+		return old;
 	}
 
 	@Override
