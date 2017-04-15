@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 import static org.mastodon.pool.ByteUtils.INT_SIZE;
 import static org.mastodon.pool.ByteUtils.SHORT_SIZE;
@@ -7,12 +7,12 @@ import org.mastodon.graph.Edge;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.properties.undo.PropertyUndoRedoStack;
-import org.mastodon.revisedundo.ByteArrayUndoRedoStack.ByteArrayRef;
-import org.mastodon.revisedundo.attributes.Attribute;
-import org.mastodon.revisedundo.attributes.AttributeSerializer;
-import org.mastodon.revisedundo.edits.GenericUndoableEditType;
-import org.mastodon.revisedundo.edits.SetAttributeType;
-import org.mastodon.revisedundo.edits.SetPropertyType;
+import org.mastodon.undo.ByteArrayUndoRedoStack.ByteArrayRef;
+import org.mastodon.undo.attributes.Attribute;
+import org.mastodon.undo.attributes.AttributeSerializer;
+import org.mastodon.undo.edits.GenericUndoableEditType;
+import org.mastodon.undo.edits.SetAttributeType;
+import org.mastodon.undo.edits.SetPropertyType;
 
 /**
  * A undo/redo stack of undoable edits made to a listenable graph.

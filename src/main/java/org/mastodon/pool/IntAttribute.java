@@ -1,6 +1,6 @@
 package org.mastodon.pool;
 
-import org.mastodon.revisedundo.attributes.Attribute;
+import org.mastodon.undo.attributes.Attribute;
 
 public class IntAttribute< O extends PoolObject< O, ?, ? > >
 	extends Attribute< O >

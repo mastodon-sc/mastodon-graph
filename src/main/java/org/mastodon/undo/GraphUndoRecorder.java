@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.properties.PropertyMap;
 import org.mastodon.properties.undo.PropertyUndoRedoStack;
-import org.mastodon.revisedundo.attributes.Attribute;
-import org.mastodon.revisedundo.attributes.AttributeSerializer;
+import org.mastodon.undo.attributes.Attribute;
+import org.mastodon.undo.attributes.AttributeSerializer;
 
 public class GraphUndoRecorder<
 			V extends Vertex< E >,

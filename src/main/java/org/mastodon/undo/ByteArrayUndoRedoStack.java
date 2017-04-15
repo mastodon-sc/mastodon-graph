@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;

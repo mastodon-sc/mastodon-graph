@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 /**
  * TODO javadoc

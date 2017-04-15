@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo.attributes;
+package org.mastodon.undo.attributes;
 
 import java.util.ArrayList;
 

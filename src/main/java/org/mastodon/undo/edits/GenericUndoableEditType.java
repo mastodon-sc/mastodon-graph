@@ -1,10 +1,10 @@
-package org.mastodon.revisedundo.edits;
+package org.mastodon.undo.edits;
 
-import org.mastodon.revisedundo.AbstractUndoableEditType;
-import org.mastodon.revisedundo.Recorder;
-import org.mastodon.revisedundo.UndoRedoStack;
-import org.mastodon.revisedundo.UndoableEdit;
-import org.mastodon.revisedundo.UndoableEditUndoRedoStack;
+import org.mastodon.undo.AbstractUndoableEditType;
+import org.mastodon.undo.Recorder;
+import org.mastodon.undo.UndoRedoStack;
+import org.mastodon.undo.UndoableEdit;
+import org.mastodon.undo.UndoableEditUndoRedoStack;
 
 public class GenericUndoableEditType< E extends UndoableEdit > extends AbstractUndoableEditType implements Recorder< E >
 {

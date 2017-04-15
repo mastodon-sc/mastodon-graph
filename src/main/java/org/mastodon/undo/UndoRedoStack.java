@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;

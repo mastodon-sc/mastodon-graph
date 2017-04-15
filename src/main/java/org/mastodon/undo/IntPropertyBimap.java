@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 import org.mastodon.RefPool;
 import org.mastodon.collection.IntRefMap;

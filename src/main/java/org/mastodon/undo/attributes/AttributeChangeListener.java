@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo.attributes;
+package org.mastodon.undo.attributes;
 
 public interface AttributeChangeListener< O >
 {

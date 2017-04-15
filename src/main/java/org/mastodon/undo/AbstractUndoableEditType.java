@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 /**
  * Abstract base class for the UndoableEdit types to be recorded in {@link UndoRedoStack}.

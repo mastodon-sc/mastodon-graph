@@ -1,4 +1,4 @@
-package org.mastodon.revisedundo;
+package org.mastodon.undo;
 
 /**
  * Functor to record an undoable edit concerning one object of type {@code O}.

@@ -1,15 +1,15 @@
-package org.mastodon.revisedundo.edits;
+package org.mastodon.undo.edits;
 
 import static org.mastodon.pool.ByteUtils.INT_SIZE;
 
-import org.mastodon.revisedundo.AbstractUndoableEditType;
-import org.mastodon.revisedundo.ByteArrayUndoRedoStack;
-import org.mastodon.revisedundo.ByteArrayUndoRedoStack.ByteArrayRef;
-import org.mastodon.revisedundo.Recorder;
-import org.mastodon.revisedundo.UndoIdBimap;
-import org.mastodon.revisedundo.UndoRedoStack;
-import org.mastodon.revisedundo.UndoRedoStack.Element;
-import org.mastodon.revisedundo.attributes.AttributeSerializer;
+import org.mastodon.undo.AbstractUndoableEditType;
+import org.mastodon.undo.ByteArrayUndoRedoStack;
+import org.mastodon.undo.Recorder;
+import org.mastodon.undo.UndoIdBimap;
+import org.mastodon.undo.UndoRedoStack;
+import org.mastodon.undo.ByteArrayUndoRedoStack.ByteArrayRef;
+import org.mastodon.undo.UndoRedoStack.Element;
+import org.mastodon.undo.attributes.AttributeSerializer;
 
 public class SetAttributeType< O > extends AbstractUndoableEditType implements Recorder< O >
 {
