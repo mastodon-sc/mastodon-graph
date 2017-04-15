@@ -68,20 +68,20 @@ public class GraphUndoRecorder<
 		for ( final Attribute< V > attribute : vertexAttributes )
 		{
 			final Recorder< V > recorder = edits.createSetVertexAttributeRecorder( attribute );
-			attribute.addBeforeAttributeChangeListener( ( a, v ) -> recorder.record( v ) );
+			attribute.addBeforeAttributeChangeListener( v -> recorder.record( v ) );
 		}
 
 		for ( final Attribute< E > attribute : edgeAttributes )
 		{
 			final Recorder< E > recorder = edits.createSetEdgeAttributeRecorder( attribute );
-			attribute.addBeforeAttributeChangeListener( ( a, v ) -> recorder.record( v ) );
+			attribute.addBeforeAttributeChangeListener( v -> recorder.record( v ) );
 		}
 
 		for ( final PropertyMap< V, ? > property  : vertexProperties )
 		{
 			final PropertyUndoRedoStack< V > propertyUndoRedoStack = property.createUndoRedoStack();
 			final Recorder< V > recorder = edits.createSetVertexPropertyRecorder( propertyUndoRedoStack );
-			property.addBeforePropertyChangeListener( ( p, vertex ) -> {
+			property.addBeforePropertyChangeListener( vertex -> {
 				if ( recording )
 					recorder.record( vertex );
 			} );
@@ -93,7 +93,7 @@ public class GraphUndoRecorder<
 		{
 			final PropertyUndoRedoStack< E > propertyUndoRedoStack = property.createUndoRedoStack();
 			final Recorder< E > recorder = edits.createSetEdgePropertyRecorder( propertyUndoRedoStack );
-			property.addBeforePropertyChangeListener( ( p, edge ) -> {
+			property.addBeforePropertyChangeListener( edge -> {
 				if ( recording )
 					recorder.record( edge );
 			} );
