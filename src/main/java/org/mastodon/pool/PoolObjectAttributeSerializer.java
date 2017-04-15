@@ -25,15 +25,13 @@ public class PoolObjectAttributeSerializer< O extends PoolObject< O, ?, ? > > im
 	@Override
 	public void getBytes( final O obj, final byte[] bytes )
 	{
-		for ( int i = 0, j = offset; i < length; ++i, ++j )
-			bytes[ i ] = obj.access.getByte( j );
+		obj.access.getBytes( bytes, 0, length, offset );
 	}
 
 	@Override
 	public void setBytes( final O obj, final byte[] bytes )
 	{
-		for ( int i = 0, j = offset; i < length; ++i, ++j )
-			obj.access.putByte( bytes[ i ], j );
+		obj.access.putBytes( bytes, 0, length, offset );
 	}
 
 	@Override
