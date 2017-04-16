@@ -68,13 +68,19 @@ public class GraphUndoRecorder<
 		for ( final Attribute< V > attribute : vertexAttributes )
 		{
 			final Recorder< V > recorder = edits.createSetVertexAttributeRecorder( attribute );
-			attribute.addBeforeAttributeChangeListener( v -> recorder.record( v ) );
+			attribute.addBeforePropertyChangeListener( vertex -> {
+				if ( recording )
+					recorder.record( vertex );
+			} );
 		}
 
 		for ( final Attribute< E > attribute : edgeAttributes )
 		{
 			final Recorder< E > recorder = edits.createSetEdgeAttributeRecorder( attribute );
-			attribute.addBeforeAttributeChangeListener( v -> recorder.record( v ) );
+			attribute.addBeforePropertyChangeListener( edge -> {
+				if ( recording )
+					recorder.record( edge );
+			} );
 		}
 
 		for ( final PropertyMap< V, ? > property  : vertexProperties )
