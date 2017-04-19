@@ -15,11 +15,11 @@ public abstract class AbstractVertexPool<
 
 	public static class AbstractVertexLayout extends PoolObjectLayout
 	{
-		IndexField firstInEdge = indexField();
-		IndexField firstOutEdge = indexField();
+		final IndexField firstInEdge = indexField();
+		final IndexField firstOutEdge = indexField();
 	}
 
-	static AbstractVertexLayout layout = new AbstractVertexLayout();
+	public static AbstractVertexLayout layout = new AbstractVertexLayout();
 
 	public AbstractVertexPool(
 			final int initialCapacity,

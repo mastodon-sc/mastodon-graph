@@ -10,7 +10,7 @@ public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, By
 {
 	static class TestVertexLayout extends AbstractVertexLayout
 	{
-		IntField id = intField();
+		final IntField id = intField();
 	}
 
 	static TestVertexLayout layout = new TestVertexLayout();

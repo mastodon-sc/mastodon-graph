@@ -15,10 +15,10 @@ public abstract class AbstractEdgePool<
 
 	public static class AbstractEdgeLayout extends PoolObjectLayout
 	{
-		IndexField source = indexField();
-		IndexField target = indexField();
-		IndexField nextSourceEdge = indexField();
-		IndexField nextTargetEdge = indexField();
+		final IndexField source = indexField();
+		final IndexField target = indexField();
+		final IndexField nextSourceEdge = indexField();
+		final IndexField nextTargetEdge = indexField();
 	}
 
 	public static AbstractEdgeLayout layout = new AbstractEdgeLayout();
