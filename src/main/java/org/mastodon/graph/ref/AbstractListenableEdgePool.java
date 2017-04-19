@@ -1,9 +1,9 @@
 package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
-import org.mastodon.pool.PoolObject;
+import org.mastodon.pool.MemPool;
 
-public class AbstractListenableEdgePool<
+public abstract class AbstractListenableEdgePool<
 			E extends AbstractListenableEdge< E, V, ?, T >,
 			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
@@ -11,10 +11,12 @@ public class AbstractListenableEdgePool<
 {
 	public AbstractListenableEdgePool(
 			final int initialCapacity,
-			final PoolObject.Factory< E, T > edgeFactory,
+			final AbstractEdgeLayout layout,
+			final Class< E > edgeClass,
+			final MemPool.Factory< T > memPoolFactory,
 			final AbstractVertexPool< V, ?, ? > vertexPool )
 	{
-		super( initialCapacity, edgeFactory, vertexPool );
+		super( initialCapacity, layout, edgeClass, memPoolFactory, vertexPool );
 	}
 
 	NotifyPostInit< ?, E > notifyPostInit;

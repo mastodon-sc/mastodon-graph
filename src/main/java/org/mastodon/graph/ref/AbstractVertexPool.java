@@ -1,10 +1,11 @@
 package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
+import org.mastodon.pool.MemPool;
 import org.mastodon.pool.Pool;
-import org.mastodon.pool.PoolObject;
+import org.mastodon.pool.PoolObjectLayout;
 
-public class AbstractVertexPool<
+public abstract class AbstractVertexPool<
 			V extends AbstractVertex< V, E, ?, T >,
 			E extends AbstractEdge< E, ?, ?, ? >,
 			T extends MappedElement >
@@ -12,11 +13,21 @@ public class AbstractVertexPool<
 {
 	private AbstractEdgePool< E, ?, ? > edgePool;
 
+	public static class AbstractVertexLayout extends PoolObjectLayout
+	{
+		IndexField firstInEdge = indexField();
+		IndexField firstOutEdge = indexField();
+	}
+
+	static AbstractVertexLayout layout = new AbstractVertexLayout();
+
 	public AbstractVertexPool(
 			final int initialCapacity,
-			final PoolObject.Factory< V, T > vertexFactory )
+			final AbstractVertexLayout layout,
+			final Class< V > vertexClass,
+			final MemPool.Factory< T > memPoolFactory )
 	{
-		super( initialCapacity, vertexFactory );
+		super( initialCapacity, layout, vertexClass, memPoolFactory );
 	}
 
 	public void linkEdgePool( final AbstractEdgePool< E, ?, ? > edgePool )

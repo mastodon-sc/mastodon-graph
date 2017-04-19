@@ -7,16 +7,12 @@ import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.graph.ref.GraphImp;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
-import org.mastodon.pool.MemPool;
-import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
 
 public class MinimalGraphExample
 {
 	static class MyVertex extends AbstractVertex< MyVertex, MyEdge, MyVertexPool, ByteMappedElement >
 	{
-		protected static final int SIZE_IN_BYTES = AbstractVertex.SIZE_IN_BYTES;
-
 		protected MyVertex( final MyVertexPool pool )
 		{
 			super( pool );
@@ -25,8 +21,6 @@ public class MinimalGraphExample
 
 	static class MyEdge extends AbstractEdge< MyEdge, MyVertex, MyEdgePool, ByteMappedElement >
 	{
-		protected static final int SIZE_IN_BYTES = AbstractEdge.SIZE_IN_BYTES;
-
 		protected MyEdge( final MyEdgePool pool )
 		{
 			super( pool );
@@ -35,88 +29,43 @@ public class MinimalGraphExample
 
 	static class MyVertexPool extends AbstractVertexPool< MyVertex, MyEdge, ByteMappedElement >
 	{
+		static AbstractVertexLayout layout = new AbstractVertexLayout();
+
 		public MyVertexPool( final int initialCapacity )
 		{
-			this( initialCapacity, new MyVertexFactory() );
+			super(
+					initialCapacity,
+					layout,
+					MyVertex.class,
+					SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
 		}
 
-		private MyVertexPool( final int initialCapacity, final MyVertexFactory f )
+		@Override
+		protected MyVertex createEmptyRef()
 		{
-			super( initialCapacity, f );
-			f.vertexPool = this;
+			return new MyVertex( this );
 		}
-
-		private static class MyVertexFactory implements PoolObject.Factory< MyVertex, ByteMappedElement >
-		{
-			private MyVertexPool vertexPool;
-
-			@Override
-			public int getSizeInBytes()
-			{
-				return MyVertex.SIZE_IN_BYTES;
-			}
-
-			@Override
-			public MyVertex createEmptyRef()
-			{
-				return new MyVertex( vertexPool );
-			}
-
-			@Override
-			public MemPool.Factory< ByteMappedElement > getMemPoolFactory()
-			{
-				return SingleArrayMemPool.factory( ByteMappedElementArray.factory );
-			}
-
-			@Override
-			public Class< MyVertex > getRefClass()
-			{
-				return MyVertex.class;
-			}
-		};
 	}
 
 	static class MyEdgePool extends AbstractEdgePool< MyEdge, MyVertex, ByteMappedElement >
 	{
+		static AbstractEdgeLayout layout = new AbstractEdgeLayout();
+
 		public MyEdgePool( final int initialCapacity, final MyVertexPool vertexPool )
 		{
-			this( initialCapacity, new MyEdgeFactory(), vertexPool );
+			super(
+					initialCapacity,
+					layout,
+					MyEdge.class,
+					SingleArrayMemPool.factory( ByteMappedElementArray.factory ),
+					vertexPool );
 		}
 
-		private MyEdgePool( final int initialCapacity, final MyEdgeFactory f, final MyVertexPool vertexPool )
+		@Override
+		protected MyEdge createEmptyRef()
 		{
-			super( initialCapacity, f, vertexPool );
-			f.edgePool = this;
+			return new MyEdge( this );
 		}
-
-		private static class MyEdgeFactory implements PoolObject.Factory< MyEdge, ByteMappedElement >
-		{
-			private MyEdgePool edgePool;
-
-			@Override
-			public int getSizeInBytes()
-			{
-				return MyEdge.SIZE_IN_BYTES;
-			}
-
-			@Override
-			public MyEdge createEmptyRef()
-			{
-				return new MyEdge( edgePool );
-			}
-
-			@Override
-			public MemPool.Factory< ByteMappedElement > getMemPoolFactory()
-			{
-				return SingleArrayMemPool.factory( ByteMappedElementArray.factory );
-			}
-
-			@Override
-			public Class< MyEdge > getRefClass()
-			{
-				return MyEdge.class;
-			}
-		};
 	}
 
 	public static void main( final String[] args )

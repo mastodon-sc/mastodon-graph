@@ -106,7 +106,7 @@ public class AbstractListenableEdge<
 	{
 		if ( !pendingInitialize )
 			throw new IllegalStateException( this.getClass().getSimpleName() + " already initialized! "
-					+ "Please see javadoc of net.trackmate.graph.ref.AbstractListenableEdge for more information." );
+					+ "Please see javadoc of org.mastodon.graph.ref.AbstractListenableEdge for more information." );
 		pendingInitialize = false;
 		notifyPostInit.notifyEdgeAdded( ( E ) this );
 	}

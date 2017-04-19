@@ -1,7 +1,5 @@
 package org.mastodon.graph.ref;
 
-import static org.mastodon.pool.ByteUtils.INDEX_SIZE;
-
 import org.mastodon.graph.Vertex;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
@@ -23,9 +21,8 @@ public class AbstractVertex<
 		extends PoolObject< V, VP, T >
 		implements Vertex< E >
 {
-	protected static final int FIRST_IN_EDGE_INDEX_OFFSET = 0;
-	protected static final int FIRST_OUT_EDGE_INDEX_OFFSET = FIRST_IN_EDGE_INDEX_OFFSET + INDEX_SIZE;
-	protected static final int SIZE_IN_BYTES = FIRST_OUT_EDGE_INDEX_OFFSET + INDEX_SIZE;
+	protected static final int FIRST_IN_EDGE_INDEX_OFFSET = AbstractVertexPool.layout.firstInEdge.getOffset();
+	protected static final int FIRST_OUT_EDGE_INDEX_OFFSET = AbstractVertexPool.layout.firstOutEdge.getOffset();
 
 	protected AbstractVertex( final VP pool )
 	{

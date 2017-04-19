@@ -1,10 +1,10 @@
 package org.mastodon.graph;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 import java.util.Comparator;
 
 import org.mastodon.collection.RefSet;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class TestUtils
 {
