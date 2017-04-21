@@ -146,8 +146,8 @@ public class ListenableGraphImp<
 	protected void pauseListeners()
 	{
 		emitEvents = false;
-		vertexPool.getPropertyMaps().pauseListeners();
-		edgePool.getPropertyMaps().pauseListeners();
+		vertexPool.getProperties().pauseListeners();
+		edgePool.getProperties().pauseListeners();
 	}
 
 	/**
@@ -159,8 +159,8 @@ public class ListenableGraphImp<
 	protected void resumeListeners()
 	{
 		emitEvents = true;
-		vertexPool.getPropertyMaps().resumeListeners();
-		edgePool.getPropertyMaps().resumeListeners();
+		vertexPool.getProperties().resumeListeners();
+		edgePool.getProperties().resumeListeners();
 		for ( final GraphListener< V, E > listener : listeners )
 			listener.graphRebuilt();
 	}

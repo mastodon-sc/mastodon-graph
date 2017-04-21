@@ -6,12 +6,10 @@ import static org.mastodon.pool.ByteUtils.SHORT_SIZE;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
+import org.mastodon.io.AttributeSerializer;
 import org.mastodon.properties.undo.PropertyUndoRedoStack;
 import org.mastodon.undo.ByteArrayUndoRedoStack.ByteArrayRef;
-import org.mastodon.undo.attributes.Attribute;
-import org.mastodon.undo.attributes.AttributeSerializer;
 import org.mastodon.undo.edits.GenericUndoableEditType;
-import org.mastodon.undo.edits.SetAttributeType;
 import org.mastodon.undo.edits.SetPropertyType;
 
 /**
@@ -77,16 +75,6 @@ public class GraphUndoRedoStack<
 	public Recorder< E > createRemoveEdgeRecorder()
 	{
 		return new RemoveEdgeType( this );
-	}
-
-	public Recorder< V > createSetVertexAttributeRecorder( final Attribute< V > attribute )
-	{
-		return new SetAttributeType<>( attribute.getUndoSerializer(), vertexUndoIdBimap, dataStack, this );
-	}
-
-	public Recorder< E > createSetEdgeAttributeRecorder( final Attribute< E > attribute )
-	{
-		return new SetAttributeType<>( attribute.getUndoSerializer(), edgeUndoIdBimap, dataStack, this );
 	}
 
 	public Recorder< V > createSetVertexPropertyRecorder( final PropertyUndoRedoStack< V > propertyUndoRedoStack )

@@ -24,7 +24,7 @@ public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, By
 				layout,
 				TestVertex.class,
 				SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
-		id = new IntAttribute<>( layout.id );
+		id = new IntAttribute<>( layout.id, this );
 	}
 
 	@Override

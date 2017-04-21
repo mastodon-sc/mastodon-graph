@@ -2,6 +2,7 @@ package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.MemPool;
+import org.mastodon.pool.Properties;
 
 public abstract class AbstractListenableVertexPool<
 			V extends AbstractListenableVertex< V, E, ?, T >,
@@ -23,6 +24,12 @@ public abstract class AbstractListenableVertexPool<
 	public void linkNotify( final NotifyPostInit< V, ? > notifyPostInit )
 	{
 		this.notifyPostInit = notifyPostInit;
+	}
+
+	@Override
+	protected Properties< V > getProperties()
+	{
+		return super.getProperties();
 	}
 
 	/*

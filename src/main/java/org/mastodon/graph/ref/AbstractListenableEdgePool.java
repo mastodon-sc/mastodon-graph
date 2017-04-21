@@ -2,6 +2,7 @@ package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.MemPool;
+import org.mastodon.pool.Properties;
 
 public abstract class AbstractListenableEdgePool<
 			E extends AbstractListenableEdge< E, V, ?, T >,
@@ -24,6 +25,12 @@ public abstract class AbstractListenableEdgePool<
 	public void linkNotify( final NotifyPostInit< ?, E > notifyPostInit )
 	{
 		this.notifyPostInit = notifyPostInit;
+	}
+
+	@Override
+	protected Properties< E > getProperties()
+	{
+		return super.getProperties();
 	}
 
 	/*
