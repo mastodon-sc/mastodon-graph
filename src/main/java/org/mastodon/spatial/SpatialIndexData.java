@@ -2,6 +2,7 @@ package org.mastodon.spatial;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import org.mastodon.RefPool;
@@ -9,15 +10,19 @@ import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefRefMap;
 import org.mastodon.collection.RefSet;
 import org.mastodon.collection.ref.RefArrayList;
+import org.mastodon.collection.ref.RefArrayPriorityQueueComparator;
 import org.mastodon.collection.ref.RefSetImp;
 import org.mastodon.kdtree.ClipConvexPolytope;
 import org.mastodon.kdtree.ClipConvexPolytopeKDTree;
+import org.mastodon.kdtree.IncrementalNearestNeighborSearch;
+import org.mastodon.kdtree.IncrementalNearestValidNeighborSearchOnKDTree;
 import org.mastodon.kdtree.KDTree;
 import org.mastodon.kdtree.KDTreeNode;
 import org.mastodon.kdtree.KDTreeValidIterator;
 import org.mastodon.kdtree.NearestValidNeighborSearchOnKDTree;
 import org.mastodon.pool.DoubleMappedElement;
 
+import gnu.trove.iterator.TIntIterator;
 import net.imglib2.RealLocalizable;
 import net.imglib2.Sampler;
 import net.imglib2.algorithm.kdtree.ConvexPolytope;
@@ -147,6 +152,11 @@ class SpatialIndexData< O extends RealLocalizable >
 	public NearestNeighborSearch< O > getNearestNeighborSearch()
 	{
 		return new NNS();
+	}
+
+	public IncrementalNearestNeighborSearch< O > getIncrementalNearestNeighborSearch()
+	{
+		return new INNS();
 	}
 
 	public ClipConvexPolytope< O > getClipConvexPolytope()
@@ -298,12 +308,15 @@ class SpatialIndexData< O extends RealLocalizable >
 
 		private final int n;
 
+		final double[] pos;
+
 		public NNS()
 		{
 			search = new NearestValidNeighborSearchOnKDTree<>( kdtree );
 			bestVertexIndex = -1;
 			ref = objPool.createRef();
 			n = search.numDimensions();
+			pos = new double[ n ];
 		}
 
 		@Override
@@ -313,26 +326,25 @@ class SpatialIndexData< O extends RealLocalizable >
 		}
 
 		@Override
-		public void search( final RealLocalizable pos )
+		public void search( final RealLocalizable query )
 		{
 			bestSquDistance = Double.MAX_VALUE;
 			bestVertexIndex = -1;
 
-			search.search( pos );
+			search.search( query );
 			if ( search.get() != null )
 			{
 				bestSquDistance = search.getSquareDistance();
 				bestVertexIndex = objPool.getId( search.get() );
 			}
 
-			final double[] p = new double[ n ];
-			pos.localize( p );
+			query.localize( pos );
 			for ( final O v : added )
 			{
 				double sum = 0;
 				for ( int d = 0; d < n; ++d )
 				{
-					final double diff = v.getDoublePosition( d ) - p[ d ];
+					final double diff = v.getDoublePosition( d ) - pos[ d ];
 					sum += diff * diff;
 				}
 				if ( sum < bestSquDistance )
@@ -386,6 +398,217 @@ class SpatialIndexData< O extends RealLocalizable >
 		public O get()
 		{
 			return bestVertex;
+		}
+	}
+
+	class INNS implements IncrementalNearestNeighborSearch< O >
+	{
+		private final IncrementalNearestValidNeighborSearchOnKDTree< O, DoubleMappedElement > search;
+
+		private final RefArrayPriorityQueueComparator< O > addedQueue;
+
+		private final int n;
+
+		final double[] pos;
+
+		private final O ref1;
+
+		private final O ref2;
+
+		private int numSteps;
+
+		private O nextAdded;
+
+		private O nextTree;
+
+		private O current;
+
+		private double currentSquDistance;
+
+		private final Comparator< O > comparator = new Comparator< O >()
+		{
+			@Override
+			public final int compare( final O o1, final O o2 )
+			{
+				double sum = 0;
+				for ( int d = 0; d < n; ++d)
+				{
+					final double p = pos[ d ];
+					final double d1 = o1.getDoublePosition( d ) - p;
+					final double d2 = o2.getDoublePosition( d ) - p;
+					sum += d1 * d1 - d2 * d2;
+				}
+				return Double.compare( sum, 0 );
+			}
+		};
+
+		public INNS()
+		{
+			search = new IncrementalNearestValidNeighborSearchOnKDTree<>( kdtree );
+			addedQueue = new RefArrayPriorityQueueComparator<>( objPool, comparator, added.size() );
+			n = search.numDimensions();
+			pos = new double[ n ];
+			ref1 = objPool.createRef();
+			ref2 = objPool.createRef();
+		}
+
+		public INNS( final INNS that )
+		{
+			search = that.search.copy();
+			n = that.n;
+			pos = that.pos.clone();
+			ref1 = objPool.createRef();
+			ref2 = objPool.createRef();
+			numSteps = that.numSteps;
+
+			addedQueue = new RefArrayPriorityQueueComparator<>( objPool, comparator, added.size() );
+			final TIntIterator it = that.addedQueue.getIndexCollection().iterator();
+			while( it.hasNext() )
+				this.addedQueue.offer( objPool.getObject( it.next(), ref2 ) );
+
+			nextAdded = addedQueue.peek( ref1 );
+			nextTree = that.nextTree == null
+					? null
+					: search.get();
+			current = that.current == null
+					? null
+					: objPool.getObject( objPool.getId( that.current ), ref2 );
+
+			currentSquDistance = that.currentSquDistance;
+		}
+
+		@Override
+		public int numDimensions()
+		{
+			return n;
+		}
+
+		@Override
+		public void search( final RealLocalizable query )
+		{
+			search.search( query );
+			query.localize( pos );
+			resetx();
+		}
+
+		private void resetx()
+		{
+			addedQueue.reset();
+			addedQueue.addAll( added );
+			nextAdded = addedQueue.peek( ref1 );
+			nextTree = search.hasNext() ? search.next() : null;
+			numSteps = 0;
+		}
+
+		@Override
+		public void reset()
+		{
+			search.reset();
+			resetx();
+		}
+
+		@Override
+		public void fwd()
+		{
+			if ( nextTree == null && search.hasNext() )
+				nextTree = search.next();
+
+			if ( nextTree == null || ( nextAdded != null && comparator.compare( nextAdded, nextTree ) > 0 ) )
+			{
+				current = addedQueue.poll( ref2 );
+				if ( current != null )
+				{
+					currentSquDistance = 0;
+					for ( int d = 0; d < n; ++d )
+					{
+						final double diff = current.getDoublePosition( d ) - pos[ d ];
+						currentSquDistance += diff * diff;
+					}
+				}
+				nextAdded = addedQueue.peek( ref1 );
+			}
+			else
+			{
+				current = nextTree;
+				currentSquDistance = search.getSquareDistance();
+				nextTree = null;
+			}
+
+			++numSteps;
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return numSteps < size;
+		}
+
+		@Override
+		public O get()
+		{
+			return current;
+		}
+
+		@Override
+		public O next()
+		{
+			fwd();
+			return get();
+		}
+
+		@Override
+		public double getSquareDistance()
+		{
+			return currentSquDistance;
+		}
+
+		@Override
+		public double getDistance()
+		{
+			return Math.sqrt( currentSquDistance );
+		}
+
+		@Override
+		public void jumpFwd( final long steps )
+		{
+			for ( int i = 0; i < ( int ) steps; ++i )
+				fwd();
+		}
+
+		@Override
+		public INNS copyCursor()
+		{
+			return copy();
+		}
+
+		@Override
+		public INNS copy()
+		{
+			return new INNS( this );
+		}
+
+		@Override
+		public void localize( final float[] position )
+		{
+			current.localize( position );
+		}
+
+		@Override
+		public void localize( final double[] position )
+		{
+			current.localize( position );
+		}
+
+		@Override
+		public float getFloatPosition( final int d )
+		{
+			return current.getFloatPosition( d );
+		}
+
+		@Override
+		public double getDoublePosition( final int d )
+		{
+			return current.getDoublePosition( d );
 		}
 	}
 
