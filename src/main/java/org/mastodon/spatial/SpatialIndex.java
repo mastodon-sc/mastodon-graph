@@ -1,6 +1,7 @@
 package org.mastodon.spatial;
 
 import org.mastodon.kdtree.ClipConvexPolytope;
+import org.mastodon.kdtree.IncrementalNearestNeighborSearch;
 
 import net.imglib2.neighborsearch.NearestNeighborSearch;
 
@@ -36,6 +37,14 @@ public interface SpatialIndex< T > extends Iterable< T >
 	 * @return a {@link NearestNeighborSearch}.
 	 */
 	public NearestNeighborSearch< T > getNearestNeighborSearch();
+
+	/**
+	 * Returns an {@link IncrementalNearestNeighborSearch} for the objects of
+	 * this index, able to perform efficiently spatial searches.
+	 *
+	 * @return an {@link IncrementalNearestNeighborSearch}.
+	 */
+	public IncrementalNearestNeighborSearch< T > getIncrementalNearestNeighborSearch();
 
 	/**
 	 * Returns a {@link ClipConvexPolytope} for the objects of this index, able

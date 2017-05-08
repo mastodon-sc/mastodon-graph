@@ -3,49 +3,33 @@ package org.mastodon.graph;
 import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
-import org.mastodon.pool.MemPool;
-import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
+import org.mastodon.pool.attributes.IntAttribute;
 
 public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, ByteMappedElement >
 {
+	static class TestVertexLayout extends AbstractVertexLayout
+	{
+		final IntField id = intField();
+	}
+
+	static TestVertexLayout layout = new TestVertexLayout();
+
+	final IntAttribute< TestVertex > id;
+
 	public TestVertexPool( final int initialCapacity )
 	{
-		this( initialCapacity, new TestVertexFactory() );
+		super(
+				initialCapacity,
+				layout,
+				TestVertex.class,
+				SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
+		id = new IntAttribute<>( layout.id, this );
 	}
 
-	private TestVertexPool( final int initialCapacity, final TestVertexPool.TestVertexFactory f )
+	@Override
+	protected TestVertex createEmptyRef()
 	{
-		super( initialCapacity, f );
-		f.vertexPool = this;
+		return new TestVertex( this );
 	}
-
-	private static class TestVertexFactory implements PoolObject.Factory< TestVertex, ByteMappedElement >
-	{
-		private TestVertexPool vertexPool;
-
-		@Override
-		public int getSizeInBytes()
-		{
-			return TestVertex.SIZE_IN_BYTES;
-		}
-
-		@Override
-		public TestVertex createEmptyRef()
-		{
-			return new TestVertex( vertexPool );
-		}
-
-		@Override
-		public MemPool.Factory< ByteMappedElement > getMemPoolFactory()
-		{
-			return SingleArrayMemPool.factory( ByteMappedElementArray.factory );
-		}
-
-		@Override
-		public Class< TestVertex > getRefClass()
-		{
-			return TestVertex.class;
-		}
-	};
 }

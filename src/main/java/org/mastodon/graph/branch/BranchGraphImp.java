@@ -48,8 +48,8 @@ import org.mastodon.pool.MappedElement;
 public abstract class BranchGraphImp<
 	V extends Vertex< E >,
 	E extends Edge< V >,
-	BV extends AbstractListenableVertex< BV, BE, T >,
-	BE extends AbstractListenableEdge< BE, BV, T >,
+	BV extends AbstractListenableVertex< BV, BE, BVP, T >,
+	BE extends AbstractListenableEdge< BE, BV, BEP, T >,
 	BVP extends AbstractListenableVertexPool< BV, BE, T >,
 	BEP extends AbstractListenableEdgePool< BE, BV, T >,
 	T extends MappedElement >

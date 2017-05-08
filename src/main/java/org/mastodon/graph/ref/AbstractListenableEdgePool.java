@@ -1,23 +1,27 @@
 package org.mastodon.graph.ref;
 
+import org.mastodon.graph.ref.AbstractEdgePool.AbstractEdgeLayout;
 import org.mastodon.pool.MappedElement;
-import org.mastodon.pool.PoolObject;
+import org.mastodon.pool.MemPool;
+import org.mastodon.pool.Properties;
 
-public class AbstractListenableEdgePool<
-			E extends AbstractListenableEdge< E, V, T >,
-			V extends AbstractVertex< V, ?, ? >,
+public abstract class AbstractListenableEdgePool<
+			E extends AbstractListenableEdge< E, V, ?, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
-		extends AbstractNonSimpleEdgeWithFeaturesPool< E, V, T >
+		extends AbstractNonSimpleEdgePool< E, V, T >
 {
 	public AbstractListenableEdgePool(
 			final int initialCapacity,
-			final PoolObject.Factory< E, T > edgeFactory,
+			final AbstractEdgeLayout layout,
+			final Class< E > edgeClass,
+			final MemPool.Factory< T > memPoolFactory,
 			final AbstractVertexPool< V, ?, ? > vertexPool )
 	{
-		super( initialCapacity, edgeFactory, vertexPool );
+		super( initialCapacity, layout, edgeClass, memPoolFactory, vertexPool );
 	}
 
-	private NotifyPostInit< ?, E > notifyPostInit;
+	NotifyPostInit< ?, E > notifyPostInit;
 
 	public void linkNotify( final NotifyPostInit< ?, E > notifyPostInit )
 	{
@@ -25,11 +29,9 @@ public class AbstractListenableEdgePool<
 	}
 
 	@Override
-	public E createRef()
+	protected Properties< E > getProperties()
 	{
-		final E edge = super.createRef();
-		edge.notifyPostInit = notifyPostInit;
-		return edge;
+		return super.getProperties();
 	}
 
 	/*

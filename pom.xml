@@ -3,27 +3,35 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>sc.fiji</groupId>
-		<artifactId>pom-fiji</artifactId>
-		<version>26.1.0</version>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>14.0.0</version>
 	</parent>
 
 	<groupId>org.mastodon</groupId>
 	<artifactId>mastodon-graph</artifactId>
-	<version>1.0.0-beta-2-SNAPSHOT</version>
+	<version>1.0.0-beta-3-SNAPSHOT</version>
 
 	<name>Mastodon Graphs</name>
 	<description>graph interfaces, object- and pool-based implementations, graph algorithms, undo framework</description>
-
-	<properties>
-		<enforcer.skip>true</enforcer.skip>
-	</properties>
+	<url>https://github.com/bigdataviewer/mastodon-graph</url>
+	<inceptionYear>2015</inceptionYear>
+	<organization>
+		<name>BigDataViewer</name>
+		<url>http://github.com/bigdataviewer</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Simplified BSD License</name>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.mastodon</groupId>
 			<artifactId>mastodon-collection</artifactId>
-			<version>1.0.0-beta-2-SNAPSHOT</version>
+			<version>1.0.0-beta-3-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Test dependencies -->
@@ -33,6 +41,37 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<mailingLists>
+		<mailingList>
+			<name>ImageJ Forum</name>
+			<archive>http://forum.imagej.net/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:git://github.com/bigdataviewer/mastodon-graph</connection>
+		<developerConnection>scm:git:git@github.com:bigdataviewer/mastodon-graph</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/bigdataviewer/mastodon-graph</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/bigdataviewer/mastodon-graph/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/bigdataviewer/mastodon-graph</url>
+	</ciManagement>
+
+	<properties>
+		<package-name>org.mastodon</package-name>
+
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.projectName>Mastodon Graphs</license.projectName>
+		<license.organizationName>Mastodon authors</license.organizationName>
+		<license.copyrightOwners>Tobias Pietzsch, Jean-Yves Tinevez</license.copyrightOwners>
+	</properties>
 
 	<developers>
 		<developer>
@@ -64,48 +103,13 @@
 		</developer>
 	</developers>
 
+	<contributors><contributor><name>grrrr</name></contributor></contributors>
+
 	<repositories>
 		<repository>
 			<id>imagej.public</id>
 			<url>http://maven.imagej.net/content/groups/public</url>
 		</repository>
 	</repositories>
-
-	<scm>
-		<connection>scm:git:git://github.com/bigdataviewer/mastodon-graph</connection>
-		<developerConnection>scm:git:git@github.com:bigdataviewer/mastodon-graph</developerConnection>
-		<tag>HEAD</tag>
-		<url>https://github.com/bigdataviewer/mastodon-graph</url>
-	</scm>
-	<issueManagement>
-		<system>GitHub</system>
-		<url>https://github.com/bigdataviewer/mastodon-graph/issues</url>
-	</issueManagement>
-
-	<licenses>
-		<license>
-			<name>BSD 2-Clause License</name>
-			<url>http://opensource.org/licenses/BSD-2-Clause</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<licenseName>bsd_2</licenseName>
-					<copyrightOwners>Tobias Pietzsch, Jean-Yves Tinevez</copyrightOwners>
-					<organizationName>Mastodon authors</organizationName>
-					<projectName>Mastodon Collections</projectName>
-					<roots>
-						<root>src/main/java</root>
-						<root>src/test/java</root>
-					</roots>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
 

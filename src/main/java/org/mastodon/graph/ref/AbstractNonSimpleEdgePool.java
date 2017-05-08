@@ -1,8 +1,9 @@
 package org.mastodon.graph.ref;
 
+import org.mastodon.graph.ref.AbstractEdgePool.AbstractEdgeLayout;
 import org.mastodon.pool.MappedElement;
+import org.mastodon.pool.MemPool;
 import org.mastodon.pool.Pool;
-import org.mastodon.pool.PoolObject;
 
 /**
  * Mother class for edge pools of <b>directed</b> graphs.
@@ -17,9 +18,9 @@ import org.mastodon.pool.PoolObject;
  * @param <T>
  *            the MappedElement type of the pool.
  */
-public class AbstractNonSimpleEdgePool< 
-			E extends AbstractEdge< E, V, T >, 
-			V extends AbstractVertex< V, ?, ? >, 
+public class AbstractNonSimpleEdgePool<
+		E extends AbstractNonSimpleEdge< E, V, ?, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
 		extends Pool< E, T >
 {
@@ -27,16 +28,18 @@ public class AbstractNonSimpleEdgePool<
 
 	public AbstractNonSimpleEdgePool(
 			final int initialCapacity,
-			final PoolObject.Factory< E, T > edgeFactory,
+			final AbstractEdgeLayout layout,
+			final Class< E > edgeClass,
+			final MemPool.Factory< T > memPoolFactory,
 			final AbstractVertexPool< V, ?, ? > vertexPool )
 	{
-		super( initialCapacity, edgeFactory );
+		super( initialCapacity, layout, edgeClass, memPoolFactory );
 		this.vertexPool = vertexPool;
 	}
 
 	/**
 	 * Adds an edge between the specified source and target.
-	 * 
+	 *
 	 * @param source
 	 *            the source vertex.
 	 * @param target
@@ -46,7 +49,7 @@ public class AbstractNonSimpleEdgePool<
 	 * @return the added edge, or <code>null</code> if an edge already exists
 	 *         between source and target.
 	 */
-	public E addEdge( final AbstractVertex< ?, ?, ? > source, final AbstractVertex< ?, ?, ? > target, final E edge )
+	public E addEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
 		create( edge );
 		edge.setSourceVertexInternalPoolIndex( source.getInternalPoolIndex() );
@@ -101,7 +104,7 @@ public class AbstractNonSimpleEdgePool<
 	/**
 	 * Inserts an edge between the specified source and target, at the specified
 	 * positions in the edge lists of the source and target vertices.
-	 * 
+	 *
 	 * @param source
 	 *            the source vertex.
 	 * @param sourceOutInsertAt
@@ -117,7 +120,7 @@ public class AbstractNonSimpleEdgePool<
 	 * @return the added edge, or <code>null</code> if an edge already exists
 	 *         between source and target.
 	 */
-	public E insertEdge( final AbstractVertex< ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ? > target, final int targetInInsertAt, final E edge )
+	public E insertEdge( final AbstractVertex< ?, ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ?, ? > target, final int targetInInsertAt, final E edge )
 	{
 		create( edge );
 		edge.setSourceVertexInternalPoolIndex( source.getInternalPoolIndex() );
@@ -157,7 +160,7 @@ public class AbstractNonSimpleEdgePool<
 		return edge;
 	}
 
-	public E getEdge( final AbstractVertex< ?, ?, ? > source, final AbstractVertex< ?, ?, ? > target, final E edge )
+	public E getEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
 		int nextSourceEdgeIndex = source.getFirstOutEdgeIndex();
 		if ( nextSourceEdgeIndex < 0 )
@@ -173,7 +176,7 @@ public class AbstractNonSimpleEdgePool<
 		return null;
 	}
 
-	public void deleteAllLinkedEdges( final AbstractVertex< ?, ?, ? > vertex )
+	public void deleteAllLinkedEdges( final AbstractVertex< ?, ?, ?, ? > vertex )
 	{
 		final V tmpVertex = vertexPool.createRef();
 		final E edge = createRef();
@@ -187,7 +190,7 @@ public class AbstractNonSimpleEdgePool<
 			getObject( index, edge );
 			unlinkFromTarget( edge, tmpEdge, tmpVertex );
 			index = edge.getNextSourceEdgeIndex();
-			deleteByInternalPoolIndex( edge.getInternalPoolIndex() );
+			super.delete( edge );
 		}
 
 		// release all incoming edges
@@ -198,7 +201,7 @@ public class AbstractNonSimpleEdgePool<
 			getObject( index, edge );
 			unlinkFromSource( edge, tmpEdge, tmpVertex );
 			index = edge.getNextTargetEdgeIndex();
-			deleteByInternalPoolIndex( edge.getInternalPoolIndex() );
+			super.delete( edge );
 		}
 
 		vertexPool.releaseRef( tmpVertex );
@@ -206,6 +209,7 @@ public class AbstractNonSimpleEdgePool<
 		releaseRef( tmpEdge );
 	}
 
+	@Override
 	public void delete( final E edge )
 	{
 		final V tmpVertex = vertexPool.createRef();
@@ -213,7 +217,7 @@ public class AbstractNonSimpleEdgePool<
 
 		unlinkFromSource( edge, tmp, tmpVertex );
 		unlinkFromTarget( edge, tmp, tmpVertex );
-		deleteByInternalPoolIndex( edge.getInternalPoolIndex() );
+		super.delete( edge );
 
 		vertexPool.releaseRef( tmpVertex );
 		releaseRef( tmp );
@@ -272,5 +276,12 @@ public class AbstractNonSimpleEdgePool<
 			}
 			tmpEdge.setNextTargetEdgeIndex( edge.getNextTargetEdgeIndex() );
 		}
+	}
+
+	@Override
+	protected E createEmptyRef()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -22,8 +22,7 @@ public interface GraphListener< V extends Vertex< E >, E extends Edge< V > >
 	 * @param vertex
 	 *            the vertex removed.
 	 */
-
-	public void vertexRemoved( V vertex );
+	public void vertexRemoved( V vertex ); // TODO rename beforeRemoveVertex
 
 	/**
 	 * Call when an edge was added to the graph.
@@ -39,5 +38,5 @@ public interface GraphListener< V extends Vertex< E >, E extends Edge< V > >
 	 * @param edge
 	 *            the edge removed.
 	 */
-	public void edgeRemoved( E edge );
+	public void edgeRemoved( E edge ); // TODO rename beforeRemoveEdge
 }

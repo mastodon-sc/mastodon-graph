@@ -1,7 +1,8 @@
 package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
-import org.mastodon.pool.PoolObject;
+import org.mastodon.pool.MemPool;
+import org.mastodon.pool.PoolObjectLayout;
 
 /**
  * Mother class for edge pools of <b>simple directed</b> graphs.
@@ -18,18 +19,31 @@ import org.mastodon.pool.PoolObject;
  * @param <T>
  *            the MappedElement type of the pool.
  */
-public class AbstractEdgePool<
-			E extends AbstractEdge< E, V, T >,
-			V extends AbstractVertex< V, ?, ? >,
+public abstract class AbstractEdgePool<
+			E extends AbstractEdge< E, V, ?, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
 		extends AbstractNonSimpleEdgePool< E, V, T >
 {
+
+	public static class AbstractEdgeLayout extends PoolObjectLayout
+	{
+		final IndexField source = indexField();
+		final IndexField target = indexField();
+		final IndexField nextSourceEdge = indexField();
+		final IndexField nextTargetEdge = indexField();
+	}
+
+	public static AbstractEdgeLayout layout = new AbstractEdgeLayout();
+
 	public AbstractEdgePool(
 			final int initialCapacity,
-			final PoolObject.Factory< E, T > edgeFactory,
+			final AbstractEdgeLayout layout,
+			final Class< E > edgeClass,
+			final MemPool.Factory< T > memPoolFactory,
 			final AbstractVertexPool< V, ?, ? > vertexPool )
 	{
-		super( initialCapacity, edgeFactory, vertexPool );
+		super( initialCapacity, layout, edgeClass, memPoolFactory, vertexPool );
 	}
 
 	/**
@@ -38,7 +52,7 @@ public class AbstractEdgePool<
 	 * If an edge already exists between this source and target (with this
 	 * direction), the edge is not added and this method returns
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param source
 	 *            the source vertex.
 	 * @param target
@@ -49,7 +63,7 @@ public class AbstractEdgePool<
 	 *         between source and target.
 	 */
 	@Override
-	public E addEdge( final AbstractVertex< ?, ?, ? > source, final AbstractVertex< ?, ?, ? > target, final E edge )
+	public E addEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
 		if ( getEdge( source, target, edge ) != null )
 			return null;
@@ -64,7 +78,7 @@ public class AbstractEdgePool<
 	 * If an edge already exists between this source and target (with this
 	 * direction), the edge is not added and this method returns
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param source
 	 *            the source vertex.
 	 * @param sourceOutInsertAt
@@ -81,7 +95,7 @@ public class AbstractEdgePool<
 	 *         between source and target.
 	 */
 	@Override
-	public E insertEdge( final AbstractVertex< ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ? > target, final int targetInInsertAt, final E edge )
+	public E insertEdge( final AbstractVertex< ?, ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ?, ? > target, final int targetInInsertAt, final E edge )
 	{
 		if ( getEdge( source, target, edge ) != null )
 			return null;

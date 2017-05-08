@@ -10,10 +10,10 @@ import org.mastodon.pool.MappedElement;
 public class ListenableGraphImp<
 		VP extends AbstractListenableVertexPool< V, E, T >,
 		EP extends AbstractListenableEdgePool< E, V, T >,
-		V extends AbstractListenableVertex< V, E, T >,
-		E extends AbstractListenableEdge< E, V, T >,
+		V extends AbstractListenableVertex< V, E, VP, T >,
+		E extends AbstractListenableEdge< E, V, EP, T >,
 		T extends MappedElement >
-	extends GraphWithFeaturesImp< VP, EP, V, E, T >
+	extends GraphImp< VP, EP, V, E, T >
 	implements ListenableGraph< V, E >
 {
 	protected final ArrayList< GraphListener< V, E > > listeners;
@@ -146,8 +146,8 @@ public class ListenableGraphImp<
 	protected void pauseListeners()
 	{
 		emitEvents = false;
-		vertexFeatures.pauseListeners();
-		edgeFeatures.pauseListeners();
+		vertexPool.getProperties().pauseListeners();
+		edgePool.getProperties().pauseListeners();
 	}
 
 	/**
@@ -159,8 +159,8 @@ public class ListenableGraphImp<
 	protected void resumeListeners()
 	{
 		emitEvents = true;
-		vertexFeatures.resumeListeners();
-		edgeFeatures.resumeListeners();
+		vertexPool.getProperties().resumeListeners();
+		edgePool.getProperties().resumeListeners();
 		for ( final GraphListener< V, E > listener : listeners )
 			listener.graphRebuilt();
 	}
