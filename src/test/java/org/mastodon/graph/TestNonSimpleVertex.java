@@ -1,23 +1,17 @@
 package org.mastodon.graph;
 
-import static org.mastodon.pool.ByteUtils.INT_SIZE;
-
 import org.mastodon.graph.ref.AbstractVertex;
-import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.pool.ByteMappedElement;
+import org.mastodon.pool.attributes.IntAttributeValue;
 
-public class TestNonSimpleVertex extends AbstractVertex< TestNonSimpleVertex, TestNonSimpleEdge, ByteMappedElement >
+public class TestNonSimpleVertex extends AbstractVertex< TestNonSimpleVertex, TestNonSimpleEdge, TestNonSimpleVertexPool, ByteMappedElement >
 {
-	protected static final int ID_OFFSET = AbstractVertex.SIZE_IN_BYTES;
+	private final IntAttributeValue id;
 
-	protected static final int SIZE_IN_BYTES = ID_OFFSET + INT_SIZE;
-
-	public final AbstractVertexPool< TestNonSimpleVertex, ?, ByteMappedElement > creatingPool;
-
-	protected TestNonSimpleVertex( final AbstractVertexPool< TestNonSimpleVertex, ?, ByteMappedElement > pool )
+	protected TestNonSimpleVertex( final TestNonSimpleVertexPool pool )
 	{
 		super( pool );
-		creatingPool = pool;
+		id = pool.id.createQuietAttributeValue( this );
 	}
 
 	public TestNonSimpleVertex init( final int id )
@@ -28,12 +22,12 @@ public class TestNonSimpleVertex extends AbstractVertex< TestNonSimpleVertex, Te
 
 	public int getId()
 	{
-		return access.getInt( ID_OFFSET );
+		return id.get();
 	}
 
 	public void setId( final int id )
 	{
-		access.putInt( id, ID_OFFSET );
+		this.id.set( id );
 	}
 
 	@Override

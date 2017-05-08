@@ -3,50 +3,36 @@ package org.mastodon.graph.branch;
 import org.mastodon.graph.ref.AbstractListenableVertexPool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
-import org.mastodon.pool.MemPool;
-import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
+import org.mastodon.pool.attributes.IntAttribute;
 
 public class BranchTestVertexPool extends AbstractListenableVertexPool< BranchTestVertex, BranchTestEdge, ByteMappedElement >
 {
+	static class BranchTestVertexLayout extends AbstractVertexLayout
+	{
+		final IntField id = intField();
+		final IntField timepoint = intField();
+	}
+
+	static BranchTestVertexLayout layout = new BranchTestVertexLayout();
+
+	final IntAttribute< BranchTestVertex > id;
+	final IntAttribute< BranchTestVertex > timepoint;
 
 	public BranchTestVertexPool( final int initialCapacity )
 	{
-		this( initialCapacity, new ListenableTestVertexFactory() );
+		super(
+				initialCapacity,
+				layout,
+				BranchTestVertex.class,
+				SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
+		id = new IntAttribute<>( layout.id, this );
+		timepoint = new IntAttribute<>( layout.timepoint, this );
 	}
 
-	private BranchTestVertexPool( final int initialCapacity, final ListenableTestVertexFactory f )
+	@Override
+	protected BranchTestVertex createEmptyRef()
 	{
-		super( initialCapacity, f );
-		f.vertexPool = this;
+		return new BranchTestVertex( this );
 	}
-
-	private static class ListenableTestVertexFactory implements PoolObject.Factory< BranchTestVertex, ByteMappedElement >
-	{
-		private BranchTestVertexPool vertexPool;
-
-		@Override
-		public int getSizeInBytes()
-		{
-			return BranchTestVertex.SIZE_IN_BYTES;
-		}
-
-		@Override
-		public BranchTestVertex createEmptyRef()
-		{
-			return new BranchTestVertex( vertexPool );
-		}
-
-		@Override
-		public MemPool.Factory< ByteMappedElement > getMemPoolFactory()
-		{
-			return SingleArrayMemPool.factory( ByteMappedElementArray.factory );
-		}
-
-		@Override
-		public Class< BranchTestVertex > getRefClass()
-		{
-			return BranchTestVertex.class;
-		}
-	};
 }

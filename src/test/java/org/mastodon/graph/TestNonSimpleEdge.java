@@ -1,19 +1,13 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.ref.AbstractEdge;
-import org.mastodon.graph.ref.AbstractNonSimpleEdgePool;
+import org.mastodon.graph.ref.AbstractNonSimpleEdge;
 import org.mastodon.pool.ByteMappedElement;
 
-public class TestNonSimpleEdge extends AbstractEdge< TestNonSimpleEdge, TestNonSimpleVertex, ByteMappedElement >
+public class TestNonSimpleEdge extends AbstractNonSimpleEdge< TestNonSimpleEdge, TestNonSimpleVertex, TestNonSimpleEdgePool, ByteMappedElement >
 {
-	protected static final int SIZE_IN_BYTES = AbstractEdge.SIZE_IN_BYTES;
-
-	public final AbstractNonSimpleEdgePool< TestNonSimpleEdge, TestNonSimpleVertex, ByteMappedElement > creatingPool;
-
-	protected TestNonSimpleEdge( final AbstractNonSimpleEdgePool< TestNonSimpleEdge, TestNonSimpleVertex, ByteMappedElement > pool )
+	protected TestNonSimpleEdge( final TestNonSimpleEdgePool pool )
 	{
 		super( pool );
-		creatingPool = pool;
 	}
 
 	@Override

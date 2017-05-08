@@ -15,7 +15,7 @@ public class TestEdge extends AbstractEdge< TestEdge, TestVertex, TestEdgePool, 
 	{
 		final TestVertex v = this.vertexPool.createRef();
 		final StringBuilder sb = new StringBuilder();
-		sb.append( "e(" );
+		sb.append( "nse(" );
 		getSource( v );
 		sb.append( v.getId() );
 		sb.append( " -> " );

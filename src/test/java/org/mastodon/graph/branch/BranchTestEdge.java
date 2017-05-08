@@ -1,19 +1,13 @@
 package org.mastodon.graph.branch;
 
 import org.mastodon.graph.ref.AbstractListenableEdge;
-import org.mastodon.graph.ref.AbstractListenableEdgePool;
 import org.mastodon.pool.ByteMappedElement;
 
-public class BranchTestEdge extends AbstractListenableEdge< BranchTestEdge, BranchTestVertex, ByteMappedElement >
+public class BranchTestEdge extends AbstractListenableEdge< BranchTestEdge, BranchTestVertex, BranchTestEdgePool, ByteMappedElement >
 {
-	protected static final int SIZE_IN_BYTES = AbstractListenableEdge.SIZE_IN_BYTES;
-
-	public final AbstractListenableEdgePool< BranchTestEdge, BranchTestVertex, ByteMappedElement > creatingPool;
-
-	protected BranchTestEdge( final AbstractListenableEdgePool< BranchTestEdge, BranchTestVertex, ByteMappedElement > pool )
+	protected BranchTestEdge( final BranchTestEdgePool pool )
 	{
 		super( pool );
-		creatingPool = pool;
 	}
 
 	public BranchTestEdge init()

@@ -3,49 +3,30 @@ package org.mastodon.graph;
 import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
-import org.mastodon.pool.MemPool;
-import org.mastodon.pool.PoolObject;
 import org.mastodon.pool.SingleArrayMemPool;
+import org.mastodon.pool.attributes.IntAttribute;
 
 public class TestNonSimpleVertexPool extends AbstractVertexPool< TestNonSimpleVertex, TestNonSimpleEdge, ByteMappedElement >
 {
+	static class TestNonSimpleVertexLayout extends AbstractVertexLayout
+	{
+		final IntField id = intField();
+	}
+
+	static TestNonSimpleVertexLayout layout = new TestNonSimpleVertexLayout();
+
+	final IntAttribute< TestNonSimpleVertex > id;
+
 	public TestNonSimpleVertexPool( final int initialCapacity )
 	{
-		this( initialCapacity, new TestVertexFactory() );
+		super( initialCapacity, layout, TestNonSimpleVertex.class, SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
+		id = new IntAttribute<>( layout.id, this );
 	}
 
-	private TestNonSimpleVertexPool( final int initialCapacity, final TestVertexFactory f )
+	@Override
+	protected TestNonSimpleVertex createEmptyRef()
 	{
-		super( initialCapacity, f );
-		f.vertexPool = this;
+		return new TestNonSimpleVertex( this );
 	}
-
-	private static class TestVertexFactory implements PoolObject.Factory< TestNonSimpleVertex, ByteMappedElement >
-	{
-		private TestNonSimpleVertexPool vertexPool;
-
-		@Override
-		public int getSizeInBytes()
-		{
-			return TestNonSimpleVertex.SIZE_IN_BYTES;
-		}
-
-		@Override
-		public TestNonSimpleVertex createEmptyRef()
-		{
-			return new TestNonSimpleVertex( vertexPool );
-		}
-
-		@Override
-		public MemPool.Factory< ByteMappedElement > getMemPoolFactory()
-		{
-			return SingleArrayMemPool.factory( ByteMappedElementArray.factory );
-		}
-
-		@Override
-		public Class< TestNonSimpleVertex > getRefClass()
-		{
-			return TestNonSimpleVertex.class;
-		}
-	};
 }
+
