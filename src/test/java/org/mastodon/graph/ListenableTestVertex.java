@@ -25,6 +25,7 @@ public class ListenableTestVertex
 	{
 		setId( id );
 		setTimepointInternal( tp );
+		initDone();
 		return this;
 	}
 
