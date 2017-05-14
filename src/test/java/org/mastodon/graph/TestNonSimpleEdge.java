@@ -1,9 +1,9 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.ref.AbstractNonSimpleEdge;
+import org.mastodon.graph.ref.AbstractEdge;
 import org.mastodon.pool.ByteMappedElement;
 
-public class TestNonSimpleEdge extends AbstractNonSimpleEdge< TestNonSimpleEdge, TestNonSimpleVertex, TestNonSimpleEdgePool, ByteMappedElement >
+public class TestNonSimpleEdge extends AbstractEdge< TestNonSimpleEdge, TestNonSimpleVertex, TestNonSimpleEdgePool, ByteMappedElement >
 {
 	protected TestNonSimpleEdge( final TestNonSimpleEdgePool pool )
 	{

@@ -6,9 +6,9 @@ import org.mastodon.pool.PoolCollectionWrapper;
 
 public class GraphImp<
 		VP extends AbstractVertexPool< V, E, T >,
-		EP extends AbstractNonSimpleEdgePool< E, V, T >,
+		EP extends AbstractEdgePool< E, V, T >,
 		V extends AbstractVertex< V, E, VP, T >,
-		E extends AbstractNonSimpleEdge< E, V, EP, T >,
+		E extends AbstractEdge< E, V, EP, T >,
 		T extends MappedElement >
 	implements Graph< V, E >
 {

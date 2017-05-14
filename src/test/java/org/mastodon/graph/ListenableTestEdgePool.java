@@ -1,6 +1,6 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.ref.AbstractEdgePool;
+import org.mastodon.graph.ref.AbstractSimpleEdgePool;
 import org.mastodon.graph.ref.AbstractListenableEdgePool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
@@ -12,7 +12,7 @@ public class ListenableTestEdgePool extends AbstractListenableEdgePool< Listenab
 	{
 		super(
 				initialCapacity,
-				AbstractEdgePool.layout,
+				AbstractSimpleEdgePool.layout,
 				ListenableTestEdge.class,
 				SingleArrayMemPool.factory( ByteMappedElementArray.factory ),
 				vertexPool );

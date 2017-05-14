@@ -4,16 +4,16 @@ import java.util.Iterator;
 
 import org.mastodon.graph.Edges;
 
-public class IncomingEdges< E extends AbstractNonSimpleEdge< E, ?, ?, ? > > implements Edges< E >
+public class IncomingEdges< E extends AbstractEdge< E, ?, ?, ? > > implements Edges< E >
 {
 	private final AbstractVertex< ?, ?, ?, ? > vertex;
-	private final AbstractNonSimpleEdgePool< E, ?, ? > edgePool;
+	private final AbstractEdgePool< E, ?, ? > edgePool;
 
 	private IncomingEdgesIterator iterator;
 
 	public IncomingEdges(
 			final AbstractVertex< ?, ?, ?, ? > vertex,
-			final AbstractNonSimpleEdgePool< E, ?, ? > edgePool )
+			final AbstractEdgePool< E, ?, ? > edgePool )
 	{
 		this.vertex = vertex;
 		this.edgePool = edgePool;

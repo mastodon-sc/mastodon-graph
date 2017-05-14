@@ -16,7 +16,7 @@ import org.mastodon.pool.PoolObject;
  */
 public class AbstractVertex<
 			V extends AbstractVertex< V, E, VP, T >,
-			E extends AbstractNonSimpleEdge< E, ?, ?, ? >,
+			E extends AbstractEdge< E, ?, ?, ? >,
 			VP extends AbstractVertexPool< V, ?, T >,
 			T extends MappedElement >
 		extends PoolObject< V, VP, T >
@@ -57,7 +57,7 @@ public class AbstractVertex<
 		setFirstOutEdgeIndex( -1 );
 	}
 
-	private AbstractNonSimpleEdgePool< E, ?, ? > edgePool;
+	private AbstractEdgePool< E, ?, ? > edgePool;
 
 	private IncomingEdges< E > incomingEdges;
 
@@ -83,7 +83,7 @@ public class AbstractVertex<
 		return edges;
 	}
 
-	void linkEdgePool( final AbstractNonSimpleEdgePool< E, ?, ? > edgePool )
+	void linkEdgePool( final AbstractEdgePool< E, ?, ? > edgePool )
 	{
 		if ( this.edgePool != edgePool )
 		{

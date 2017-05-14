@@ -6,7 +6,7 @@ import org.mastodon.pool.Properties;
 
 public abstract class AbstractListenableVertexPool<
 			V extends AbstractListenableVertex< V, E, ?, T >,
-			E extends AbstractNonSimpleEdge< E, ?, ?, ? >,
+			E extends AbstractEdge< E, ?, ?, ? >,
 			T extends MappedElement >
 		extends AbstractVertexPool< V, E, T >
 {

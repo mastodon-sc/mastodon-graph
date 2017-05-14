@@ -1,16 +1,15 @@
 package org.mastodon.graph.ref;
 
+import org.mastodon.graph.ref.AbstractSimpleEdgePool.AbstractEdgeLayout;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.MemPool;
-import org.mastodon.pool.PoolObjectLayout;
+import org.mastodon.pool.Pool;
 
 /**
- * Mother class for edge pools of <b>simple directed</b> graphs.
+ * Mother class for edge pools of <b>directed</b> graphs.
  * <p>
- * Simple, directed graphs are graphs for which there is at most one directed
- * edge between a source and a target vertices (0 or 1, but there might another
- * edge in the opposite direction). This is enforced here by preventing adding
- * an edge between a source and a target already linked by an edge.
+ * Graphs based on this edge pool do not have a limitation on the number of
+ * edges between a source and target vertices.
  *
  * @param <E>
  *            the edge type.
@@ -19,22 +18,13 @@ import org.mastodon.pool.PoolObjectLayout;
  * @param <T>
  *            the MappedElement type of the pool.
  */
-public abstract class AbstractEdgePool<
-			E extends AbstractEdge< E, V, ?, T >,
+public class AbstractEdgePool<
+		E extends AbstractEdge< E, V, ?, T >,
 			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
-		extends AbstractNonSimpleEdgePool< E, V, T >
+		extends Pool< E, T >
 {
-
-	public static class AbstractEdgeLayout extends PoolObjectLayout
-	{
-		final IndexField source = indexField();
-		final IndexField target = indexField();
-		final IndexField nextSourceEdge = indexField();
-		final IndexField nextTargetEdge = indexField();
-	}
-
-	public static AbstractEdgeLayout layout = new AbstractEdgeLayout();
+	final AbstractVertexPool< V, ?, ? > vertexPool;
 
 	public AbstractEdgePool(
 			final int initialCapacity,
@@ -43,15 +33,12 @@ public abstract class AbstractEdgePool<
 			final MemPool.Factory< T > memPoolFactory,
 			final AbstractVertexPool< V, ?, ? > vertexPool )
 	{
-		super( initialCapacity, layout, edgeClass, memPoolFactory, vertexPool );
+		super( initialCapacity, layout, edgeClass, memPoolFactory );
+		this.vertexPool = vertexPool;
 	}
 
 	/**
 	 * Adds an edge between the specified source and target.
-	 * <p>
-	 * If an edge already exists between this source and target (with this
-	 * direction), the edge is not added and this method returns
-	 * <code>null</code>.
 	 *
 	 * @param source
 	 *            the source vertex.
@@ -62,22 +49,61 @@ public abstract class AbstractEdgePool<
 	 * @return the added edge, or <code>null</code> if an edge already exists
 	 *         between source and target.
 	 */
-	@Override
 	public E addEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
-		if ( getEdge( source, target, edge ) != null )
-			return null;
+		create( edge );
+		edge.setSourceVertexInternalPoolIndex( source.getInternalPoolIndex() );
+		edge.setTargetVertexInternalPoolIndex( target.getInternalPoolIndex() );
 
-		return super.addEdge( source, target, edge );
+		final E tmp = createRef();
+
+		final int sourceOutIndex = source.getFirstOutEdgeIndex();
+		if ( sourceOutIndex < 0 )
+		{
+			// source has no outgoing edge yet. Set this one as the first.
+			source.setFirstOutEdgeIndex( edge.getInternalPoolIndex() );
+		}
+		else
+		{
+			// source has outgoing edges. Append this one to the end of the
+			// linked list.
+			getObject( sourceOutIndex, tmp );
+			int nextSourceEdgeIndex = tmp.getNextSourceEdgeIndex();
+			while ( nextSourceEdgeIndex >= 0 )
+			{
+				getObject( nextSourceEdgeIndex, tmp );
+				nextSourceEdgeIndex = tmp.getNextSourceEdgeIndex();
+			}
+			tmp.setNextSourceEdgeIndex( edge.getInternalPoolIndex() );
+		}
+
+		final int targetInIndex = target.getFirstInEdgeIndex();
+		if ( targetInIndex < 0 )
+		{
+			// target has no incoming edge yet. Set this one as the first.
+			target.setFirstInEdgeIndex( edge.getInternalPoolIndex() );
+		}
+		else
+		{
+			// target has incoming edges. Append this one to the end of the
+			// linked list.
+			getObject( targetInIndex, tmp );
+			int nextTargetEdgeIndex = tmp.getNextTargetEdgeIndex();
+			while ( nextTargetEdgeIndex >= 0 )
+			{
+				getObject( nextTargetEdgeIndex, tmp );
+				nextTargetEdgeIndex = tmp.getNextTargetEdgeIndex();
+			}
+			tmp.setNextTargetEdgeIndex( edge.getInternalPoolIndex() );
+		}
+
+		releaseRef( tmp );
+		return edge;
 	}
 
 	/**
 	 * Inserts an edge between the specified source and target, at the specified
 	 * positions in the edge lists of the source and target vertices.
-	 * <p>
-	 * If an edge already exists between this source and target (with this
-	 * direction), the edge is not added and this method returns
-	 * <code>null</code>.
 	 *
 	 * @param source
 	 *            the source vertex.
@@ -94,12 +120,168 @@ public abstract class AbstractEdgePool<
 	 * @return the added edge, or <code>null</code> if an edge already exists
 	 *         between source and target.
 	 */
-	@Override
 	public E insertEdge( final AbstractVertex< ?, ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ?, ? > target, final int targetInInsertAt, final E edge )
 	{
-		if ( getEdge( source, target, edge ) != null )
-			return null;
+		create( edge );
+		edge.setSourceVertexInternalPoolIndex( source.getInternalPoolIndex() );
+		edge.setTargetVertexInternalPoolIndex( target.getInternalPoolIndex() );
 
-		return super.insertEdge( source, sourceOutInsertAt, target, targetInInsertAt, edge );
+		final E tmp = createRef();
+
+		int nextSourceEdgeIndex = source.getFirstOutEdgeIndex();
+		int insertIndex = 0;
+		while ( nextSourceEdgeIndex >= 0 && insertIndex < sourceOutInsertAt )
+		{
+			getObject( nextSourceEdgeIndex, tmp );
+			nextSourceEdgeIndex = tmp.getNextSourceEdgeIndex();
+			++insertIndex;
+		}
+		edge.setNextSourceEdgeIndex( nextSourceEdgeIndex );
+		if ( insertIndex == 0 )
+			source.setFirstOutEdgeIndex( edge.getInternalPoolIndex() );
+		else
+			tmp.setNextSourceEdgeIndex( edge.getInternalPoolIndex() );
+
+		int nextTargetEdgeIndex = target.getFirstInEdgeIndex();
+		insertIndex = 0;
+		while ( nextTargetEdgeIndex >= 0 && insertIndex < targetInInsertAt )
+		{
+			getObject( nextTargetEdgeIndex, tmp );
+			nextTargetEdgeIndex = tmp.getNextTargetEdgeIndex();
+			++insertIndex;
+		}
+		edge.setNextTargetEdgeIndex( nextTargetEdgeIndex );
+		if ( insertIndex == 0 )
+			target.setFirstInEdgeIndex( edge.getInternalPoolIndex() );
+		else
+			tmp.setNextTargetEdgeIndex( edge.getInternalPoolIndex() );
+
+		releaseRef( tmp );
+		return edge;
+	}
+
+	public E getEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
+	{
+		int nextSourceEdgeIndex = source.getFirstOutEdgeIndex();
+		if ( nextSourceEdgeIndex < 0 )
+			return null;
+		do
+		{
+			getObject( nextSourceEdgeIndex, edge );
+			if ( edge.getTargetVertexInternalPoolIndex() == target.getInternalPoolIndex() )
+				return edge;
+			nextSourceEdgeIndex = edge.getNextSourceEdgeIndex();
+		}
+		while ( nextSourceEdgeIndex >= 0 );
+		return null;
+	}
+
+	public void deleteAllLinkedEdges( final AbstractVertex< ?, ?, ?, ? > vertex )
+	{
+		final V tmpVertex = vertexPool.createRef();
+		final E edge = createRef();
+		final E tmpEdge = createRef();
+
+		// release all outgoing edges
+		int index = vertex.getFirstOutEdgeIndex();
+		vertex.setFirstOutEdgeIndex( -1 );
+		while ( index >= 0 )
+		{
+			getObject( index, edge );
+			unlinkFromTarget( edge, tmpEdge, tmpVertex );
+			index = edge.getNextSourceEdgeIndex();
+			super.delete( edge );
+		}
+
+		// release all incoming edges
+		index = vertex.getFirstInEdgeIndex();
+		vertex.setFirstInEdgeIndex( -1 );
+		while ( index >= 0 )
+		{
+			getObject( index, edge );
+			unlinkFromSource( edge, tmpEdge, tmpVertex );
+			index = edge.getNextTargetEdgeIndex();
+			super.delete( edge );
+		}
+
+		vertexPool.releaseRef( tmpVertex );
+		releaseRef( edge );
+		releaseRef( tmpEdge );
+	}
+
+	@Override
+	public void delete( final E edge )
+	{
+		final V tmpVertex = vertexPool.createRef();
+		final E tmp = createRef();
+
+		unlinkFromSource( edge, tmp, tmpVertex );
+		unlinkFromTarget( edge, tmp, tmpVertex );
+		super.delete( edge );
+
+		vertexPool.releaseRef( tmpVertex );
+		releaseRef( tmp );
+	}
+
+	/*
+	 *
+	 * Internal stuff. If it should be necessary for performance reasons, these
+	 * can be made protected or public
+	 *
+	 */
+
+	private void unlinkFromSource( final E edge, final E tmpEdge, final V tmpVertex )
+	{
+		vertexPool.getObject( edge.getSourceVertexInternalPoolIndex(), tmpVertex );
+		final int sourceOutIndex = tmpVertex.getFirstOutEdgeIndex();
+		if ( sourceOutIndex == edge.getInternalPoolIndex() )
+		{
+			// this edge is the first in the sources list of outgoing edges
+			tmpVertex.setFirstOutEdgeIndex( edge.getNextSourceEdgeIndex() );
+		}
+		else
+		{
+			// find this edge in the sources list of outgoing edges and remove
+			// it
+			getObject( sourceOutIndex, tmpEdge );
+			int nextSourceEdgeIndex = tmpEdge.getNextSourceEdgeIndex();
+			while ( nextSourceEdgeIndex != edge.getInternalPoolIndex() )
+			{
+				getObject( nextSourceEdgeIndex, tmpEdge );
+				nextSourceEdgeIndex = tmpEdge.getNextSourceEdgeIndex();
+			}
+			tmpEdge.setNextSourceEdgeIndex( edge.getNextSourceEdgeIndex() );
+		}
+	}
+
+	private void unlinkFromTarget( final E edge, final E tmpEdge, final V tmpVertex )
+	{
+		vertexPool.getObject( edge.getTargetVertexInternalPoolIndex(), tmpVertex );
+		final int targetInIndex = tmpVertex.getFirstInEdgeIndex();
+		if ( targetInIndex == edge.getInternalPoolIndex() )
+		{
+			// this edge is the first in the targets list of incoming edges
+			tmpVertex.setFirstInEdgeIndex( edge.getNextTargetEdgeIndex() );
+		}
+		else
+		{
+			// find this edge in the targets list of incoming edges and remove
+			// it
+			getObject( targetInIndex, tmpEdge );
+			int nextTargetEdgeIndex = tmpEdge.getNextTargetEdgeIndex();
+			while ( nextTargetEdgeIndex != edge.getInternalPoolIndex() )
+			{
+				getObject( nextTargetEdgeIndex, tmpEdge );
+				nextTargetEdgeIndex = tmpEdge.getNextTargetEdgeIndex();
+			}
+			tmpEdge.setNextTargetEdgeIndex( edge.getNextTargetEdgeIndex() );
+		}
+	}
+
+	@Override
+	protected E createEmptyRef()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

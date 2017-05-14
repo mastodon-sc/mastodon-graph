@@ -1,15 +1,21 @@
 package org.mastodon.graph.ref;
 
-import org.mastodon.graph.ref.AbstractEdgePool.AbstractEdgeLayout;
+import org.mastodon.graph.ref.AbstractSimpleEdgePool.AbstractEdgeLayout;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.Properties;
 
+/**
+ * Mother class for edge pools of <b>directed, listenable</b> graphs.
+ * <p>
+ * Graphs based on this edge pool do not have a limitation on the number of
+ * edges between a source and target vertices.
+ */
 public abstract class AbstractListenableEdgePool<
 			E extends AbstractListenableEdge< E, V, ?, T >,
 			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
-		extends AbstractNonSimpleEdgePool< E, V, T >
+		extends AbstractEdgePool< E, V, T >
 {
 	public AbstractListenableEdgePool(
 			final int initialCapacity,

@@ -42,7 +42,7 @@ import org.mastodon.pool.MappedElement;
  */
 public class AbstractListenableVertex<
 			V extends AbstractListenableVertex< V, E, VP, T >,
-			E extends AbstractNonSimpleEdge< E, ?, ?, ? >,
+			E extends AbstractEdge< E, ?, ?, ? >,
 			VP extends AbstractListenableVertexPool< V, ?, T >,
 			T extends MappedElement >
 		extends AbstractVertex< V, E, VP, T >

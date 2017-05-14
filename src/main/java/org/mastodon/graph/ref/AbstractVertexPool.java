@@ -7,12 +7,12 @@ import org.mastodon.pool.PoolObjectLayout;
 
 public abstract class AbstractVertexPool<
 			V extends AbstractVertex< V, E, ?, T >,
-			E extends AbstractNonSimpleEdge< E, ?, ?, ? >,
+			E extends AbstractEdge< E, ?, ?, ? >,
 			T extends MappedElement >
 		extends Pool< V, T >
 {
 	// TODO make it private again when we do not need this anymore.
-	protected AbstractNonSimpleEdgePool< E, ?, ? > edgePool;
+	protected AbstractEdgePool< E, ?, ? > edgePool;
 
 	public static class AbstractVertexLayout extends PoolObjectLayout
 	{
@@ -31,7 +31,7 @@ public abstract class AbstractVertexPool<
 		super( initialCapacity, layout, vertexClass, memPoolFactory );
 	}
 
-	public void linkEdgePool( final AbstractNonSimpleEdgePool< E, ?, ? > edgePool )
+	public void linkEdgePool( final AbstractEdgePool< E, ?, ? > edgePool )
 	{
 		this.edgePool = edgePool;
 	}

@@ -8,8 +8,10 @@ import org.mastodon.graph.Vertex;
 import org.mastodon.pool.MappedElement;
 
 /**
- * TODO: javadoc
- *
+ * Mother class for edge of <b>directed, listenable</b> graphs.
+ * <p>
+ * Graphs based on this edge class do not have a limitation on the number of
+ * edges between a source and target vertices.
  * <p>
  * <em>Important:</em> Derived classes need to define "constructor" methods
  * (preferably called {@code init(...)} and users <em>must</em> call one of
@@ -45,7 +47,7 @@ public class AbstractListenableEdge<
 			V extends AbstractVertex< V, ?, ?, ? >,
 			EP extends AbstractListenableEdgePool< E, V, T >,
 			T extends MappedElement >
-		extends AbstractNonSimpleEdge< E, V, EP, T >
+		extends AbstractEdge< E, V, EP, T >
 {
 	protected AbstractListenableEdge( final EP pool )
 	{
