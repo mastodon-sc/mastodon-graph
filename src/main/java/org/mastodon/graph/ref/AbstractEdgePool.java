@@ -75,8 +75,7 @@ public abstract class AbstractEdgePool<
 		}
 		else
 		{
-			// source has outgoing edges. Append this one to the end of the
-			// linked list.
+			// source has outgoing edges. Append this one to the end of the linked list.
 			getObject( sourceOutIndex, tmp );
 			int nextSourceEdgeIndex = tmp.getNextSourceEdgeIndex();
 			while ( nextSourceEdgeIndex >= 0 )
@@ -95,8 +94,7 @@ public abstract class AbstractEdgePool<
 		}
 		else
 		{
-			// target has incoming edges. Append this one to the end of the
-			// linked list.
+			// target has incoming edges. Append this one to the end of the linked list.
 			getObject( targetInIndex, tmp );
 			int nextTargetEdgeIndex = tmp.getNextTargetEdgeIndex();
 			while ( nextTargetEdgeIndex >= 0 )
@@ -234,10 +232,10 @@ public abstract class AbstractEdgePool<
 	}
 
 	/*
+	 * Internal stuff.
 	 *
-	 * Internal stuff. If it should be necessary for performance reasons, these
+	 * If it should be necessary for performance reasons, these
 	 * can be made protected or public
-	 *
 	 */
 
 	private void unlinkFromSource( final E edge, final E tmpEdge, final V tmpVertex )
@@ -251,8 +249,7 @@ public abstract class AbstractEdgePool<
 		}
 		else
 		{
-			// find this edge in the sources list of outgoing edges and remove
-			// it
+			// find this edge in the sources list of outgoing edges and remove it
 			getObject( sourceOutIndex, tmpEdge );
 			int nextSourceEdgeIndex = tmpEdge.getNextSourceEdgeIndex();
 			while ( nextSourceEdgeIndex != edge.getInternalPoolIndex() )
@@ -275,8 +272,7 @@ public abstract class AbstractEdgePool<
 		}
 		else
 		{
-			// find this edge in the targets list of incoming edges and remove
-			// it
+			// find this edge in the targets list of incoming edges and remove it
 			getObject( targetInIndex, tmpEdge );
 			int nextTargetEdgeIndex = tmpEdge.getNextTargetEdgeIndex();
 			while ( nextTargetEdgeIndex != edge.getInternalPoolIndex() )
