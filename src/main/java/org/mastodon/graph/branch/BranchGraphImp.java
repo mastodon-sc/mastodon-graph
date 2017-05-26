@@ -163,6 +163,30 @@ public abstract class BranchGraphImp<
 	 *             when called.
 	 */
 	@Override
+	public BE insertEdge( final BV source, final int sourceOutIndex, final BV target, final int targetInIndex )
+	{
+		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
+	}
+
+	/**
+	 * Unsupported operation as the branch graph is read-only.
+	 *
+	 * @throws UnsupportedOperationException
+	 *             when called.
+	 */
+	@Override
+	public BE insertEdge( final BV source, final int sourceOutIndex, final BV target, final int targetInIndex, final BE edge )
+	{
+		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
+	}
+
+	/**
+	 * Unsupported operation as the branch graph is read-only.
+	 *
+	 * @throws UnsupportedOperationException
+	 *             when called.
+	 */
+	@Override
 	public BV addVertex()
 	{
 		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
