@@ -4,15 +4,23 @@ import org.mastodon.graph.Edge;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
 
+/**
+ * TODO: javadoc
+ *
+ * @param <E>
+ * @param <V>
+ * @param <T>
+ *
+ * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ */
 public class AbstractEdge<
-		E extends AbstractEdge< E, V, EP, T >,
-		V extends AbstractVertex< V, ?, ?, ? >,
-		EP extends AbstractEdgePool< E, V, T >,
-		T extends MappedElement >
-	extends PoolObject< E, EP, T >
-	implements Edge< V >
+			E extends AbstractEdge< E, V, EP, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
+			EP extends AbstractEdgePool< E, V, T >,
+			T extends MappedElement >
+		extends PoolObject< E, EP, T >
+		implements Edge< V >
 {
-
 	protected static final int SOURCE_INDEX_OFFSET = AbstractEdgePool.layout.source.getOffset();
 	protected static final int TARGET_INDEX_OFFSET = AbstractEdgePool.layout.target.getOffset();
 	protected static final int NEXT_SOURCE_EDGE_INDEX_OFFSET = AbstractEdgePool.layout.nextSourceEdge.getOffset();
