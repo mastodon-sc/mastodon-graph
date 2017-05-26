@@ -2,7 +2,6 @@ package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.MemPool;
-import org.mastodon.pool.PoolObjectLayout;
 
 /**
  * Mother class for edge pools of <b>simple directed</b> graphs.
@@ -25,17 +24,6 @@ public abstract class AbstractSimpleEdgePool<
 			T extends MappedElement >
 		extends AbstractEdgePool< E, V, T >
 {
-
-	public static class AbstractEdgeLayout extends PoolObjectLayout
-	{
-		final IndexField source = indexField();
-		final IndexField target = indexField();
-		final IndexField nextSourceEdge = indexField();
-		final IndexField nextTargetEdge = indexField();
-	}
-
-	public static AbstractEdgeLayout layout = new AbstractEdgeLayout();
-
 	public AbstractSimpleEdgePool(
 			final int initialCapacity,
 			final AbstractEdgeLayout layout,

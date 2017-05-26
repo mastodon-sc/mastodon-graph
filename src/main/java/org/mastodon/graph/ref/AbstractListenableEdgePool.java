@@ -1,6 +1,5 @@
 package org.mastodon.graph.ref;
 
-import org.mastodon.graph.ref.AbstractSimpleEdgePool.AbstractEdgeLayout;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.Properties;
