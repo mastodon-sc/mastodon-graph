@@ -19,7 +19,7 @@ import org.mastodon.pool.MemPool;
  *            the MappedElement type of the pool.
  */
 public abstract class AbstractSimpleEdgePool<
-			E extends AbstractSimpleEdge< E, V, ?, T >,
+			E extends AbstractEdge< E, V, ?, T >,
 			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
 		extends AbstractEdgePool< E, V, T >

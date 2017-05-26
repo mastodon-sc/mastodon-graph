@@ -1,9 +1,9 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.ref.AbstractSimpleEdge;
+import org.mastodon.graph.ref.AbstractEdge;
 import org.mastodon.pool.ByteMappedElement;
 
-public class TestEdge extends AbstractSimpleEdge< TestEdge, TestVertex, TestEdgePool, ByteMappedElement >
+public class TestEdge extends AbstractEdge< TestEdge, TestVertex, TestEdgePool, ByteMappedElement >
 {
 	protected TestEdge( final TestEdgePool pool )
 	{
@@ -15,7 +15,7 @@ public class TestEdge extends AbstractSimpleEdge< TestEdge, TestVertex, TestEdge
 	{
 		final TestVertex v = this.vertexPool.createRef();
 		final StringBuilder sb = new StringBuilder();
-		sb.append( "nse(" );
+		sb.append( "e(" );
 		getSource( v );
 		sb.append( v.getId() );
 		sb.append( " -> " );
