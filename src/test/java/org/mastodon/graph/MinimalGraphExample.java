@@ -1,6 +1,6 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.ref.AbstractSimpleEdge;
+import org.mastodon.graph.ref.AbstractEdge;
 import org.mastodon.graph.ref.AbstractSimpleEdgePool;
 import org.mastodon.graph.ref.AbstractVertex;
 import org.mastodon.graph.ref.AbstractVertexPool;
@@ -19,7 +19,7 @@ public class MinimalGraphExample
 		}
 	}
 
-	static class MyEdge extends AbstractSimpleEdge< MyEdge, MyVertex, MyEdgePool, ByteMappedElement >
+	static class MyEdge extends AbstractEdge< MyEdge, MyVertex, MyEdgePool, ByteMappedElement >
 	{
 		protected MyEdge( final MyEdgePool pool )
 		{

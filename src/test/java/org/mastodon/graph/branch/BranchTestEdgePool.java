@@ -1,6 +1,6 @@
 package org.mastodon.graph.branch;
 
-import org.mastodon.graph.ref.AbstractSimpleEdgePool;
+import org.mastodon.graph.ref.AbstractEdgePool;
 import org.mastodon.graph.ref.AbstractListenableEdgePool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
@@ -10,7 +10,7 @@ public class BranchTestEdgePool extends AbstractListenableEdgePool< BranchTestEd
 {
 	public BranchTestEdgePool( final int initialCapacity, final BranchTestVertexPool vertexPool )
 	{
-		super( initialCapacity, AbstractSimpleEdgePool.layout, BranchTestEdge.class, SingleArrayMemPool.factory( ByteMappedElementArray.factory ), vertexPool );
+		super( initialCapacity, AbstractEdgePool.layout, BranchTestEdge.class, SingleArrayMemPool.factory( ByteMappedElementArray.factory ), vertexPool );
 	}
 
 	@Override

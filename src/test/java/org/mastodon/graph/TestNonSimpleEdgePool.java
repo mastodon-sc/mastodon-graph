@@ -1,6 +1,5 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.ref.AbstractSimpleEdgePool;
 import org.mastodon.graph.ref.AbstractEdgePool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
@@ -12,7 +11,7 @@ public class TestNonSimpleEdgePool extends AbstractEdgePool< TestNonSimpleEdge, 
 	{
 		super(
 				initialCapacity,
-				AbstractSimpleEdgePool.layout,
+				AbstractEdgePool.layout,
 				TestNonSimpleEdge.class,
 				SingleArrayMemPool.factory( ByteMappedElementArray.factory ),
 				vertexPool );

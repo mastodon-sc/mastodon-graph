@@ -18,7 +18,7 @@ import org.mastodon.pool.Pool;
  * @param <T>
  *            the MappedElement type of the pool.
  */
-public class AbstractEdgePool<
+public abstract class AbstractEdgePool<
 		E extends AbstractEdge< E, V, ?, T >,
 			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
@@ -276,12 +276,5 @@ public class AbstractEdgePool<
 			}
 			tmpEdge.setNextTargetEdgeIndex( edge.getNextTargetEdgeIndex() );
 		}
-	}
-
-	@Override
-	protected E createEmptyRef()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

@@ -13,10 +13,10 @@ public class AbstractEdge<
 	implements Edge< V >
 {
 
-	protected static final int SOURCE_INDEX_OFFSET = AbstractSimpleEdgePool.layout.source.getOffset();
-	protected static final int TARGET_INDEX_OFFSET = AbstractSimpleEdgePool.layout.target.getOffset();
-	protected static final int NEXT_SOURCE_EDGE_INDEX_OFFSET = AbstractSimpleEdgePool.layout.nextSourceEdge.getOffset();
-	protected static final int NEXT_TARGET_EDGE_INDEX_OFFSET = AbstractSimpleEdgePool.layout.nextTargetEdge.getOffset();
+	protected static final int SOURCE_INDEX_OFFSET = AbstractEdgePool.layout.source.getOffset();
+	protected static final int TARGET_INDEX_OFFSET = AbstractEdgePool.layout.target.getOffset();
+	protected static final int NEXT_SOURCE_EDGE_INDEX_OFFSET = AbstractEdgePool.layout.nextSourceEdge.getOffset();
+	protected static final int NEXT_TARGET_EDGE_INDEX_OFFSET = AbstractEdgePool.layout.nextTargetEdge.getOffset();
 
 	protected final AbstractVertexPool< V, ?, ? > vertexPool;
 
