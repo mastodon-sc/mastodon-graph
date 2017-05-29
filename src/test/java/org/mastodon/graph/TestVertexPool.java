@@ -8,22 +8,18 @@ import org.mastodon.pool.attributes.IntAttribute;
 
 public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, ByteMappedElement >
 {
-	static class TestVertexLayout extends AbstractVertexLayout
+	static class TestNonSimpleVertexLayout extends AbstractVertexLayout
 	{
 		final IntField id = intField();
 	}
 
-	static TestVertexLayout layout = new TestVertexLayout();
+	static TestNonSimpleVertexLayout layout = new TestNonSimpleVertexLayout();
 
 	final IntAttribute< TestVertex > id;
 
 	public TestVertexPool( final int initialCapacity )
 	{
-		super(
-				initialCapacity,
-				layout,
-				TestVertex.class,
-				SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
+		super( initialCapacity, layout, TestVertex.class, SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
 		id = new IntAttribute<>( layout.id, this );
 	}
 
@@ -33,3 +29,4 @@ public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, By
 		return new TestVertex( this );
 	}
 }
+

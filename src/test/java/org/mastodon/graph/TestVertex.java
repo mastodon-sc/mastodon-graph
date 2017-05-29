@@ -34,7 +34,7 @@ public class TestVertex extends AbstractVertex< TestVertex, TestEdge, TestVertex
 	public String toString()
 	{
 		final StringBuilder sb = new StringBuilder();
-		sb.append( "v(" );
+		sb.append( "nsv(" );
 		sb.append( getId() );
 		sb.append( ")" );
 		return sb.toString();

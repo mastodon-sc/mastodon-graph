@@ -9,8 +9,8 @@ import java.util.Iterator;
 import org.junit.Test;
 import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefCollections;
-import org.mastodon.graph.TestEdge;
-import org.mastodon.graph.TestVertex;
+import org.mastodon.graph.TestSimpleEdge;
+import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.algorithm.traversal.InverseDepthFirstIterator;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
@@ -26,19 +26,19 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testStraightLinePoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.straightLinePoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.straightLinePoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 5 );
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 5 );
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 5 ) );
 		expected.add( bundle.vertices.get( 4 ) );
 		expected.add( bundle.vertices.get( 3 ) );
 		expected.add( bundle.vertices.get( 2 ) );
 		expected.add( bundle.vertices.get( 1 ) );
 		expected.add( bundle.vertices.get( 0 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{
@@ -100,15 +100,15 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testForkPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.forkPoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.forkPoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 1 );
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 1 );
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 1 ) );
 		expected.add( bundle.vertices.get( 0 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{
@@ -122,17 +122,17 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testDiamondPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.diamondPoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.diamondPoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 3 );
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 3 );
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 3 ) );
 		expected.add( bundle.vertices.get( 2 ) );
 		expected.add( bundle.vertices.get( 0 ) );
 		expected.add( bundle.vertices.get( 1 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{
@@ -197,12 +197,12 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testLoopPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.loopPoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.loopPoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 0 );
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 0 );
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 0 ) );
 		expected.add( bundle.vertices.get( 6 ) );
 		expected.add( bundle.vertices.get( 5 ) );
@@ -210,7 +210,7 @@ public class InverseDepthFirstIteratorTest
 		expected.add( bundle.vertices.get( 3 ) );
 		expected.add( bundle.vertices.get( 2 ) );
 		expected.add( bundle.vertices.get( 1 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{
@@ -224,15 +224,15 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testSingleEdgePoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.singleEdgePoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.singleEdgePoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 1 );
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 1 );
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 1 ) );
 		expected.add( bundle.vertices.get( 0 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{
@@ -289,14 +289,14 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testSingleVertexPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.singleVertexPoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.singleVertexPoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 0 );
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 0 );
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 0 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{
@@ -310,16 +310,16 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testWpExampleVertexPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.wpExamplePoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.wpExamplePoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 6 ); // G
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 6 ); // G
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 6 ) );
 		expected.add( bundle.vertices.get( 2 ) );
 		expected.add( bundle.vertices.get( 0 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{
@@ -379,16 +379,16 @@ public class InverseDepthFirstIteratorTest
 	@Test
 	public void testTwoComponentsVertexPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 6 ); // G
-		final InverseDepthFirstIterator< TestVertex, TestEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
+		final TestSimpleVertex first = bundle.vertices.get( 6 ); // G
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( first, bundle.graph );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 6 ) );
 		expected.add( bundle.vertices.get( 2 ) );
 		expected.add( bundle.vertices.get( 0 ) );
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 
 		while ( eit.hasNext() )
 		{

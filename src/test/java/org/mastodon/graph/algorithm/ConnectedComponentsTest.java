@@ -12,9 +12,9 @@ import org.junit.Test;
 import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefSet;
 import org.mastodon.collection.RefCollections;
-import org.mastodon.graph.TestEdge;
-import org.mastodon.graph.TestGraph;
-import org.mastodon.graph.TestVertex;
+import org.mastodon.graph.TestSimpleEdge;
+import org.mastodon.graph.TestSimpleGraph;
+import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.algorithm.ConnectedComponents;
 
 import gnu.trove.set.hash.TIntHashSet;
@@ -22,30 +22,30 @@ import gnu.trove.set.hash.TIntHashSet;
 public class ConnectedComponentsTest
 {
 
-	private TestGraph graph;
+	private TestSimpleGraph graph;
 
 	private int idLoop;
 
 	private int idTree;
 
-	private TestVertex R00;
+	private TestSimpleVertex R00;
 
-	private TestVertex E;
+	private TestSimpleVertex E;
 
 	@Before
 	public void setUp() throws Exception
 	{
-		graph = new TestGraph();
+		graph = new TestSimpleGraph();
 
 		/*
 		 * 1. Linear branch.
 		 */
 
 		final int idLinearBranch = 0;
-		final TestVertex A = graph.addVertex().init( idLinearBranch );
-		final TestVertex B = graph.addVertex().init( idLinearBranch );
-		final TestVertex C = graph.addVertex().init( idLinearBranch );
-		final TestVertex D = graph.addVertex().init( idLinearBranch );
+		final TestSimpleVertex A = graph.addVertex().init( idLinearBranch );
+		final TestSimpleVertex B = graph.addVertex().init( idLinearBranch );
+		final TestSimpleVertex C = graph.addVertex().init( idLinearBranch );
+		final TestSimpleVertex D = graph.addVertex().init( idLinearBranch );
 		graph.addEdge( A, B );
 		graph.addEdge( B, C );
 		graph.addEdge( C, D );
@@ -56,9 +56,9 @@ public class ConnectedComponentsTest
 
 		idLoop = 1;
 		E = graph.addVertex().init( idLoop );
-		final TestVertex F = graph.addVertex().init( idLoop );
-		final TestVertex G = graph.addVertex().init( idLoop );
-		final TestVertex H = graph.addVertex().init( idLoop );
+		final TestSimpleVertex F = graph.addVertex().init( idLoop );
+		final TestSimpleVertex G = graph.addVertex().init( idLoop );
+		final TestSimpleVertex H = graph.addVertex().init( idLoop );
 		graph.addEdge( E, F );
 		graph.addEdge( F, G );
 		graph.addEdge( G, H );
@@ -69,13 +69,13 @@ public class ConnectedComponentsTest
 		 */
 
 		idTree = 2;
-		final TestVertex R0 = graph.addVertex().init( idTree );
+		final TestSimpleVertex R0 = graph.addVertex().init( idTree );
 		R00 = graph.addVertex().init( idTree );
-		final TestVertex R01 = graph.addVertex().init( idTree );
-		final TestVertex R000 = graph.addVertex().init( idTree );
-		final TestVertex R001 = graph.addVertex().init( idTree );
-		final TestVertex R010 = graph.addVertex().init( idTree );
-		final TestVertex R011 = graph.addVertex().init( idTree );
+		final TestSimpleVertex R01 = graph.addVertex().init( idTree );
+		final TestSimpleVertex R000 = graph.addVertex().init( idTree );
+		final TestSimpleVertex R001 = graph.addVertex().init( idTree );
+		final TestSimpleVertex R010 = graph.addVertex().init( idTree );
+		final TestSimpleVertex R011 = graph.addVertex().init( idTree );
 		graph.addEdge( R0, R00 );
 		graph.addEdge( R0, R01 );
 		graph.addEdge( R00, R000 );
@@ -95,8 +95,8 @@ public class ConnectedComponentsTest
 		 */
 
 		final int idDouble = 4;
-		final TestVertex I1 = graph.addVertex().init( idDouble );
-		final TestVertex I2 = graph.addVertex().init( idDouble );
+		final TestSimpleVertex I1 = graph.addVertex().init( idDouble );
+		final TestSimpleVertex I2 = graph.addVertex().init( idDouble );
 		graph.addEdge( I1, I2 );
 
 		/*
@@ -106,14 +106,14 @@ public class ConnectedComponentsTest
 		final Random ran = new Random( 1l );
 		final int nv = 50 + ran.nextInt( 100 );
 		final int nExtraEdges = 20 + ran.nextInt( 50 );
-		final RefList< TestVertex > vList = RefCollections.createRefList( graph.vertices(), nv );
+		final RefList< TestSimpleVertex > vList = RefCollections.createRefList( graph.vertices(), nv );
 		final int idRandom = 5;
 
-		final TestVertex previous = graph.addVertex().init( idRandom );
+		final TestSimpleVertex previous = graph.addVertex().init( idRandom );
 		vList.add( previous );
 		for ( int i = 1; i < nv; i++ )
 		{
-			final TestVertex current = graph.addVertex().init( idRandom );
+			final TestSimpleVertex current = graph.addVertex().init( idRandom );
 			vList.add( current );
 			// At least a linear branch to ensure they are all connected.
 			graph.addEdge( previous, current );
@@ -128,8 +128,8 @@ public class ConnectedComponentsTest
 				continue;
 			}
 
-			final TestVertex source = vList.get( iSource );
-			final TestVertex target = vList.get( iTarget );
+			final TestSimpleVertex source = vList.get( iSource );
+			final TestSimpleVertex target = vList.get( iTarget );
 			graph.addEdge( source, target );
 		}
 	}
@@ -137,15 +137,15 @@ public class ConnectedComponentsTest
 	@Test
 	public void testBehavior()
 	{
-		final ConnectedComponents< TestVertex, TestEdge > cc = new ConnectedComponents< TestVertex, TestEdge >( graph );
-		final Set< RefSet< TestVertex >> components = cc.get();
+		final ConnectedComponents< TestSimpleVertex, TestSimpleEdge > cc = new ConnectedComponents< TestSimpleVertex, TestSimpleEdge >( graph );
+		final Set< RefSet< TestSimpleVertex >> components = cc.get();
 		final TIntHashSet componentIds = new TIntHashSet( components.size() );
 
 		int counter = 0;
-		for ( final RefSet< TestVertex > refSet : components )
+		for ( final RefSet< TestSimpleVertex > refSet : components )
 		{
-			final Iterator< TestVertex > it = refSet.iterator();
-			final TestVertex previous = it.next();
+			final Iterator< TestSimpleVertex > it = refSet.iterator();
+			final TestSimpleVertex previous = it.next();
 			counter++;
 			final int currentId = previous.getId();
 
@@ -155,7 +155,7 @@ public class ConnectedComponentsTest
 			while ( it.hasNext() )
 			{
 				counter++;
-				final TestVertex current = it.next();
+				final TestSimpleVertex current = it.next();
 				final int id = current.getId();
 				assertEquals( "Found an undesired vertex in a connected components.", currentId, id );
 			}
@@ -171,14 +171,14 @@ public class ConnectedComponentsTest
 		 */
 
 		graph.addEdge( E, R00 );
-		final Set< RefSet< TestVertex >> nCC = cc.get();
+		final Set< RefSet< TestSimpleVertex >> nCC = cc.get();
 
 		counter = 0;
 		componentIds.clear();
-		for ( final RefSet< TestVertex > refSet : nCC )
+		for ( final RefSet< TestSimpleVertex > refSet : nCC )
 		{
-			final Iterator< TestVertex > it = refSet.iterator();
-			final TestVertex previous = it.next();
+			final Iterator< TestSimpleVertex > it = refSet.iterator();
+			final TestSimpleVertex previous = it.next();
 			counter++;
 			final int currentId = previous.getId();
 			assertFalse( "The component with ID = " + currentId + " is disjoint: it belongs to two different sets.", componentIds.contains( currentId ) );
@@ -187,7 +187,7 @@ public class ConnectedComponentsTest
 			while ( it.hasNext() )
 			{
 				counter++;
-				final TestVertex current = it.next();
+				final TestSimpleVertex current = it.next();
 				final int id = current.getId();
 				componentIds.add( id );
 

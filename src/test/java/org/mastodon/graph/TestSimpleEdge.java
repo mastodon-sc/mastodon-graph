@@ -3,9 +3,9 @@ package org.mastodon.graph;
 import org.mastodon.graph.ref.AbstractEdge;
 import org.mastodon.pool.ByteMappedElement;
 
-public class TestNonSimpleEdge extends AbstractEdge< TestNonSimpleEdge, TestNonSimpleVertex, TestNonSimpleEdgePool, ByteMappedElement >
+public class TestSimpleEdge extends AbstractEdge< TestSimpleEdge, TestSimpleVertex, TestSimpleEdgePool, ByteMappedElement >
 {
-	protected TestNonSimpleEdge( final TestNonSimpleEdgePool pool )
+	protected TestSimpleEdge( final TestSimpleEdgePool pool )
 	{
 		super( pool );
 	}
@@ -13,9 +13,9 @@ public class TestNonSimpleEdge extends AbstractEdge< TestNonSimpleEdge, TestNonS
 	@Override
 	public String toString()
 	{
-		final TestNonSimpleVertex v = this.vertexPool.createRef();
+		final TestSimpleVertex v = this.vertexPool.createRef();
 		final StringBuilder sb = new StringBuilder();
-		sb.append( "nse(" );
+		sb.append( "e(" );
 		getSource( v );
 		sb.append( v.getId() );
 		sb.append( " -> " );

@@ -1,12 +1,11 @@
 package org.mastodon.graph;
 
 import org.mastodon.graph.ref.AbstractEdgePool;
-import org.mastodon.graph.ref.AbstractSimpleEdgePool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.SingleArrayMemPool;
 
-public class TestEdgePool extends AbstractSimpleEdgePool< TestEdge, TestVertex, ByteMappedElement >
+public class TestEdgePool extends AbstractEdgePool< TestEdge, TestVertex, ByteMappedElement >
 {
 	public TestEdgePool( final int initialCapacity, final TestVertexPool vertexPool )
 	{

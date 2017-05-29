@@ -1,25 +1,26 @@
 package org.mastodon.graph;
 
 import org.mastodon.graph.ref.AbstractEdgePool;
+import org.mastodon.graph.ref.AbstractSimpleEdgePool;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.SingleArrayMemPool;
 
-public class TestNonSimpleEdgePool extends AbstractEdgePool< TestNonSimpleEdge, TestNonSimpleVertex, ByteMappedElement >
+public class TestSimpleEdgePool extends AbstractSimpleEdgePool< TestSimpleEdge, TestSimpleVertex, ByteMappedElement >
 {
-	public TestNonSimpleEdgePool( final int initialCapacity, final TestNonSimpleVertexPool vertexPool )
+	public TestSimpleEdgePool( final int initialCapacity, final TestSimpleVertexPool vertexPool )
 	{
 		super(
 				initialCapacity,
 				AbstractEdgePool.layout,
-				TestNonSimpleEdge.class,
+				TestSimpleEdge.class,
 				SingleArrayMemPool.factory( ByteMappedElementArray.factory ),
 				vertexPool );
 	}
 
 	@Override
-	protected TestNonSimpleEdge createEmptyRef()
+	protected TestSimpleEdge createEmptyRef()
 	{
-		return new TestNonSimpleEdge( this );
+		return new TestSimpleEdge( this );
 	}
 }
