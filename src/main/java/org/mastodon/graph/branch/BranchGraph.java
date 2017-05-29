@@ -136,7 +136,26 @@ public interface BranchGraph<
 
 	/**
 	 * Returns the edge linked to the specified branch edge. The linked edge is
-	 * the single outgoing edge of the branch extremity.
+	 * the first edge of the branch in the linked graph.
+	 * <p>
+	 * For instance, in
+	 * <pre>
+	 *     LINKED-GRAPH                  BRANCH-GRAPH
+	 *
+	 *           v0                           bv0
+	 *           |  e0                         |
+	 *           v1                            |  be0
+	 *           |  e1                         |
+	 *           v2                           bv1
+	 *       e2 / \  e4                       / \
+	 *         /   \                    be1  /   \  be2
+	 *        v3    v5                      /     \
+	 *     e3 |     | e5                   /       \
+	 *        v4    v6                    bv2      bv3
+	 * </pre>
+	 * the edge linked to <code>be1</code> is <code>e2</code>. The edge linked
+	 * to <code>be2</code> is <code>e4</code>.
+	 *
 	 *
 	 * @param be
 	 *            the branch edge.
@@ -151,6 +170,26 @@ public interface BranchGraph<
 	/**
 	 * Returns the vertex linked to the specified branch vertex. The linked
 	 * vertex is a branch extremity.
+	 * <p>
+	 * For instance, in
+	 *
+	 * <pre>
+	 *     LINKED-GRAPH                  BRANCH-GRAPH
+	 *
+	 *           v0                           bv0
+	 *           |  e0                         |
+	 *           v1                            |  be0
+	 *           |  e1                         |
+	 *           v2                           bv1
+	 *       e2 / \  e4                       / \
+	 *         /   \                    be1  /   \  be2
+	 *        v3    v5                      /     \
+	 *     e3 |     | e5                   /       \
+	 *        v4    v6                    bv2      bv3
+	 * </pre>
+	 *
+	 * the vertex linked to <code>bv0</code> is <code>v0</code>. The vertex
+	 * linked to <code>bv1</code> is <code>v2</code>.
 	 *
 	 * @param bv
 	 *            the branch vertex.
@@ -164,6 +203,27 @@ public interface BranchGraph<
 
 	/**
 	 * Returns the branch edge linked to the specified edge.
+	 * <p>
+	 * For instance, in
+	 *
+	 * <pre>
+	 *     LINKED-GRAPH                  BRANCH-GRAPH
+	 *
+	 *           v0                           bv0
+	 *           |  e0                         |
+	 *           v1                            |  be0
+	 *           |  e1                         |
+	 *           v2                           bv1
+	 *       e2 / \  e4                       / \
+	 *         /   \                    be1  /   \  be2
+	 *        v3    v5                      /     \
+	 *     e3 |     | e5                   /       \
+	 *        v4    v6                    bv2      bv3
+	 * </pre>
+	 *
+	 * <code>e0</code> and <code>e1</code> link to <code>be0</code>.
+	 * <code>e2</code> and <code>e3</code> link to <code>be1</code>.
+	 * <code>e4</code> and <code>e5</code> link to <code>be2</code>.
 	 *
 	 * @param edge
 	 *            the linked edge.
@@ -174,9 +234,30 @@ public interface BranchGraph<
 	public BE getBranchEdge( E edge, BE ref );
 
 	/**
-	 * Returns the branch vertex linked to the specified edge if it belongs to a
+	 * Returns the branch edge linked to the specified vertex if it belongs to a
 	 * branch. Returns <code>null</code> if the specified vertex is a branch
 	 * extremity.
+	 * <p>
+	 * For instance, in
+	 *
+	 * <pre>
+	 *     LINKED-GRAPH                  BRANCH-GRAPH
+	 *
+	 *           v0                           bv0
+	 *           |  e0                         |
+	 *           v1                            |  be0
+	 *           |  e1                         |
+	 *           v2                           bv1
+	 *       e2 / \  e4                       / \
+	 *         /   \                    be1  /   \  be2
+	 *        v3    v5                      /     \
+	 *     e3 |     | e5                   /       \
+	 *        v4    v6                    bv2      bv3
+	 * </pre>
+	 *
+	 * <code>v1</code> links to <code>be0</code>. <code>v3</code> links to
+	 * <code>be1</code>. <code>v0</code> links to <code>null</code> because this
+	 * vertex is a branch extremity.
 	 *
 	 * @param vertex
 	 *            the linked vertex.
@@ -190,6 +271,26 @@ public interface BranchGraph<
 	 * Returns the branch vertex linked to the specified vertex if it is a
 	 * branch extremity. Returns <code>null</code> if the specified vertex
 	 * belongs to inside a branch.
+	 * <p>
+	 * For instance, in
+	 *
+	 * <pre>
+	 *     LINKED-GRAPH                  BRANCH-GRAPH
+	 *
+	 *           v0                           bv0
+	 *           |  e0                         |
+	 *           v1                            |  be0
+	 *           |  e1                         |
+	 *           v2                           bv1
+	 *       e2 / \  e4                       / \
+	 *         /   \                    be1  /   \  be2
+	 *        v3    v5                      /     \
+	 *     e3 |     | e5                   /       \
+	 *        v4    v6                    bv2      bv3
+	 * </pre>
+	 *
+	 * <code>v1</code> and <code>v3</code> link to <code>null</code> because
+	 * they belong inside a branch. <code>v0</code> links to <code>bv0</code>.
 	 *
 	 * @param vertex
 	 *            the linked vertex.
@@ -201,7 +302,7 @@ public interface BranchGraph<
 
 	/**
 	 * Returns a graph id map for the branch graph.
-	 * 
+	 *
 	 * @return a graph id map.
 	 */
 	public GraphIdBimap< BV, BE > getGraphIdBimap();
@@ -209,7 +310,7 @@ public interface BranchGraph<
 	/**
 	 * Returns an iterator that iterates in order over the linked vertices in a
 	 * branch, specified by its branch edge. The first and last vertex iterated
-	 * are the branch nodes.
+	 * are the branch extremities.
 	 *
 	 * @param edge
 	 *            the branch edge.
