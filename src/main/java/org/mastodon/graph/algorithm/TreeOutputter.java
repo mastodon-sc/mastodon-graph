@@ -229,7 +229,7 @@ public class TreeOutputter< V extends Vertex< E >, E extends Edge< V > > extends
 			}
 
 			int li = -1;
-			for ( int i = col + width - 1; i >= col + 1; i-- )
+			for ( int i = Math.min( col + width - 1, above2[ row + 1 ].length() - 1 ); i >= col + 1; i-- )
 			{
 				final char d = above2[ row + 1 ].charAt( i );
 				if ( d == V_BAR_CHAR || d == TRIANGLE_B_CHAR || d == CORNER_BL_CHAR || d == CORNER_BR_CHAR )
