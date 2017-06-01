@@ -1,5 +1,7 @@
 package org.mastodon.graph;
 
+import java.util.Iterator;
+
 import org.mastodon.collection.RefCollection;
 
 
@@ -110,4 +112,8 @@ public interface ReadOnlyGraph< V extends Vertex< E >, E extends Edge< V > >
 	 *         {@code releaseRef()} are guaranteed to be implemented.
 	 */
 	public RefCollection< E > edges();
+
+	public Iterator< E > getEdges( V source, V target, Iterator< E > ref );
+
+	public Iterator< E > getEdges( V source, V target );
 }
