@@ -8,12 +8,12 @@ import org.mastodon.pool.attributes.IntAttribute;
 
 public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, ByteMappedElement >
 {
-	static class TestNonSimpleVertexLayout extends AbstractVertexLayout
+	static class TestVertexLayout extends AbstractVertexLayout
 	{
 		final IntField id = intField();
 	}
 
-	static TestNonSimpleVertexLayout layout = new TestNonSimpleVertexLayout();
+	static TestVertexLayout layout = new TestVertexLayout();
 
 	final IntAttribute< TestVertex > id;
 
