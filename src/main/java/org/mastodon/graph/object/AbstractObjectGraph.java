@@ -2,10 +2,10 @@ package org.mastodon.graph.object;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 import org.mastodon.collection.RefCollection;
 import org.mastodon.collection.wrap.RefCollectionWrapper;
+import org.mastodon.graph.Edges;
 import org.mastodon.graph.Graph;
 
 public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E >, E extends AbstractObjectEdge< E, V > > implements Graph< V, E >
@@ -99,67 +99,15 @@ public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E 
 	}
 
 	@Override
-	public Iterator< E > getEdges( final V source, final V target, final Iterator< E > ref )
+	public Edges< E > getEdges( final V source, final V target, final V ref )
 	{
 		return getEdges( source, target );
 	}
 
 	@Override
-	public Iterator< E > getEdges( final V source, final V target )
+	public Edges< E > getEdges( final V source, final V target )
 	{
-		return new MyIterator( source, target );
-	}
-
-	private class MyIterator implements Iterator< E >
-	{
-
-		private final Iterator< E > outgoingIterator;
-
-		private final V target;
-
-		private E next;
-
-		private E current;
-
-		private boolean hasNext;
-
-		public MyIterator( final V source, final V target )
-		{
-			this.target = target;
-			this.outgoingIterator = source.outgoingEdges().iterator();
-			hasNext = true;
-			next = null;
-			prefetch();
-		}
-
-		private void prefetch()
-		{
-			while ( outgoingIterator.hasNext() )
-			{
-				next = outgoingIterator.next();
-				if ( next.getTarget().equals( target ) )
-				{
-					hasNext = true;
-					return;
-				}
-			}
-			hasNext = false;
-		}
-
-		@Override
-		public boolean hasNext()
-		{
-			return hasNext;
-		}
-
-		@Override
-		public E next()
-		{
-			current = next;
-			prefetch();
-			return current;
-		}
-
+		return new ObjectEdgesSourceToTarget<>( source, target, edges );
 	}
 
 	@Override
@@ -178,7 +126,7 @@ public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E 
 				edges.remove( edge );
 			}
 		}
-	}
+ 	}
 
 	@Override
 	public void remove( final E edge )
