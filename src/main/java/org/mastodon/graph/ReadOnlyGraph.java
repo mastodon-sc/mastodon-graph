@@ -1,7 +1,5 @@
 package org.mastodon.graph;
 
-import java.util.Iterator;
-
 import org.mastodon.collection.RefCollection;
 
 
@@ -54,6 +52,28 @@ public interface ReadOnlyGraph< V extends Vertex< E >, E extends Edge< V > >
 	 *         concrete implementation.
 	 */
 	public E getEdge( final V source, final V target, final E ref );
+
+	/**
+	 * TODO
+	 *
+	 * @param source
+	 * @param target
+	 * @return
+	 */
+	public Edges< E > getEdges( final V source, final V target );
+
+	/**
+	 * TODO
+	 *
+	 * @param source
+	 * @param target
+	 * @param ref
+	 *            a vertex reference that can be used for retrieval. Depending
+	 *            on concrete implementation, this object can be cleared,
+	 *            ignored or re-used.
+	 * @return
+	 */
+	public Edges< E > getEdges( final V source, final V target, final V ref );
 
 	/**
 	 * Generates a vertex reference that can be used for retrieval. Depending on
@@ -112,8 +132,4 @@ public interface ReadOnlyGraph< V extends Vertex< E >, E extends Edge< V > >
 	 *         {@code releaseRef()} are guaranteed to be implemented.
 	 */
 	public RefCollection< E > edges();
-
-	public Iterator< E > getEdges( V source, V target, Iterator< E > ref );
-
-	public Iterator< E > getEdges( V source, V target );
 }

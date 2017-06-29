@@ -65,6 +65,8 @@ public class AbstractVertex<
 
 	private AllEdges< E > edges;
 
+	OutgoingEdgesToTarget< E > outgoingEdgesToTarget;
+
 	@Override
 	public IncomingEdges< E > incomingEdges()
 	{
@@ -91,6 +93,7 @@ public class AbstractVertex<
 			incomingEdges = new IncomingEdges<>( this, edgePool );
 			outgoingEdges = new OutgoingEdges<>( this, edgePool );
 			edges = new AllEdges<>( this, edgePool );
+			outgoingEdgesToTarget = new OutgoingEdgesToTarget<>( this, edgePool );
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package org.mastodon.graph.ref;
 
-import java.util.Iterator;
-
+import org.mastodon.graph.Edges;
 import org.mastodon.graph.Graph;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolCollectionWrapper;
@@ -83,6 +82,20 @@ public class GraphImp<
 	}
 
 	@Override
+	public Edges< E > getEdges( final V source, final V target )
+	{
+		return getEdges( source, target, vertexRef() );
+	}
+
+	@Override
+	public Edges< E > getEdges( final V source, final V target, final V ref )
+	{
+		ref.refTo( source );
+		ref.outgoingEdgesToTarget.setTarget( target );
+		return ref.outgoingEdgesToTarget;
+	}
+
+	@Override
 	public PoolCollectionWrapper< V > vertices()
 	{
 		return vertexPool.asRefCollection();
@@ -140,82 +153,5 @@ public class GraphImp<
 	{
 		vertexPool.clear();
 		edgePool.clear();
-	}
-
-	@Override
-	public Iterator< E > getEdges( final V source, final V target )
-	{
-		return getEdges( source, target, null );
-	}
-
-	@Override
-	public Iterator< E > getEdges( final V source, final V target, Iterator< E > ref )
-	{
-		if ( null == ref || ( !( ref instanceof GraphImp.MyIterator ) ) )
-			ref = new MyIterator();
-
-		final MyIterator it = ( MyIterator ) ref;
-		it.outgoingIterator = source.outgoingEdges().iterator();
-		it.target = target;
-		it.reset();
-		return it;
-	}
-
-	private class MyIterator implements Iterator< E >
-	{
-
-		private final V vref = vertexRef();
-
-		private final E current = edgeRef();
-
-		private OutgoingEdges< E >.OutgoingEdgesIterator outgoingIterator;
-
-		private V target;
-
-		private boolean hasNext;
-
-		private E next;
-
-		private void reset()
-		{
-			hasNext = true;
-			next = null;
-			prefetch();
-		}
-
-		private void prefetch()
-		{
-			while ( outgoingIterator.hasNext() )
-			{
-				next = outgoingIterator.next();
-				if (next.getTarget( vref ).equals( target ))
-				{
-					hasNext = true;
-					return;
-				}
-			}
-			hasNext = false;
-		}
-
-		@Override
-		public boolean hasNext()
-		{
-			return hasNext;
-		}
-
-		@Override
-		public E next()
-		{
-			current.refTo( next );
-			prefetch();
-			return current;
-		}
-
-		@Override
-		public void remove()
-		{
-			GraphImp.this.remove( current );
-		}
-
 	}
 }

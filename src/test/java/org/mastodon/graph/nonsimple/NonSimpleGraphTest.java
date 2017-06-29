@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefList;
+import org.mastodon.graph.Edges;
 import org.mastodon.graph.TestEdge;
 import org.mastodon.graph.TestGraph;
 import org.mastodon.graph.TestVertex;
@@ -154,13 +155,15 @@ public class NonSimpleGraphTest
 		// And an edge to another target.
 		graph.addEdge( s, t2 );
 
-		final Iterator< TestEdge > edges = graph.getEdges( s, t );
+		final TestVertex ref = graph.vertexRef();
+		final Edges< TestEdge > edges = graph.getEdges( s, t, ref );
+		final Iterator< TestEdge > it = edges.iterator();
 		int nedges = 0;
 		TestEdge previous = null;
-		while ( edges.hasNext() )
+		while ( it.hasNext() )
 		{
 			nedges++;
-			final TestEdge e = edges.next();
+			final TestEdge e = it.next();
 
 			// Test non equality with previous edge.
 			if ( null != previous )
@@ -187,19 +190,18 @@ public class NonSimpleGraphTest
 		/*
 		 * Test reuse of iterator ref.
 		 */
-
-		final int hashCode = edges.hashCode();
-		final Iterator< TestEdge > edges2 = graph.getEdges( s, t, edges );
-		assertEquals( "Did not reuse iterator reference.", hashCode, edges2.hashCode() );
+		final Edges< TestEdge > edges2 = graph.getEdges( s, t, ref );
+		assertEquals( "Did not reuse iterator reference.", edges, edges2 );
 
 		/*
 		 * Test iterator with removal.
 		 */
 
-		while ( edges2.hasNext() )
+		final Iterator< TestEdge > it2 = edges2.iterator();
+		while ( it2.hasNext() )
 		{
-			edges2.next();
-			edges2.remove();
+			it2.next();
+			it2.remove();
 		}
 
 		assertNull( "All edges between source and target should have been removed.", graph.getEdge( s, t ) );
@@ -208,16 +210,17 @@ public class NonSimpleGraphTest
 		 * Test reuse of iterator ref.
 		 */
 
-		final Iterator< TestEdge > edges3 = graph.getEdges( s, t2, edges );
-		assertEquals( "Did not reuse iterator reference.", hashCode, edges3.hashCode() );
+		final Edges< TestEdge > edges3 = graph.getEdges( s, t2, ref );
+		assertEquals( "Did not reuse iterator reference.", edges, edges3 );
 
 		/*
 		 * Test single edge.
 		 */
 
-		while ( edges3.hasNext() )
+		final Iterator< TestEdge > it3 = edges3.iterator();
+		while ( it3.hasNext() )
 		{
-			final TestEdge e = edges3.next();
+			final TestEdge e = it3.next();
 			assertEquals( "Unexpected edge.", graph.getEdge( s, t2 ), e );
 		}
 
