@@ -1,7 +1,7 @@
 package org.mastodon.graph;
 
 import org.mastodon.graph.ref.AbstractEdge;
-import org.mastodon.graph.ref.AbstractEdgePool;
+import org.mastodon.graph.ref.AbstractSimpleEdgePool;
 import org.mastodon.graph.ref.AbstractVertex;
 import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.graph.ref.GraphImp;
@@ -47,7 +47,7 @@ public class MinimalGraphExample
 		}
 	}
 
-	static class MyEdgePool extends AbstractEdgePool< MyEdge, MyVertex, ByteMappedElement >
+	static class MyEdgePool extends AbstractSimpleEdgePool< MyEdge, MyVertex, ByteMappedElement >
 	{
 		static AbstractEdgeLayout layout = new AbstractEdgeLayout();
 

@@ -35,6 +35,7 @@ import org.mastodon.pool.MappedElement;
  *
  * @param <V>
  * @param <E>
+ * @param <VP>
  * @param <T>
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;

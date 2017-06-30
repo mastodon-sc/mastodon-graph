@@ -6,7 +6,7 @@ import org.mastodon.pool.ByteMappedElementArray;
 import org.mastodon.pool.SingleArrayMemPool;
 import org.mastodon.pool.attributes.IntAttribute;
 
-public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, ByteMappedElement >
+public class TestSimpleVertexPool extends AbstractVertexPool< TestSimpleVertex, TestSimpleEdge, ByteMappedElement >
 {
 	static class TestVertexLayout extends AbstractVertexLayout
 	{
@@ -15,18 +15,21 @@ public class TestVertexPool extends AbstractVertexPool< TestVertex, TestEdge, By
 
 	static TestVertexLayout layout = new TestVertexLayout();
 
-	final IntAttribute< TestVertex > id;
+	final IntAttribute< TestSimpleVertex > id;
 
-	public TestVertexPool( final int initialCapacity )
+	public TestSimpleVertexPool( final int initialCapacity )
 	{
-		super( initialCapacity, layout, TestVertex.class, SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
+		super(
+				initialCapacity,
+				layout,
+				TestSimpleVertex.class,
+				SingleArrayMemPool.factory( ByteMappedElementArray.factory ) );
 		id = new IntAttribute<>( layout.id, this );
 	}
 
 	@Override
-	protected TestVertex createEmptyRef()
+	protected TestSimpleVertex createEmptyRef()
 	{
-		return new TestVertex( this );
+		return new TestSimpleVertex( this );
 	}
 }
-

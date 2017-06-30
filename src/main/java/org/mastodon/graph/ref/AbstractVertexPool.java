@@ -11,7 +11,8 @@ public abstract class AbstractVertexPool<
 			T extends MappedElement >
 		extends Pool< V, T >
 {
-	private AbstractEdgePool< E, ?, ? > edgePool;
+	// TODO make it private again when we do not need this anymore.
+	protected AbstractEdgePool< E, ?, ? > edgePool;
 
 	public static class AbstractVertexLayout extends PoolObjectLayout
 	{

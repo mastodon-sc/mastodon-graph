@@ -8,10 +8,10 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class TestUtils
 {
-	public static final Comparator< TestVertex > idComparator = new Comparator< TestVertex >()
+	public static final Comparator< TestSimpleVertex > idComparator = new Comparator< TestSimpleVertex >()
 	{
 		@Override
-		public int compare( final TestVertex o1, final TestVertex o2 )
+		public int compare( final TestSimpleVertex o1, final TestSimpleVertex o2 )
 		{
 			return o1.getId() - o2.getId();
 		}

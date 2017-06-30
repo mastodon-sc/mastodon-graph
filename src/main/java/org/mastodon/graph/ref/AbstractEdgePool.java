@@ -5,6 +5,19 @@ import org.mastodon.pool.MemPool;
 import org.mastodon.pool.Pool;
 import org.mastodon.pool.PoolObjectLayout;
 
+/**
+ * Mother class for edge pools of <b>directed</b> graphs.
+ * <p>
+ * Graphs based on this edge pool do not have a limitation on the number of
+ * edges between a source and target vertices.
+ *
+ * @param <E>
+ *            the edge type.
+ * @param <V>
+ *            the vertex type.
+ * @param <T>
+ *            the MappedElement type of the pool.
+ */
 public abstract class AbstractEdgePool<
 			E extends AbstractEdge< E, V, ?, T >,
 			V extends AbstractVertex< V, ?, ?, ? >,
@@ -34,11 +47,20 @@ public abstract class AbstractEdgePool<
 		this.vertexPool = vertexPool;
 	}
 
+	/**
+	 * Adds an edge between the specified source and target.
+	 *
+	 * @param source
+	 *            the source vertex.
+	 * @param target
+	 *            the target vertex.
+	 * @param edge
+	 *            a reference object used for operation.
+	 * @return the added edge, or <code>null</code> if an edge already exists
+	 *         between source and target.
+	 */
 	public E addEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
-		if ( getEdge( source, target, edge ) != null )
-			return null;
-
 		create( edge );
 		edge.setSourceVertexInternalPoolIndex( source.getInternalPoolIndex() );
 		edge.setTargetVertexInternalPoolIndex( target.getInternalPoolIndex() );
@@ -56,7 +78,7 @@ public abstract class AbstractEdgePool<
 			// source has outgoing edges. Append this one to the end of the linked list.
 			getObject( sourceOutIndex, tmp );
 			int nextSourceEdgeIndex = tmp.getNextSourceEdgeIndex();
-			while( nextSourceEdgeIndex >= 0 )
+			while ( nextSourceEdgeIndex >= 0 )
 			{
 				getObject( nextSourceEdgeIndex, tmp );
 				nextSourceEdgeIndex = tmp.getNextSourceEdgeIndex();
@@ -75,7 +97,7 @@ public abstract class AbstractEdgePool<
 			// target has incoming edges. Append this one to the end of the linked list.
 			getObject( targetInIndex, tmp );
 			int nextTargetEdgeIndex = tmp.getNextTargetEdgeIndex();
-			while( nextTargetEdgeIndex >= 0 )
+			while ( nextTargetEdgeIndex >= 0 )
 			{
 				getObject( nextTargetEdgeIndex, tmp );
 				nextTargetEdgeIndex = tmp.getNextTargetEdgeIndex();
@@ -87,11 +109,27 @@ public abstract class AbstractEdgePool<
 		return edge;
 	}
 
+	/**
+	 * Inserts an edge between the specified source and target, at the specified
+	 * positions in the edge lists of the source and target vertices.
+	 *
+	 * @param source
+	 *            the source vertex.
+	 * @param sourceOutInsertAt
+	 *            the position the created edge is to be inserted in the source
+	 *            vertex outgoing edge list.
+	 * @param target
+	 *            the target vertex.
+	 * @param targetInInsertAt
+	 *            the position the created edge is to be inserted in the target
+	 *            vertex incoming edge list.
+	 * @param edge
+	 *            a reference object used for operation.
+	 * @return the added edge, or <code>null</code> if an edge already exists
+	 *         between source and target.
+	 */
 	public E insertEdge( final AbstractVertex< ?, ?, ?, ? > source, final int sourceOutInsertAt, final AbstractVertex< ?, ?, ?, ? > target, final int targetInInsertAt, final E edge )
 	{
-		if ( getEdge( source, target, edge ) != null )
-			return null;
-
 		create( edge );
 		edge.setSourceVertexInternalPoolIndex( source.getInternalPoolIndex() );
 		edge.setTargetVertexInternalPoolIndex( target.getInternalPoolIndex() );
@@ -100,7 +138,7 @@ public abstract class AbstractEdgePool<
 
 		int nextSourceEdgeIndex = source.getFirstOutEdgeIndex();
 		int insertIndex = 0;
-		while( nextSourceEdgeIndex >= 0 && insertIndex < sourceOutInsertAt )
+		while ( nextSourceEdgeIndex >= 0 && insertIndex < sourceOutInsertAt )
 		{
 			getObject( nextSourceEdgeIndex, tmp );
 			nextSourceEdgeIndex = tmp.getNextSourceEdgeIndex();
@@ -112,11 +150,9 @@ public abstract class AbstractEdgePool<
 		else
 			tmp.setNextSourceEdgeIndex( edge.getInternalPoolIndex() );
 
-
-
 		int nextTargetEdgeIndex = target.getFirstInEdgeIndex();
 		insertIndex = 0;
-		while( nextTargetEdgeIndex >= 0 && insertIndex < targetInInsertAt )
+		while ( nextTargetEdgeIndex >= 0 && insertIndex < targetInInsertAt )
 		{
 			getObject( nextTargetEdgeIndex, tmp );
 			nextTargetEdgeIndex = tmp.getNextTargetEdgeIndex();
@@ -131,7 +167,6 @@ public abstract class AbstractEdgePool<
 		releaseRef( tmp );
 		return edge;
 	}
-
 
 	public E getEdge( final AbstractVertex< ?, ?, ?, ? > source, final AbstractVertex< ?, ?, ?, ? > target, final E edge )
 	{
@@ -197,10 +232,10 @@ public abstract class AbstractEdgePool<
 	}
 
 	/*
-	 *
 	 * Internal stuff.
-	 * If it should be necessary for performance reasons, these can be made protected or public
 	 *
+	 * If it should be necessary for performance reasons, these
+	 * can be made protected or public
 	 */
 
 	private void unlinkFromSource( final E edge, final E tmpEdge, final V tmpVertex )
@@ -217,7 +252,7 @@ public abstract class AbstractEdgePool<
 			// find this edge in the sources list of outgoing edges and remove it
 			getObject( sourceOutIndex, tmpEdge );
 			int nextSourceEdgeIndex = tmpEdge.getNextSourceEdgeIndex();
-			while( nextSourceEdgeIndex != edge.getInternalPoolIndex() )
+			while ( nextSourceEdgeIndex != edge.getInternalPoolIndex() )
 			{
 				getObject( nextSourceEdgeIndex, tmpEdge );
 				nextSourceEdgeIndex = tmpEdge.getNextSourceEdgeIndex();
@@ -240,7 +275,7 @@ public abstract class AbstractEdgePool<
 			// find this edge in the targets list of incoming edges and remove it
 			getObject( targetInIndex, tmpEdge );
 			int nextTargetEdgeIndex = tmpEdge.getNextTargetEdgeIndex();
-			while( nextTargetEdgeIndex != edge.getInternalPoolIndex() )
+			while ( nextTargetEdgeIndex != edge.getInternalPoolIndex() )
 			{
 				getObject( nextTargetEdgeIndex, tmpEdge );
 				nextTargetEdgeIndex = tmpEdge.getNextTargetEdgeIndex();

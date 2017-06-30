@@ -11,9 +11,9 @@ import java.util.List;
 
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.Graph;
-import org.mastodon.graph.TestEdge;
-import org.mastodon.graph.TestGraph;
-import org.mastodon.graph.TestVertex;
+import org.mastodon.graph.TestSimpleEdge;
+import org.mastodon.graph.TestSimpleGraph;
+import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.traversal.GraphSearch;
 import org.mastodon.graph.algorithm.traversal.SearchListener;
@@ -97,20 +97,20 @@ public class GraphsForTests
 		};
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > straightLinePoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > straightLinePoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = new GraphTestBundle<>();
 
-		final TestGraph graph = new TestGraph();
+		final TestSimpleGraph graph = new TestSimpleGraph();
 		bundle.graph = graph;
 
-		final TestVertex A = graph.addVertex().init( 1 );
-		final TestVertex B = graph.addVertex().init( 2 );
-		final TestVertex C = graph.addVertex().init( 3 );
-		final TestVertex D = graph.addVertex().init( 4 );
-		final TestVertex E = graph.addVertex().init( 5 );
-		final TestVertex F = graph.addVertex().init( 6 );
-		final TestVertex G = graph.addVertex().init( 7 );
+		final TestSimpleVertex A = graph.addVertex().init( 1 );
+		final TestSimpleVertex B = graph.addVertex().init( 2 );
+		final TestSimpleVertex C = graph.addVertex().init( 3 );
+		final TestSimpleVertex D = graph.addVertex().init( 4 );
+		final TestSimpleVertex E = graph.addVertex().init( 5 );
+		final TestSimpleVertex F = graph.addVertex().init( 6 );
+		final TestSimpleVertex G = graph.addVertex().init( 7 );
 		bundle.vertices = new ArrayList<>( 7 );
 		bundle.vertices.add( A );
 		bundle.vertices.add( B );
@@ -120,12 +120,12 @@ public class GraphsForTests
 		bundle.vertices.add( F );
 		bundle.vertices.add( G );
 
-		final TestEdge eAB = graph.addEdge( A, B );
-		final TestEdge eBC = graph.addEdge( B, C );
-		final TestEdge eCD = graph.addEdge( C, D );
-		final TestEdge eDE = graph.addEdge( D, E );
-		final TestEdge eEF = graph.addEdge( E, F );
-		final TestEdge eFG = graph.addEdge( F, G );
+		final TestSimpleEdge eAB = graph.addEdge( A, B );
+		final TestSimpleEdge eBC = graph.addEdge( B, C );
+		final TestSimpleEdge eCD = graph.addEdge( C, D );
+		final TestSimpleEdge eDE = graph.addEdge( D, E );
+		final TestSimpleEdge eEF = graph.addEdge( E, F );
+		final TestSimpleEdge eFG = graph.addEdge( F, G );
 		bundle.edges = new ArrayList<>( 6 );
 		bundle.edges.add( eAB );
 		bundle.edges.add( eBC );
@@ -179,10 +179,10 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > loopPoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > loopPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = straightLinePoolObjects();
-		final TestEdge edge = bundle.graph.addEdge( bundle.vertices.get( 6 ), bundle.vertices.get( 0 ) );
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = straightLinePoolObjects();
+		final TestSimpleEdge edge = bundle.graph.addEdge( bundle.vertices.get( 6 ), bundle.vertices.get( 0 ) );
 		bundle.edges.add( edge );
 
 		bundle.name = "Loop pool objects";
@@ -198,20 +198,20 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > wpExamplePoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > wpExamplePoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = new GraphTestBundle<>();
 
-		final TestGraph graph = new TestGraph();
+		final TestSimpleGraph graph = new TestSimpleGraph();
 		bundle.graph = graph;
 
-		final TestVertex A = graph.addVertex().init( 1 );
-		final TestVertex B = graph.addVertex().init( 2 );
-		final TestVertex C = graph.addVertex().init( 3 );
-		final TestVertex D = graph.addVertex().init( 4 );
-		final TestVertex E = graph.addVertex().init( 5 );
-		final TestVertex F = graph.addVertex().init( 6 );
-		final TestVertex G = graph.addVertex().init( 7 );
+		final TestSimpleVertex A = graph.addVertex().init( 1 );
+		final TestSimpleVertex B = graph.addVertex().init( 2 );
+		final TestSimpleVertex C = graph.addVertex().init( 3 );
+		final TestSimpleVertex D = graph.addVertex().init( 4 );
+		final TestSimpleVertex E = graph.addVertex().init( 5 );
+		final TestSimpleVertex F = graph.addVertex().init( 6 );
+		final TestSimpleVertex G = graph.addVertex().init( 7 );
 		bundle.vertices = new ArrayList<>( 7 );
 		bundle.vertices.add( A );
 		bundle.vertices.add( B );
@@ -221,13 +221,13 @@ public class GraphsForTests
 		bundle.vertices.add( F );
 		bundle.vertices.add( G );
 
-		final TestEdge eAB = graph.addEdge( A, B ); // 0
-		final TestEdge eAC = graph.addEdge( A, C ); // 1
-		final TestEdge eAE = graph.addEdge( A, E ); // 2
-		final TestEdge eBD = graph.addEdge( B, D ); // 3
-		final TestEdge eBF = graph.addEdge( B, F ); // 4
-		final TestEdge eFE = graph.addEdge( F, E ); // 5
-		final TestEdge eCG = graph.addEdge( C, G ); // 6
+		final TestSimpleEdge eAB = graph.addEdge( A, B ); // 0
+		final TestSimpleEdge eAC = graph.addEdge( A, C ); // 1
+		final TestSimpleEdge eAE = graph.addEdge( A, E ); // 2
+		final TestSimpleEdge eBD = graph.addEdge( B, D ); // 3
+		final TestSimpleEdge eBF = graph.addEdge( B, F ); // 4
+		final TestSimpleEdge eFE = graph.addEdge( F, E ); // 5
+		final TestSimpleEdge eCG = graph.addEdge( C, G ); // 6
 		bundle.edges = new ArrayList<>( 7 );
 		bundle.edges.add( eAB ); // 0
 		bundle.edges.add( eAC ); // 1
@@ -284,15 +284,15 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > singleVertexPoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > singleVertexPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = new GraphTestBundle<>();
 
-		final TestGraph graph = new TestGraph();
+		final TestSimpleGraph graph = new TestSimpleGraph();
 		bundle.graph = graph;
 
-		final TestVertex A = graph.addVertex().init( 1 );
-		bundle.vertices = Arrays.asList( new TestVertex[] { A } );
+		final TestSimpleVertex A = graph.addVertex().init( 1 );
+		bundle.vertices = Arrays.asList( new TestSimpleVertex[] { A } );
 
 		bundle.edges = Collections.emptyList();
 
@@ -316,19 +316,19 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > singleEdgePoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > singleEdgePoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = new GraphTestBundle<>();
 
-		final TestGraph graph = new TestGraph();
+		final TestSimpleGraph graph = new TestSimpleGraph();
 		bundle.graph = graph;
 
-		final TestVertex A = graph.addVertex().init( 1 );
-		final TestVertex B = graph.addVertex().init( 2 );
-		bundle.vertices = Arrays.asList( new TestVertex[] { A, B } );
+		final TestSimpleVertex A = graph.addVertex().init( 1 );
+		final TestSimpleVertex B = graph.addVertex().init( 2 );
+		bundle.vertices = Arrays.asList( new TestSimpleVertex[] { A, B } );
 
-		final TestEdge eAB = graph.addEdge( A, B );
-		bundle.edges = Arrays.asList( new TestEdge[] { eAB } );
+		final TestSimpleEdge eAB = graph.addEdge( A, B );
+		bundle.edges = Arrays.asList( new TestSimpleEdge[] { eAB } );
 
 		bundle.name = "Single edge pool objects";
 		return bundle;
@@ -355,44 +355,44 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > forkPoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > forkPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = new GraphTestBundle<>();
 
-		final TestGraph graph = new TestGraph();
+		final TestSimpleGraph graph = new TestSimpleGraph();
 		bundle.graph = graph;
 
-		final TestVertex A = graph.addVertex().init( 1 );
-		final TestVertex B = graph.addVertex().init( 2 );
-		final TestVertex C = graph.addVertex().init( 3 );
-		bundle.vertices = Arrays.asList( new TestVertex[] { A, B, C } );
+		final TestSimpleVertex A = graph.addVertex().init( 1 );
+		final TestSimpleVertex B = graph.addVertex().init( 2 );
+		final TestSimpleVertex C = graph.addVertex().init( 3 );
+		bundle.vertices = Arrays.asList( new TestSimpleVertex[] { A, B, C } );
 
-		final TestEdge eAB = graph.addEdge( A, B );
-		final TestEdge eAC = graph.addEdge( A, C );
-		bundle.edges = Arrays.asList( new TestEdge[] { eAB, eAC } );
+		final TestSimpleEdge eAB = graph.addEdge( A, B );
+		final TestSimpleEdge eAC = graph.addEdge( A, C );
+		bundle.edges = Arrays.asList( new TestSimpleEdge[] { eAB, eAC } );
 
 		bundle.name = "Fork pool objects";
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > diamondPoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > diamondPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = new GraphTestBundle<>();
 
-		final TestGraph graph = new TestGraph();
+		final TestSimpleGraph graph = new TestSimpleGraph();
 		bundle.graph = graph;
 
-		final TestVertex A = graph.addVertex().init( 1 );
-		final TestVertex B = graph.addVertex().init( 2 );
-		final TestVertex C = graph.addVertex().init( 3 );
-		final TestVertex D = graph.addVertex().init( 4 );
-		bundle.vertices = Arrays.asList( new TestVertex[] { A, B, C, D } );
+		final TestSimpleVertex A = graph.addVertex().init( 1 );
+		final TestSimpleVertex B = graph.addVertex().init( 2 );
+		final TestSimpleVertex C = graph.addVertex().init( 3 );
+		final TestSimpleVertex D = graph.addVertex().init( 4 );
+		bundle.vertices = Arrays.asList( new TestSimpleVertex[] { A, B, C, D } );
 
-		final TestEdge eAB = graph.addEdge( A, B );
-		final TestEdge eAC = graph.addEdge( A, C );
-		final TestEdge eBD = graph.addEdge( B, D );
-		final TestEdge eCD = graph.addEdge( C, D );
-		bundle.edges = Arrays.asList( new TestEdge[] { eAB, eAC, eBD, eCD } );
+		final TestSimpleEdge eAB = graph.addEdge( A, B );
+		final TestSimpleEdge eAC = graph.addEdge( A, C );
+		final TestSimpleEdge eBD = graph.addEdge( B, D );
+		final TestSimpleEdge eCD = graph.addEdge( C, D );
+		bundle.edges = Arrays.asList( new TestSimpleEdge[] { eAB, eAC, eBD, eCD } );
 
 		bundle.name = "Diamond pool objects";
 		return bundle;
@@ -447,26 +447,26 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > twoComponentsPoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > twoComponentsPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = wpExamplePoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = wpExamplePoolObjects();
 
-		final TestVertex A = bundle.graph.addVertex().init( 11 );
-		final TestVertex B = bundle.graph.addVertex().init( 12 );
-		final TestVertex C = bundle.graph.addVertex().init( 13 );
-		final TestVertex D = bundle.graph.addVertex().init( 14 );
-		final TestVertex E = bundle.graph.addVertex().init( 15 );
-		final TestVertex F = bundle.graph.addVertex().init( 16 );
-		final TestVertex G = bundle.graph.addVertex().init( 17 );
-		bundle.vertices.addAll( Arrays.asList( new TestVertex[] { A, B, C, D, E, F, G } ) );
+		final TestSimpleVertex A = bundle.graph.addVertex().init( 11 );
+		final TestSimpleVertex B = bundle.graph.addVertex().init( 12 );
+		final TestSimpleVertex C = bundle.graph.addVertex().init( 13 );
+		final TestSimpleVertex D = bundle.graph.addVertex().init( 14 );
+		final TestSimpleVertex E = bundle.graph.addVertex().init( 15 );
+		final TestSimpleVertex F = bundle.graph.addVertex().init( 16 );
+		final TestSimpleVertex G = bundle.graph.addVertex().init( 17 );
+		bundle.vertices.addAll( Arrays.asList( new TestSimpleVertex[] { A, B, C, D, E, F, G } ) );
 
-		final TestEdge eAB = bundle.graph.addEdge( A, B );
-		final TestEdge eBC = bundle.graph.addEdge( B, C );
-		final TestEdge eCD = bundle.graph.addEdge( C, D );
-		final TestEdge eDE = bundle.graph.addEdge( D, E );
-		final TestEdge eEF = bundle.graph.addEdge( E, F );
-		final TestEdge eFG = bundle.graph.addEdge( F, G );
-		bundle.edges.addAll( Arrays.asList( new TestEdge[] { eAB, eBC, eCD, eDE, eEF, eFG } ) );
+		final TestSimpleEdge eAB = bundle.graph.addEdge( A, B );
+		final TestSimpleEdge eBC = bundle.graph.addEdge( B, C );
+		final TestSimpleEdge eCD = bundle.graph.addEdge( C, D );
+		final TestSimpleEdge eDE = bundle.graph.addEdge( D, E );
+		final TestSimpleEdge eEF = bundle.graph.addEdge( E, F );
+		final TestSimpleEdge eFG = bundle.graph.addEdge( F, G );
+		bundle.edges.addAll( Arrays.asList( new TestSimpleEdge[] { eAB, eBC, eCD, eDE, eEF, eFG } ) );
 
 		bundle.name = "Two components pool objects";
 		return bundle;

@@ -2,7 +2,6 @@ package org.mastodon.graph;
 
 import org.mastodon.collection.RefCollection;
 
-
 /**
  * A read-only graph consisting of vertices of type {@code V} and edges of type
  * {@code E}. "Read-only" means that the graph cannot be modified through this
@@ -52,6 +51,54 @@ public interface ReadOnlyGraph< V extends Vertex< E >, E extends Edge< V > >
 	 *         concrete implementation.
 	 */
 	public E getEdge( final V source, final V target, final E ref );
+
+	/**
+	 * Returns the collection of directed edges linking vertex {@code source} to
+	 * {@code target}.
+	 * <p>
+	 * For simple graphs, there might be 0 or 1 such edges, but not more. For
+	 * general graphs, there might be 0, 1 or several edges linking
+	 * {@code source} to {@code target}. When there is no edge from
+	 * {@code source} to {@code target}, the collection returned is empty, but
+	 * never {@code null}. Iterators over this collection support element
+	 * removal.
+	 *
+	 * @param source
+	 *            the source vertex.
+	 * @param target
+	 *            the target vertex.
+	 * @return the collection of edges linking vertex {@code source} to
+	 *         {@code target}.
+	 */
+	public Edges< E > getEdges( final V source, final V target );
+
+	/**
+	 * Returns the collection of directed edges linking vertex {@code source} to
+	 * {@code target}.
+	 * <p>
+	 * For simple graphs, there might be 0 or 1 such edges, but not more. For
+	 * general graphs, there might be 0, 1 or several edges linking
+	 * {@code source} to {@code target}. When there is no edge from
+	 * {@code source} to {@code target}, the collection returned is empty, but
+	 * never {@code null}. Iterators over this collection support element
+	 * removal.
+	 * <p>
+	 * This method is a (potentially) allocation-free version of
+	 * {@link #getEdges(Vertex, Vertex)}
+	 *
+	 *
+	 * @param source
+	 *            the source vertex.
+	 * @param target
+	 *            the target vertex.
+	 * @param ref
+	 *            a vertex reference that can be used for retrieval. Depending
+	 *            on concrete implementation, this object can be cleared,
+	 *            ignored or re-used.
+	 * @return the collection of edges linking vertex {@code source} to
+	 *         {@code target}.
+	 */
+	public Edges< E > getEdges( final V source, final V target, final V ref );
 
 	/**
 	 * Generates a vertex reference that can be used for retrieval. Depending on

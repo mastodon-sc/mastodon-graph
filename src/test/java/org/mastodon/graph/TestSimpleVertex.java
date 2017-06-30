@@ -4,17 +4,17 @@ import org.mastodon.graph.ref.AbstractVertex;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.attributes.IntAttributeValue;
 
-public class TestVertex extends AbstractVertex< TestVertex, TestEdge, TestVertexPool, ByteMappedElement >
+public class TestSimpleVertex extends AbstractVertex< TestSimpleVertex, TestSimpleEdge, TestSimpleVertexPool, ByteMappedElement >
 {
 	private final IntAttributeValue id;
 
-	protected TestVertex( final TestVertexPool pool )
+	protected TestSimpleVertex( final TestSimpleVertexPool pool )
 	{
 		super( pool );
 		id = pool.id.createQuietAttributeValue( this );
 	}
 
-	public TestVertex init( final int id )
+	public TestSimpleVertex init( final int id )
 	{
 		setId( id );
 		return this;
@@ -34,7 +34,7 @@ public class TestVertex extends AbstractVertex< TestVertex, TestEdge, TestVertex
 	public String toString()
 	{
 		final StringBuilder sb = new StringBuilder();
-		sb.append( "nsv(" );
+		sb.append( "v(" );
 		sb.append( getId() );
 		sb.append( ")" );
 		return sb.toString();

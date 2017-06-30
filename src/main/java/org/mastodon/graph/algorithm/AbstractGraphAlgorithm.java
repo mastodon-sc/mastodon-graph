@@ -6,6 +6,7 @@ import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefDeque;
 import org.mastodon.collection.RefIntMap;
 import org.mastodon.collection.RefList;
+import org.mastodon.collection.RefMaps;
 import org.mastodon.collection.RefObjectMap;
 import org.mastodon.collection.RefRefMap;
 import org.mastodon.collection.RefSet;
@@ -157,52 +158,52 @@ public abstract class AbstractGraphAlgorithm< V extends Vertex< E >, E extends E
 
 	protected < O > RefObjectMap< V, O > createVertexObjectMap()
 	{
-		return RefCollections.createRefObjectMap( graph.vertices() );
+		return RefMaps.createRefObjectMap( graph.vertices() );
 	}
 
 	protected < O > RefObjectMap< E, O > createEdgeObjectMap()
 	{
-		return RefCollections.createRefObjectMap( graph.edges() );
+		return RefMaps.createRefObjectMap( graph.edges() );
 	}
 
 	protected RefRefMap< V, V > createVertexVertexMap()
 	{
-		return RefCollections.createRefRefMap( graph.vertices() );
+		return RefMaps.createRefRefMap( graph.vertices() );
 	}
 
 	protected RefRefMap< V, V > createVertexVertexMap( final int initialCapacity )
 	{
-		return RefCollections.createRefRefMap( graph.vertices(), initialCapacity );
+		return RefMaps.createRefRefMap( graph.vertices(), initialCapacity );
 	}
 
 	protected RefRefMap< E, E > createEdgeEdgeMap()
 	{
-		return RefCollections.createRefRefMap( graph.edges() );
+		return RefMaps.createRefRefMap( graph.edges() );
 	}
 
 	protected RefRefMap< E, E > createEdgeEdgeMap( final int initialCapacity )
 	{
-		return RefCollections.createRefRefMap( graph.edges(), initialCapacity );
+		return RefMaps.createRefRefMap( graph.edges(), initialCapacity );
 	}
 
 	protected RefIntMap< V > createVertexIntMap( final int noEntryValue )
 	{
-		return RefCollections.createRefIntMap( graph.vertices(), noEntryValue );
+		return RefMaps.createRefIntMap( graph.vertices(), noEntryValue );
 	}
 
 	protected RefIntMap< V > createVertexIntMap( final int noEntryValue, final int initialCapacity )
 	{
-		return RefCollections.createRefIntMap( graph.vertices(), noEntryValue, initialCapacity );
+		return RefMaps.createRefIntMap( graph.vertices(), noEntryValue, initialCapacity );
 	}
 
 	protected RefIntMap< E > createEdgeIntMap( final int noEntryValue )
 	{
-		return RefCollections.createRefIntMap( graph.edges(), noEntryValue );
+		return RefMaps.createRefIntMap( graph.edges(), noEntryValue );
 	}
 
 	protected RefIntMap< E > createEdgeIntMap( final int noEntryValue, final int initialCapacity )
 	{
-		return RefCollections.createRefIntMap( graph.edges(), noEntryValue, initialCapacity );
+		return RefMaps.createRefIntMap( graph.edges(), noEntryValue, initialCapacity );
 	}
 
 	protected Iterator< V > safeVertexIterator( final Iterator< V > iterator )

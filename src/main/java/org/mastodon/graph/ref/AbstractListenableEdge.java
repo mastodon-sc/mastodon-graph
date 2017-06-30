@@ -4,11 +4,14 @@ import org.mastodon.graph.Edge;
 import org.mastodon.graph.Graph;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableReadOnlyGraph;
+import org.mastodon.graph.Vertex;
 import org.mastodon.pool.MappedElement;
 
 /**
- * TODO: javadoc
- *
+ * Mother class for edge of <b>directed, listenable</b> graphs.
+ * <p>
+ * Graphs based on this edge class do not have a limitation on the number of
+ * edges between a source and target vertices.
  * <p>
  * <em>Important:</em> Derived classes need to define "constructor" methods
  * (preferably called {@code init(...)} and users <em>must</em> call one of
@@ -18,21 +21,23 @@ import org.mastodon.pool.MappedElement;
  * The reason: {@link ListenableReadOnlyGraph} should emit the
  * {@link GraphListener#edgeAdded(Edge)} event only after some basic
  * initialization has happened on the newly created edge. It is therefore not
- * emitted in {@link Graph#addEdge(Vertex, Vertex)} but instead in {@link #initDone()}.
+ * emitted in {@link Graph#addEdge(Vertex, Vertex)} but instead in
+ * {@link #initDone()}.
  * <p>
  * Idiomatically, adding an edge to a graph should look like this:<br>
  * {@code MyEdge e = graph.addEdge(...).init(...);}
  * <p>
  * Like a constructor, {@code init(...)} should be called before any other
- * method, and only once. {@link AbstractListenableEdge} tries to do some
- * basic detection of violations of this rule (throwing
- * {@link IllegalStateException} if it finds anything).
+ * method, and only once. {@link AbstractListenableEdge} tries to do some basic
+ * detection of violations of this rule (throwing {@link IllegalStateException}
+ * if it finds anything).
  * <p>
  * TODO: It would be nice to be able to enforce this at compile time, but I
  * couldn't find a good solution to achieve that.
  *
  * @param <V>
  * @param <E>
+ * @param <EP>
  * @param <T>
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;

@@ -9,6 +9,7 @@ import org.mastodon.pool.PoolObject;
  *
  * @param <V>
  * @param <E>
+ * @param <VP>
  * @param <T>
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
@@ -64,6 +65,8 @@ public class AbstractVertex<
 
 	private AllEdges< E > edges;
 
+	OutgoingEdgesToTarget< E > outgoingEdgesToTarget;
+
 	@Override
 	public IncomingEdges< E > incomingEdges()
 	{
@@ -90,6 +93,7 @@ public class AbstractVertex<
 			incomingEdges = new IncomingEdges<>( this, edgePool );
 			outgoingEdges = new OutgoingEdges<>( this, edgePool );
 			edges = new AllEdges<>( this, edgePool );
+			outgoingEdgesToTarget = new OutgoingEdgesToTarget<>( this, edgePool );
 		}
 	}
 }

@@ -4,6 +4,12 @@ import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.MemPool;
 import org.mastodon.pool.Properties;
 
+/**
+ * Mother class for edge pools of <b>directed, listenable</b> graphs.
+ * <p>
+ * Graphs based on this edge pool do not have a limitation on the number of
+ * edges between a source and target vertices.
+ */
 public abstract class AbstractListenableEdgePool<
 			E extends AbstractListenableEdge< E, V, ?, T >,
 			V extends AbstractVertex< V, ?, ?, ? >,
