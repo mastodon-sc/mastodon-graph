@@ -92,9 +92,9 @@ public interface ReadOnlyGraph< V extends Vertex< E >, E extends Edge< V > >
 	 * @param target
 	 *            the target vertex.
 	 * @param ref
-	 *            an edge reference that can be used for retrieval. Depending on
-	 *            concrete implementation, this object can be cleared, ignored
-	 *            or re-used.
+	 *            a vertex reference that can be used for retrieval. Depending
+	 *            on concrete implementation, this object can be cleared,
+	 *            ignored or re-used.
 	 * @return the collection of edges linking vertex {@code source} to
 	 *         {@code target}.
 	 */
