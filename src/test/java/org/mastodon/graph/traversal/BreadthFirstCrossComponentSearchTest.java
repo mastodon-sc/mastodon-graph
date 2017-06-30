@@ -13,8 +13,9 @@ import org.junit.Test;
 import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefIntMap;
 import org.mastodon.collection.RefList;
-import org.mastodon.graph.TestEdge;
-import org.mastodon.graph.TestVertex;
+import org.mastodon.collection.RefMaps;
+import org.mastodon.graph.TestSimpleEdge;
+import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.algorithm.traversal.BreadthFirstCrossComponentSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
@@ -35,7 +36,7 @@ public class BreadthFirstCrossComponentSearchTest
 	@Test
 	public void testmultipleComponentsPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.multipleComponentsPoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.multipleComponentsPoolObjects();
 
 
 		final List< EdgeClass > edgeClass = new ArrayList<>();
@@ -43,7 +44,7 @@ public class BreadthFirstCrossComponentSearchTest
 			edgeClass.addAll( Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, CROSS } ) );
 
 		// Expected iteration order.
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 8 ) );
 		expected.add( bundle.vertices.get( 9 ) );
 		expected.add( bundle.vertices.get( 10 ) );
@@ -64,7 +65,7 @@ public class BreadthFirstCrossComponentSearchTest
 		expected.add( bundle.vertices.get( 6 ) );
 		expected.add( bundle.vertices.get( 7 ) );
 
-		final RefList< TestEdge > edges = RefCollections.createRefList( bundle.graph.edges() );
+		final RefList< TestSimpleEdge > edges = RefCollections.createRefList( bundle.graph.edges() );
 		edges.add( bundle.edges.get( 8 ) );
 		edges.add( bundle.edges.get( 9 ) );
 		edges.add( bundle.edges.get( 10 ) );
@@ -86,16 +87,16 @@ public class BreadthFirstCrossComponentSearchTest
 		edges.add( bundle.edges.get( 7 ) );
 
 		// Specifies root order.
-		final RefList< TestVertex > roots = RefCollections.createRefList( bundle.graph.vertices(), 4 );
+		final RefList< TestSimpleVertex > roots = RefCollections.createRefList( bundle.graph.vertices(), 4 );
 		roots.add( bundle.vertices.get( 8 ) );
 		roots.add( bundle.vertices.get( 0 ) );
 		roots.add( bundle.vertices.get( 12 ) );
 		roots.add( bundle.vertices.get( 4 ) );
-		final TestVertex first = bundle.vertices.get( 8 );
-		final BreadthFirstCrossComponentSearch< TestVertex, TestEdge > bfs =
+		final TestSimpleVertex first = bundle.vertices.get( 8 );
+		final BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > bfs =
 				new BreadthFirstCrossComponentSearch<>( bundle.graph, SearchDirection.DIRECTED, roots );
 
-		final TraversalTester< TestVertex, TestEdge, BreadthFirstCrossComponentSearch< TestVertex, TestEdge > > traversalTester =
+		final TraversalTester< TestSimpleVertex, TestSimpleEdge, BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
 						expected.iterator(),
 						expected.iterator(),
@@ -184,14 +185,14 @@ public class BreadthFirstCrossComponentSearchTest
 	@Test
 	public void testTwoComponentsPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
 
-		final TestVertex first = bundle.vertices.get( 0 );
-		final BreadthFirstCrossComponentSearch< TestVertex, TestEdge > bfs =
+		final TestSimpleVertex first = bundle.vertices.get( 0 );
+		final BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > bfs =
 				new BreadthFirstCrossComponentSearch<>( bundle.graph, SearchDirection.DIRECTED,
 						Arrays.asList( bundle.vertices.get( 0 ), bundle.vertices.get( 7 ) ) );
 
-		final RefList< TestVertex > expectedVertices = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expectedVertices = RefCollections.createRefList( bundle.graph.vertices() );
 		expectedVertices.add( bundle.vertices.get( 0 ) );
 		expectedVertices.add( bundle.vertices.get( 1 ) );
 		expectedVertices.add( bundle.vertices.get( 2 ) );
@@ -207,8 +208,8 @@ public class BreadthFirstCrossComponentSearchTest
 		expectedVertices.add( bundle.vertices.get( 12 ) );
 		expectedVertices.add( bundle.vertices.get( 13 ) );
 
-		final List< TestVertex > processedVertices = expectedVertices;
-		final List< TestEdge > expectedEdges = Arrays.asList( new TestEdge[] {
+		final List< TestSimpleVertex > processedVertices = expectedVertices;
+		final List< TestSimpleEdge > expectedEdges = Arrays.asList( new TestSimpleEdge[] {
 				bundle.edges.get( 0 ),
 				bundle.edges.get( 1 ),
 				bundle.edges.get( 2 ),
@@ -228,7 +229,7 @@ public class BreadthFirstCrossComponentSearchTest
 				TREE, TREE, TREE, TREE, TREE, TREE, CROSS,
 				TREE, TREE, TREE, TREE, TREE, TREE } );
 
-		final TraversalTester< TestVertex, TestEdge, BreadthFirstCrossComponentSearch< TestVertex, TestEdge > > traversalTester =
+		final TraversalTester< TestSimpleVertex, TestSimpleEdge, BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
 						expectedVertices.iterator(),
 						processedVertices.iterator(),
@@ -304,41 +305,41 @@ public class BreadthFirstCrossComponentSearchTest
 	public void testIterateWholeGraph()
 	{
 		// Test that we iterate the whole graph.
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
-		final RefIntMap< TestVertex > map = RefCollections.createRefIntMap( bundle.graph.vertices(), -1 );
-		for ( final TestVertex v : bundle.graph.vertices() )
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
+		final RefIntMap< TestSimpleVertex > map = RefMaps.createRefIntMap( bundle.graph.vertices(), -1 );
+		for ( final TestSimpleVertex v : bundle.graph.vertices() )
 			map.put( v, 0 );
 
-		final BreadthFirstCrossComponentSearch< TestVertex, TestEdge > bfs =
+		final BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > bfs =
 				new BreadthFirstCrossComponentSearch<>( bundle.graph, SearchDirection.DIRECTED );
 
 		final AtomicInteger iter = new AtomicInteger( 0 );
-		bfs.setTraversalListener( new SearchListener< TestVertex, TestEdge, BreadthFirstCrossComponentSearch< TestVertex, TestEdge > >()
+		bfs.setTraversalListener( new SearchListener< TestSimpleVertex, TestSimpleEdge, BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > >()
 		{
 
 			@Override
-			public void processVertexLate( final TestVertex vertex, final BreadthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			public void processVertexLate( final TestSimpleVertex vertex, final BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > search )
 			{}
 
 			@Override
-			public void processVertexEarly( final TestVertex vertex, final BreadthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			public void processVertexEarly( final TestSimpleVertex vertex, final BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > search )
 			{
 				map.adjustValue( vertex, 1 );
 				iter.incrementAndGet();
 			}
 
 			@Override
-			public void processEdge( final TestEdge edge, final TestVertex from, final TestVertex to, final BreadthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			public void processEdge( final TestSimpleEdge edge, final TestSimpleVertex from, final TestSimpleVertex to, final BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > search )
 			{}
 
 			@Override
-			public void crossComponent( final TestVertex from, final TestVertex to, final BreadthFirstCrossComponentSearch< TestVertex, TestEdge > search )
+			public void crossComponent( final TestSimpleVertex from, final TestSimpleVertex to, final BreadthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > search )
 			{}
 		} );
 		bfs.start( bundle.graph.vertices().iterator().next() );
 
 		assertEquals( "Did not iterate over all vertices.", bundle.graph.vertices().size(), iter.get() );
-		for ( final TestVertex v : map.keySet() )
+		for ( final TestSimpleVertex v : map.keySet() )
 			assertEquals( "Vertex was not iterated exactly once.", 1, map.get( v ) );
 	}
 }

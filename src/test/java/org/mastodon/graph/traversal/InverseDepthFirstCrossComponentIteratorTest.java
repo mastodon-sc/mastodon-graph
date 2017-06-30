@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefList;
 import org.mastodon.graph.Graph;
-import org.mastodon.graph.TestEdge;
-import org.mastodon.graph.TestVertex;
+import org.mastodon.graph.TestSimpleEdge;
+import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.algorithm.traversal.InverseDepthFirstCrossComponentIterator;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
@@ -28,12 +28,12 @@ public class InverseDepthFirstCrossComponentIteratorTest
 	@Test
 	public void testTwoComponentsComeBackOnFirstPool()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
-		final Graph< TestVertex, TestEdge > graph = bundle.graph;
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
+		final Graph< TestSimpleVertex, TestSimpleEdge > graph = bundle.graph;
 		// Start with B.
-		final TestVertex start = bundle.vertices.get( 1 );
+		final TestSimpleVertex start = bundle.vertices.get( 1 );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 1 ) );
 		expected.add( bundle.vertices.get( 0 ) ); // Jump
 		expected.add( bundle.vertices.get( 13 ) );
@@ -49,15 +49,15 @@ public class InverseDepthFirstCrossComponentIteratorTest
 		expected.add( bundle.vertices.get( 5 ) );
 		expected.add( bundle.vertices.get( 3 ) );
 
-		final Iterator< TestVertex > eit = expected.iterator();
-		final Iterator< TestVertex > it =
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > it =
 				new InverseDepthFirstCrossComponentIterator<>( start, graph );
 
 		while ( eit.hasNext() )
 		{
 			assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
-			final TestVertex a = it.next();
-			final TestVertex e = eit.next();
+			final TestSimpleVertex a = it.next();
+			final TestSimpleVertex e = eit.next();
 			assertEquals( "Unexpected vertex met during iteration.", e, a );
 		}
 
@@ -67,12 +67,12 @@ public class InverseDepthFirstCrossComponentIteratorTest
 	@Test
 	public void testTwoComponentsStartOnLeafPool()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
-		final Graph< TestVertex, TestEdge > graph = bundle.graph;
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.twoComponentsPoolObjects();
+		final Graph< TestSimpleVertex, TestSimpleEdge > graph = bundle.graph;
 		// Start with a leaf.
-		final TestVertex start = bundle.vertices.get( 4 );
+		final TestSimpleVertex start = bundle.vertices.get( 4 );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 4 ) );
 		expected.add( bundle.vertices.get( 5 ) );
 		expected.add( bundle.vertices.get( 1 ) );
@@ -88,15 +88,15 @@ public class InverseDepthFirstCrossComponentIteratorTest
 		expected.add( bundle.vertices.get( 2 ) );
 		expected.add( bundle.vertices.get( 3 ) );
 
-		final Iterator< TestVertex > eit = expected.iterator();
-		final Iterator< TestVertex > it =
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > it =
 				new InverseDepthFirstCrossComponentIterator<>( start, graph );
 
 		while ( eit.hasNext() )
 		{
 			assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
-			final TestVertex a = it.next();
-			final TestVertex e = eit.next();
+			final TestSimpleVertex a = it.next();
+			final TestSimpleVertex e = eit.next();
 			assertEquals( "Unexpected vertex met during iteration.", e, a );
 		}
 
@@ -106,12 +106,12 @@ public class InverseDepthFirstCrossComponentIteratorTest
 	@Test
 	public void testOneComponentPool()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.wpExamplePoolObjects();
-		final Graph< TestVertex, TestEdge > graph = bundle.graph;
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.wpExamplePoolObjects();
+		final Graph< TestSimpleVertex, TestSimpleEdge > graph = bundle.graph;
 		// Start with B.
-		final TestVertex start = bundle.vertices.get( 1 );
+		final TestSimpleVertex start = bundle.vertices.get( 1 );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 1 ) );
 		expected.add( bundle.vertices.get( 0 ) ); // Finish, jump...
 		expected.add( bundle.vertices.get( 6 ) ); // Here
@@ -120,15 +120,15 @@ public class InverseDepthFirstCrossComponentIteratorTest
 		expected.add( bundle.vertices.get( 5 ) );
 		expected.add( bundle.vertices.get( 3 ) );
 
-		final Iterator< TestVertex > eit = expected.iterator();
-		final Iterator< TestVertex > it =
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > it =
 				new InverseDepthFirstCrossComponentIterator<>( start, graph );
 
 		while ( eit.hasNext() )
 		{
 			assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
-			final TestVertex a = it.next();
-			final TestVertex e = eit.next();
+			final TestSimpleVertex a = it.next();
+			final TestSimpleVertex e = eit.next();
 			assertEquals( "Unexpected vertex met during iteration.", e, a );
 		}
 
@@ -165,24 +165,24 @@ public class InverseDepthFirstCrossComponentIteratorTest
 	@Test
 	public void testOneEdgePool()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.singleEdgePoolObjects();
-		final Graph< TestVertex, TestEdge > graph = bundle.graph;
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.singleEdgePoolObjects();
+		final Graph< TestSimpleVertex, TestSimpleEdge > graph = bundle.graph;
 		// Start with B.
-		final TestVertex start = bundle.vertices.get( 1 );
+		final TestSimpleVertex start = bundle.vertices.get( 1 );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 1 ) ); // Jump here.
 		expected.add( bundle.vertices.get( 0 ) ); // Come back on first
 
-		final Iterator< TestVertex > eit = expected.iterator();
-		final Iterator< TestVertex > it =
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > it =
 				new InverseDepthFirstCrossComponentIterator<>( start, graph );
 
 		while ( eit.hasNext() )
 		{
 			assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
-			final TestVertex a = it.next();
-			final TestVertex e = eit.next();
+			final TestSimpleVertex a = it.next();
+			final TestSimpleVertex e = eit.next();
 			assertEquals( "Unexpected vertex met during iteration.", e, a );
 		}
 
@@ -218,23 +218,23 @@ public class InverseDepthFirstCrossComponentIteratorTest
 	@Test
 	public void testOneVertexPool()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.singleVertexPoolObjects();
-		final Graph< TestVertex, TestEdge > graph = bundle.graph;
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.singleVertexPoolObjects();
+		final Graph< TestSimpleVertex, TestSimpleEdge > graph = bundle.graph;
 		// Start with B.
-		final TestVertex start = bundle.vertices.get( 0 );
+		final TestSimpleVertex start = bundle.vertices.get( 0 );
 
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 0 ) );
 
-		final Iterator< TestVertex > eit = expected.iterator();
-		final Iterator< TestVertex > it =
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > it =
 				new InverseDepthFirstCrossComponentIterator<>( start, graph );
 
 		while ( eit.hasNext() )
 		{
 			assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
-			final TestVertex a = it.next();
-			final TestVertex e = eit.next();
+			final TestSimpleVertex a = it.next();
+			final TestSimpleVertex e = eit.next();
 			assertEquals( "Unexpected vertex met during iteration.", e, a );
 		}
 
@@ -295,18 +295,18 @@ public class InverseDepthFirstCrossComponentIteratorTest
 	@Test
 	public void testCrossComponentOrderPool()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = GraphsForTests.multipleComponentsPoolObjects();
-		final Graph< TestVertex, TestEdge > graph = bundle.graph;
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.multipleComponentsPoolObjects();
+		final Graph< TestSimpleVertex, TestSimpleEdge > graph = bundle.graph;
 
 		// Specifies leaf order.
-		final RefList< TestVertex > leaves = RefCollections.createRefList( graph.vertices(), 4 );
+		final RefList< TestSimpleVertex > leaves = RefCollections.createRefList( graph.vertices(), 4 );
 		leaves.add( bundle.vertices.get( 11 ) );
 		leaves.add( bundle.vertices.get( 3 ) );
 		leaves.add( bundle.vertices.get( 15 ) );
 		leaves.add( bundle.vertices.get( 7 ) );
 
 		// Expected iteration order.
-		final RefList< TestVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
 		expected.add( bundle.vertices.get( 11 ) );
 		expected.add( bundle.vertices.get( 10 ) );
 		expected.add( bundle.vertices.get( 8 ) );
@@ -327,16 +327,16 @@ public class InverseDepthFirstCrossComponentIteratorTest
 		expected.add( bundle.vertices.get( 4 ) );
 		expected.add( bundle.vertices.get( 5 ) );
 
-		final Iterator< TestVertex > eit = expected.iterator();
+		final Iterator< TestSimpleVertex > eit = expected.iterator();
 		// Use constructor with specified roots.
-		final Iterator< TestVertex > it =
+		final Iterator< TestSimpleVertex > it =
 				new InverseDepthFirstCrossComponentIterator<>( bundle.vertices.get( 11 ), graph, leaves );
 
 		while ( eit.hasNext() )
 		{
 			assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
-			final TestVertex a = it.next();
-			final TestVertex e = eit.next();
+			final TestSimpleVertex a = it.next();
+			final TestSimpleVertex e = eit.next();
 			assertEquals( "Unexpected vertex met during iteration.", e, a );
 		}
 

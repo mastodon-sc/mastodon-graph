@@ -618,11 +618,11 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	public static final GraphTestBundle< TestVertex, TestEdge > multipleComponentsPoolObjects()
+	public static final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > multipleComponentsPoolObjects()
 	{
-		final GraphTestBundle< TestVertex, TestEdge > bundle = new GraphTestBundle<>();
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = new GraphTestBundle<>();
 
-		final TestGraph graph = new TestGraph();
+		final TestSimpleGraph graph = new TestSimpleGraph();
 		bundle.graph = graph;
 		bundle.vertices = new ArrayList<>( 0 );
 		bundle.edges = new ArrayList<>( 0 );
@@ -630,19 +630,19 @@ public class GraphsForTests
 		// Create 4 diamonds.
 		for ( int i = 0; i < 4; i++ )
 		{
-			final TestVertex A = graph.addVertex().init( 0 + 4 * i );
-			final TestVertex B = graph.addVertex().init( 1 + 4 * i );
-			final TestVertex C = graph.addVertex().init( 2 + 4 * i );
-			final TestVertex D = graph.addVertex().init( 3 + 4 * i );
+			final TestSimpleVertex A = graph.addVertex().init( 0 + 4 * i );
+			final TestSimpleVertex B = graph.addVertex().init( 1 + 4 * i );
+			final TestSimpleVertex C = graph.addVertex().init( 2 + 4 * i );
+			final TestSimpleVertex D = graph.addVertex().init( 3 + 4 * i );
 			bundle.vertices.add( A );
 			bundle.vertices.add( B );
 			bundle.vertices.add( C );
 			bundle.vertices.add( D );
 
-			final TestEdge eAB = graph.addEdge( A, B );
-			final TestEdge eAC = graph.addEdge( A, C );
-			final TestEdge eBD = graph.addEdge( B, D );
-			final TestEdge eCD = graph.addEdge( C, D );
+			final TestSimpleEdge eAB = graph.addEdge( A, B );
+			final TestSimpleEdge eAC = graph.addEdge( A, C );
+			final TestSimpleEdge eBD = graph.addEdge( B, D );
+			final TestSimpleEdge eCD = graph.addEdge( C, D );
 			bundle.edges.add( eAB );
 			bundle.edges.add( eAC );
 			bundle.edges.add( eBD );
