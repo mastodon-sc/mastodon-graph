@@ -1,22 +1,25 @@
 package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
-import org.mastodon.pool.PoolObject;
+import org.mastodon.pool.MemPool;
+import org.mastodon.pool.Properties;
 
-public class AbstractListenableVertexPool<
-			V extends AbstractListenableVertex< V, E, T >,
-			E extends AbstractEdge< E, ?, ? >,
+public abstract class AbstractListenableVertexPool<
+			V extends AbstractListenableVertex< V, E, ?, T >,
+			E extends AbstractEdge< E, ?, ?, ? >,
 			T extends MappedElement >
-		extends AbstractVertexWithFeaturesPool< V, E, T >
+		extends AbstractVertexPool< V, E, T >
 {
 	public AbstractListenableVertexPool(
 			final int initialCapacity,
-			final PoolObject.Factory< V, T > vertexFactory )
+			final AbstractVertexLayout layout,
+			final Class< V > vertexClass,
+			final MemPool.Factory< T > memPoolFactory )
 	{
-		super( initialCapacity, vertexFactory );
+		super( initialCapacity, layout, vertexClass, memPoolFactory );
 	}
 
-	private NotifyPostInit< V, ? > notifyPostInit;
+	NotifyPostInit< V, ? > notifyPostInit;
 
 	public void linkNotify( final NotifyPostInit< V, ? > notifyPostInit )
 	{
@@ -24,11 +27,9 @@ public class AbstractListenableVertexPool<
 	}
 
 	@Override
-	public V createRef()
+	protected Properties< V > getProperties()
 	{
-		final V vertex = super.createRef();
-		vertex.notifyPostInit = notifyPostInit;
-		return vertex;
+		return super.getProperties();
 	}
 
 	/*

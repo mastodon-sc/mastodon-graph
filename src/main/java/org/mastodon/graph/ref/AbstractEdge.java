@@ -1,7 +1,5 @@
 package org.mastodon.graph.ref;
 
-import static org.mastodon.pool.ByteUtils.INDEX_SIZE;
-
 import org.mastodon.graph.Edge;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
@@ -15,19 +13,22 @@ import org.mastodon.pool.PoolObject;
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractEdge< E extends AbstractEdge< E, V, T >, V extends AbstractVertex< V, ?, ? >, T extends MappedElement >
-		extends PoolObject< E, T >
+public class AbstractEdge<
+			E extends AbstractEdge< E, V, EP, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
+			EP extends AbstractEdgePool< E, V, T >,
+			T extends MappedElement >
+		extends PoolObject< E, EP, T >
 		implements Edge< V >
 {
-	protected static final int SOURCE_INDEX_OFFSET = 0;
-	protected static final int TARGET_INDEX_OFFSET = SOURCE_INDEX_OFFSET + INDEX_SIZE;
-	protected static final int NEXT_SOURCE_EDGE_INDEX_OFFSET = TARGET_INDEX_OFFSET + INDEX_SIZE;
-	protected static final int NEXT_TARGET_EDGE_INDEX_OFFSET = NEXT_SOURCE_EDGE_INDEX_OFFSET + INDEX_SIZE;
-	protected static final int SIZE_IN_BYTES = NEXT_TARGET_EDGE_INDEX_OFFSET + INDEX_SIZE;
+	protected static final int SOURCE_INDEX_OFFSET = AbstractEdgePool.layout.source.getOffset();
+	protected static final int TARGET_INDEX_OFFSET = AbstractEdgePool.layout.target.getOffset();
+	protected static final int NEXT_SOURCE_EDGE_INDEX_OFFSET = AbstractEdgePool.layout.nextSourceEdge.getOffset();
+	protected static final int NEXT_TARGET_EDGE_INDEX_OFFSET = AbstractEdgePool.layout.nextTargetEdge.getOffset();
 
 	protected final AbstractVertexPool< V, ?, ? > vertexPool;
 
-	protected AbstractEdge( final AbstractEdgePool< E, V, T > pool )
+	protected AbstractEdge( final EP pool )
 	{
 		super( pool );
 		this.vertexPool = pool.vertexPool;

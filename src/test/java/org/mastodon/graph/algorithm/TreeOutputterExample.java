@@ -1,9 +1,9 @@
 package org.mastodon.graph.algorithm;
 
 import org.mastodon.collection.RefSet;
-import org.mastodon.graph.TestEdge;
-import org.mastodon.graph.TestGraph;
-import org.mastodon.graph.TestVertex;
+import org.mastodon.graph.TestSimpleEdge;
+import org.mastodon.graph.TestSimpleGraph;
+import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.algorithm.RootFinder;
 import org.mastodon.graph.algorithm.TreeOutputter;
 import org.mastodon.graph.object.ObjectEdge;
@@ -12,9 +12,9 @@ import org.mastodon.graph.object.ObjectVertex;
 
 public class TreeOutputterExample
 {
-	private static TestGraph tsg;
+	private static TestSimpleGraph tsg;
 
-	private static TestVertex A;
+	private static TestSimpleVertex A;
 
 	public static void main( final String[] args )
 	{
@@ -32,33 +32,33 @@ public class TreeOutputterExample
 		System.out.println();
 
 		createTrackMateGraph();
-		final TreeOutputter< TestVertex, TestEdge > tsto = new TreeOutputter< TestVertex, TestEdge >( tsg );
+		final TreeOutputter< TestSimpleVertex, TestSimpleEdge > tsto = new TreeOutputter< TestSimpleVertex, TestSimpleEdge >( tsg );
 		System.out.println( tsto.get( A ) );
 
 	}
 
-	public static final TestGraph createTrackMateGraph()
+	public static final TestSimpleGraph createTrackMateGraph()
 	{
-		tsg = new TestGraph();
+		tsg = new TestSimpleGraph();
 
 		A = tsg.addVertex().init( 0 );
 
-		final TestVertex B = tsg.addVertex().init( 1 );
+		final TestSimpleVertex B = tsg.addVertex().init( 1 );
 		tsg.addEdge( A, B );
 
-		final TestVertex C = tsg.addVertex().init( 2 );
+		final TestSimpleVertex C = tsg.addVertex().init( 2 );
 		tsg.addEdge( A, C );
 
-		final TestVertex E = tsg.addVertex().init( 3 );
+		final TestSimpleVertex E = tsg.addVertex().init( 3 );
 		tsg.addEdge( A, E );
 
-		final TestVertex D = tsg.addVertex().init( 4 );
+		final TestSimpleVertex D = tsg.addVertex().init( 4 );
 		tsg.addEdge( B, D );
 
-		final TestVertex F = tsg.addVertex().init( 5 );
+		final TestSimpleVertex F = tsg.addVertex().init( 5 );
 		tsg.addEdge( B, F );
 
-		final TestVertex G = tsg.addVertex().init( 6 );
+		final TestSimpleVertex G = tsg.addVertex().init( 6 );
 		tsg.addEdge( C, G );
 
 		// For fun, let's make it NOT a tree

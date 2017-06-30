@@ -15,7 +15,7 @@ public abstract class Assigner< O >
 			return ObjectAssign.instance;
 	}
 
-	static class RefAssign< O extends PoolObject< O, ? > > extends Assigner< O >
+	static class RefAssign< O extends PoolObject< O, ?, ? > > extends Assigner< O >
 	{
 		@Override
 		public O assign( final O value, final O target )

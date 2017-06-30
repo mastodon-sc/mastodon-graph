@@ -1,23 +1,32 @@
 package org.mastodon.graph.ref;
 
 import org.mastodon.pool.MappedElement;
-import org.mastodon.pool.PoolObject;
+import org.mastodon.pool.MemPool;
+import org.mastodon.pool.Properties;
 
-public class AbstractListenableEdgePool<
-			E extends AbstractListenableEdge< E, V, T >,
-			V extends AbstractVertex< V, ?, ? >,
+/**
+ * Mother class for edge pools of <b>directed, listenable</b> graphs.
+ * <p>
+ * Graphs based on this edge pool do not have a limitation on the number of
+ * edges between a source and target vertices.
+ */
+public abstract class AbstractListenableEdgePool<
+			E extends AbstractListenableEdge< E, V, ?, T >,
+			V extends AbstractVertex< V, ?, ?, ? >,
 			T extends MappedElement >
-		extends AbstractEdgeWithFeaturesPool< E, V, T >
+		extends AbstractEdgePool< E, V, T >
 {
 	public AbstractListenableEdgePool(
 			final int initialCapacity,
-			final PoolObject.Factory< E, T > edgeFactory,
+			final AbstractEdgeLayout layout,
+			final Class< E > edgeClass,
+			final MemPool.Factory< T > memPoolFactory,
 			final AbstractVertexPool< V, ?, ? > vertexPool )
 	{
-		super( initialCapacity, edgeFactory, vertexPool );
+		super( initialCapacity, layout, edgeClass, memPoolFactory, vertexPool );
 	}
 
-	private NotifyPostInit< ?, E > notifyPostInit;
+	NotifyPostInit< ?, E > notifyPostInit;
 
 	public void linkNotify( final NotifyPostInit< ?, E > notifyPostInit )
 	{
@@ -25,11 +34,9 @@ public class AbstractListenableEdgePool<
 	}
 
 	@Override
-	public E createRef()
+	protected Properties< E > getProperties()
 	{
-		final E edge = super.createRef();
-		edge.notifyPostInit = notifyPostInit;
-		return edge;
+		return super.getProperties();
 	}
 
 	/*

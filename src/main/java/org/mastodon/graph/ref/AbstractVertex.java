@@ -1,7 +1,5 @@
 package org.mastodon.graph.ref;
 
-import static org.mastodon.pool.ByteUtils.INDEX_SIZE;
-
 import org.mastodon.graph.Vertex;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
@@ -11,19 +9,23 @@ import org.mastodon.pool.PoolObject;
  *
  * @param <V>
  * @param <E>
+ * @param <VP>
  * @param <T>
  *
  * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
  */
-public class AbstractVertex< V extends AbstractVertex< V, E, T >, E extends AbstractEdge< E, ?, ? >, T extends MappedElement >
-		extends PoolObject< V, T >
+public class AbstractVertex<
+			V extends AbstractVertex< V, E, VP, T >,
+			E extends AbstractEdge< E, ?, ?, ? >,
+			VP extends AbstractVertexPool< V, ?, T >,
+			T extends MappedElement >
+		extends PoolObject< V, VP, T >
 		implements Vertex< E >
 {
-	protected static final int FIRST_IN_EDGE_INDEX_OFFSET = 0;
-	protected static final int FIRST_OUT_EDGE_INDEX_OFFSET = FIRST_IN_EDGE_INDEX_OFFSET + INDEX_SIZE;
-	protected static final int SIZE_IN_BYTES = FIRST_OUT_EDGE_INDEX_OFFSET + INDEX_SIZE;
+	protected static final int FIRST_IN_EDGE_INDEX_OFFSET = AbstractVertexPool.layout.firstInEdge.getOffset();
+	protected static final int FIRST_OUT_EDGE_INDEX_OFFSET = AbstractVertexPool.layout.firstOutEdge.getOffset();
 
-	protected AbstractVertex( final AbstractVertexPool< V, ?, T > pool )
+	protected AbstractVertex( final VP pool )
 	{
 		super( pool );
 	}
@@ -63,6 +65,8 @@ public class AbstractVertex< V extends AbstractVertex< V, E, T >, E extends Abst
 
 	private AllEdges< E > edges;
 
+	OutgoingEdgesToTarget< E > outgoingEdgesToTarget;
+
 	@Override
 	public IncomingEdges< E > incomingEdges()
 	{
@@ -89,6 +93,7 @@ public class AbstractVertex< V extends AbstractVertex< V, E, T >, E extends Abst
 			incomingEdges = new IncomingEdges<>( this, edgePool );
 			outgoingEdges = new OutgoingEdges<>( this, edgePool );
 			edges = new AllEdges<>( this, edgePool );
+			outgoingEdgesToTarget = new OutgoingEdgesToTarget<>( this, edgePool );
 		}
 	}
 }

@@ -4,15 +4,15 @@ import java.util.Iterator;
 
 import org.mastodon.graph.Edges;
 
-public class AllEdges< E extends AbstractEdge< E, ?, ? > > implements Edges< E >
+public class AllEdges< E extends AbstractEdge< E, ?, ?, ? > > implements Edges< E >
 {
-	private final AbstractVertex< ?, ?, ? > vertex;
+	private final AbstractVertex< ?, ?, ?, ? > vertex;
 	private final AbstractEdgePool< E, ?, ? > edgePool;
 
 	private EdgesIterator iterator;
 
 	public AllEdges(
-			final AbstractVertex< ?, ?, ? > vertex,
+			final AbstractVertex< ?, ?, ?, ? > vertex,
 			final AbstractEdgePool< E, ?, ? > edgePool )
 	{
 		this.vertex = vertex;

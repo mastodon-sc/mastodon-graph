@@ -9,6 +9,7 @@ import org.mastodon.graph.Graph;
 import org.mastodon.graph.GraphIdBimap;
 import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
+import org.mastodon.io.AttributeSerializer;
 import org.mastodon.io.FileIdToObjectMap;
 import org.mastodon.io.ObjectToFileIdMap;
 
@@ -16,39 +17,13 @@ import gnu.trove.map.hash.TIntIntHashMap;
 
 /**
  * Write/read a {@link Graph} to/from an ObjectStream. For each {@link Graph}
- * class, the {@link RawGraphIO.Serializer} interface needs to be implemented
+ * class, the {@link GraphSerializer} interface needs to be implemented
  * that serializes vertex and edge attributes to/from a byte array.
  *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ * @author Tobias Pietzsch
  */
 public class RawGraphIO
 {
-	/**
-	 * Provides serialization of vertices and edges to a byte array, for a specific {@link Graph} class.
-	 *
-	 * @param <V>
-	 * @param <E>
-	 *
-	 * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
-	 */
-	public static interface Serializer< V extends Vertex< E >, E extends Edge< V > >
-	{
-		public ObjectSerializer< V > getVertexSerializer();
-
-		public ObjectSerializer< E > getEdgeSerializer();
-	}
-
-	public static interface ObjectSerializer< O >
-	{
-		public int getNumBytes();
-
-		public void getBytes( final O object, final byte[] bytes );
-
-		public void setBytes( final O object, final byte[] bytes );
-
-		public void notifyAdded( final O object );
-	}
-
 	public static final class GraphToFileIdMap< V extends Vertex< E >, E extends Edge< V > >
 	{
 		private final ObjectToFileIdMap< V > vertices;
@@ -103,15 +78,15 @@ public class RawGraphIO
 			GraphToFileIdMap< V, E > write(
 					final ReadOnlyGraph< V, E > graph,
 					final GraphIdBimap< V, E > idmap,
-					final Serializer< V, E > io,
+					final GraphSerializer< V, E > io,
 					final ObjectOutputStream oos )
 			throws IOException
 	{
 		final int numVertices = graph.vertices().size();
 		oos.writeInt( numVertices );
 
-		final ObjectSerializer< V > vio = io.getVertexSerializer();
-		final ObjectSerializer< E > eio = io.getEdgeSerializer();
+		final AttributeSerializer< V > vio = io.getVertexSerializer();
+		final AttributeSerializer< E > eio = io.getEdgeSerializer();
 
 		final byte[] vbytes = new byte[ vio.getNumBytes() ];
 		final boolean writeVertexBytes = vio.getNumBytes() > 0;
@@ -170,7 +145,7 @@ public class RawGraphIO
 			FileIdToGraphMap< V, E > read(
 					final Graph< V, E > graph,
 					final GraphIdBimap< V, E > idmap,
-					final Serializer< V, E > io,
+					final GraphSerializer< V, E > io,
 					final ObjectInputStream ois )
 			throws IOException
 	{
@@ -179,8 +154,8 @@ public class RawGraphIO
 		final V v2 = graph.vertexRef();
 		final E e = graph.edgeRef();
 
-		final ObjectSerializer< V > vio = io.getVertexSerializer();
-		final ObjectSerializer< E > eio = io.getEdgeSerializer();
+		final AttributeSerializer< V > vio = io.getVertexSerializer();
+		final AttributeSerializer< E > eio = io.getEdgeSerializer();
 
 		final byte[] vbytes = new byte[ vio.getNumBytes() ];
 		final boolean readVertexBytes = vio.getNumBytes() > 0;
@@ -193,7 +168,7 @@ public class RawGraphIO
 				ois.readFully( vbytes );
 				vio.setBytes( v1, vbytes );
 			}
-			vio.notifyAdded( v1 );
+			vio.notifySet( v1 );
 			fileIndexToVertexId.put( i, idmap.getVertexId( v1 ) );
 		}
 
@@ -215,7 +190,7 @@ public class RawGraphIO
 				ois.readFully( ebytes );
 				eio.setBytes( e, ebytes );
 			}
-			eio.notifyAdded( e );
+			eio.notifySet( e );
 			fileIndexToEdgeId.put( i, idmap.getEdgeId( e ) );
 		}
 

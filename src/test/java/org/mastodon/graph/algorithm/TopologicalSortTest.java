@@ -11,9 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefCollections;
-import org.mastodon.graph.TestEdge;
-import org.mastodon.graph.TestGraph;
-import org.mastodon.graph.TestVertex;
+import org.mastodon.graph.TestSimpleEdge;
+import org.mastodon.graph.TestSimpleGraph;
+import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.algorithm.TopologicalSort;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectGraph;
@@ -22,13 +22,13 @@ import org.mastodon.graph.object.ObjectVertex;
 public class TopologicalSortTest
 {
 
-	private TestGraph graphRef;
+	private TestSimpleGraph graphRef;
 
-	private TestVertex v10ref;
+	private TestSimpleVertex v10ref;
 
-	private TestVertex v7ref;
+	private TestSimpleVertex v7ref;
 
-	private RefList< TestVertex > verticesRef;
+	private RefList< TestSimpleVertex > verticesRef;
 
 	/*
 	 * Pool based
@@ -39,21 +39,21 @@ public class TopologicalSortTest
 	{
 		// From http://en.wikipedia.org/wiki/Topological_sorting
 		// X encodes "level"
-		graphRef = new TestGraph();
+		graphRef = new TestSimpleGraph();
 		verticesRef = RefCollections.createRefList( graphRef.vertices() );
 
 		v7ref = graphRef.addVertex().init( 0 );
-		final TestVertex v11 = graphRef.addVertex().init( 1 );
+		final TestSimpleVertex v11 = graphRef.addVertex().init( 1 );
 		graphRef.addEdge( v7ref, v11 );
-		final TestVertex v5 = graphRef.addVertex().init( 2 );
+		final TestSimpleVertex v5 = graphRef.addVertex().init( 2 );
 		graphRef.addEdge( v5, v11 );
-		final TestVertex v8 = graphRef.addVertex().init( 3 );
+		final TestSimpleVertex v8 = graphRef.addVertex().init( 3 );
 		graphRef.addEdge( v7ref, v8 );
-		final TestVertex v3 = graphRef.addVertex().init( 4 );
+		final TestSimpleVertex v3 = graphRef.addVertex().init( 4 );
 		graphRef.addEdge( v3, v8 );
-		final TestVertex v2 = graphRef.addVertex().init( 5 );
+		final TestSimpleVertex v2 = graphRef.addVertex().init( 5 );
 		graphRef.addEdge( v11, v2 );
-		final TestVertex v9 = graphRef.addVertex().init( 6 );
+		final TestSimpleVertex v9 = graphRef.addVertex().init( 6 );
 		graphRef.addEdge( v11, v9 );
 		graphRef.addEdge( v8, v9 );
 		v10ref = graphRef.addVertex().init( 7 );
@@ -79,17 +79,17 @@ public class TopologicalSortTest
 	@Test
 	public void testBehaviorRef()
 	{
-		final TopologicalSort< TestVertex, TestEdge > sort = new TopologicalSort< TestVertex, TestEdge >( graphRef );
+		final TopologicalSort< TestSimpleVertex, TestSimpleEdge > sort = new TopologicalSort< TestSimpleVertex, TestSimpleEdge >( graphRef );
 		assertFalse( sort.hasFailed() );
 
-		final TestVertex target = graphRef.vertexRef();
-		final TestVertex current = graphRef.vertexRef();
-		final List< TestVertex > list = sort.get();
+		final TestSimpleVertex target = graphRef.vertexRef();
+		final TestSimpleVertex current = graphRef.vertexRef();
+		final List< TestSimpleVertex > list = sort.get();
 
 		for ( int i = 0; i < list.size(); i++ )
 		{
 			current.refTo( list.get( i ) );
-			for ( final TestEdge e : current.outgoingEdges() )
+			for ( final TestSimpleEdge e : current.outgoingEdges() )
 			{
 				e.getTarget( target );
 				final boolean dependenceInList = list.subList( 0, i ).contains( target );
@@ -105,11 +105,11 @@ public class TopologicalSortTest
 	@Test
 	public void testNotDAGRef()
 	{
-		final TopologicalSort< TestVertex, TestEdge > sort = new TopologicalSort< TestVertex, TestEdge >( graphRef );
+		final TopologicalSort< TestSimpleVertex, TestSimpleEdge > sort = new TopologicalSort< TestSimpleVertex, TestSimpleEdge >( graphRef );
 		assertFalse( sort.hasFailed() );
 
 		graphRef.addEdge( v10ref, v7ref );
-		final TopologicalSort< TestVertex, TestEdge > sort2 = new TopologicalSort< TestVertex, TestEdge >( graphRef );
+		final TopologicalSort< TestSimpleVertex, TestSimpleEdge > sort2 = new TopologicalSort< TestSimpleVertex, TestSimpleEdge >( graphRef );
 		assertTrue( sort2.hasFailed() );
 	}
 

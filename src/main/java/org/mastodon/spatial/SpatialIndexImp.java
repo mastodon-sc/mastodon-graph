@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.mastodon.RefPool;
 import org.mastodon.kdtree.ClipConvexPolytope;
+import org.mastodon.kdtree.IncrementalNearestNeighborSearch;
 
 import net.imglib2.RealLocalizable;
 import net.imglib2.neighborsearch.NearestNeighborSearch;
@@ -60,6 +61,12 @@ public class SpatialIndexImp< O extends RealLocalizable > implements SpatialInde
 	public NearestNeighborSearch< O > getNearestNeighborSearch()
 	{
 		return data.getNearestNeighborSearch();
+	}
+
+	@Override
+	public IncrementalNearestNeighborSearch< O > getIncrementalNearestNeighborSearch()
+	{
+		return data.getIncrementalNearestNeighborSearch();
 	}
 
 	@Override

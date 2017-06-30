@@ -5,10 +5,12 @@ import java.util.Collections;
 
 import org.mastodon.collection.RefCollection;
 import org.mastodon.collection.wrap.RefCollectionWrapper;
+import org.mastodon.graph.Edges;
 import org.mastodon.graph.Graph;
 
 public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E >, E extends AbstractObjectEdge< E, V > > implements Graph< V, E >
 {
+
 	public interface Factory< V, E >
 	{
 		public V createVertex();
@@ -97,6 +99,18 @@ public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E 
 	}
 
 	@Override
+	public Edges< E > getEdges( final V source, final V target, final V ref )
+	{
+		return getEdges( source, target );
+	}
+
+	@Override
+	public Edges< E > getEdges( final V source, final V target )
+	{
+		return new ObjectEdgesSourceToTarget<>( source, target, edges );
+	}
+
+	@Override
 	public void remove( final V vertex )
 	{
 		if ( vertices.remove( vertex ) )
@@ -112,7 +126,7 @@ public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E 
 				edges.remove( edge );
 			}
 		}
-	}
+ 	}
 
 	@Override
 	public void remove( final E edge )

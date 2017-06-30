@@ -1,5 +1,6 @@
 package org.mastodon.graph.ref;
 
+import org.mastodon.graph.Edges;
 import org.mastodon.graph.Graph;
 import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolCollectionWrapper;
@@ -7,11 +8,12 @@ import org.mastodon.pool.PoolCollectionWrapper;
 public class GraphImp<
 		VP extends AbstractVertexPool< V, E, T >,
 		EP extends AbstractEdgePool< E, V, T >,
-		V extends AbstractVertex< V, E, T >,
-		E extends AbstractEdge< E, V, T >,
+		V extends AbstractVertex< V, E, VP, T >,
+		E extends AbstractEdge< E, V, EP, T >,
 		T extends MappedElement >
 	implements Graph< V, E >
 {
+
 	protected final VP vertexPool;
 
 	protected final EP edgePool;
@@ -77,6 +79,20 @@ public class GraphImp<
 	public E getEdge( final V source, final V target, final E edge )
 	{
 		return edgePool.getEdge( source, target, edge );
+	}
+
+	@Override
+	public Edges< E > getEdges( final V source, final V target )
+	{
+		return getEdges( source, target, vertexRef() );
+	}
+
+	@Override
+	public Edges< E > getEdges( final V source, final V target, final V ref )
+	{
+		ref.refTo( source );
+		ref.outgoingEdgesToTarget.setTarget( target );
+		return ref.outgoingEdgesToTarget;
 	}
 
 	@Override

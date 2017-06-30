@@ -1,85 +1,114 @@
 package org.mastodon.undo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.GraphIdBimap;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
-import org.mastodon.features.Feature;
-import org.mastodon.features.FeatureChangeListener;
-import org.mastodon.features.Features;
-import org.mastodon.undo.attributes.Attribute;
-import org.mastodon.undo.attributes.AttributeChangeListener;
-import org.mastodon.undo.attributes.Attributes;
+import org.mastodon.io.AttributeSerializer;
+import org.mastodon.properties.Property;
+import org.mastodon.properties.PropertyMap;
+import org.mastodon.properties.undo.PropertyUndoRedoStack;
 
-/**
- * TODO: javadoc
- * TODO: figure out, when mappings can be removed from UndoIdBimaps.
- * TODO: move to package model.undo (?)
- *
- * @param <V>
- * @param <E>
- *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
- */
 public class GraphUndoRecorder<
 			V extends Vertex< E >,
-			E extends Edge< V >,
-			L extends GraphUndoableEditList< V, E > >
+			E extends Edge< V > >
 		implements GraphListener< V, E >, UndoPointMarker
 {
-	private static final int defaultCapacity = 1000;
-
 	protected boolean recording;
 
-	protected final L edits;
+	private final GraphUndoRedoStack< V, E > edits;
 
-	public static < V extends Vertex< E >, E extends Edge< V > >
-		GraphUndoRecorder< V, E, GraphUndoableEditList< V, E > > create(
-				final ListenableGraph< V, E > graph,
-				final Features< V > vertexFeatures,
-				final Features< E > edgeFeatures,
-				final Attributes< V > vertexAttributes,
-				final Attributes< E > edgeAttributes,
-				final GraphIdBimap< V, E > idmap,
-				final GraphUndoSerializer< V, E > serializer )
+	private final Recorder< V > addVertex;
+
+	private final Recorder< E > addEdge;
+
+	private final Recorder< V > removeVertex;
+
+	private final Recorder< E > removeEdge;
+
+	private final List< PropertyMapAndRecorder< V > > vertexPropertyRecorders;
+
+	private final List< PropertyMapAndRecorder< E > > edgePropertyRecorders;
+
+	static class PropertyMapAndRecorder< O >
 	{
-		final UndoIdBimap< V > vertexUndoIdBimap = new UndoIdBimap<>( idmap.vertexIdBimap() );
-		final UndoIdBimap< E > edgeUndoIdBimap = new UndoIdBimap<>( idmap.edgeIdBimap() );
-		final GraphUndoableEditList< V, E > edits = new GraphUndoableEditList<>(
-				defaultCapacity,
-				graph,
-				vertexFeatures,
-				edgeFeatures,
-				vertexAttributes,
-				edgeAttributes,
-				serializer,
-				vertexUndoIdBimap,
-				edgeUndoIdBimap );
-		return new GraphUndoRecorder<>(
-				graph,
-				vertexFeatures,
-				edgeFeatures,
-				vertexAttributes,
-				edgeAttributes,
-				edits );
+		final PropertyMap< O, ? > propertyMap;
+
+		final Recorder< O > recorder;
+
+		PropertyMapAndRecorder(
+				final PropertyMap< O, ? > propertyMap,
+				final Recorder< O > recorder )
+		{
+			this.propertyMap = propertyMap;
+			this.recorder = recorder;
+		}
+
+		void recordIfSet( final O obj )
+		{
+			if ( propertyMap.isSet( obj ) )
+				recorder.record( obj );
+		}
 	}
 
 	public GraphUndoRecorder(
+			final int initialCapacity,
 			final ListenableGraph< V, E > graph,
-			final Features< V > vertexFeatures,
-			final Features< E > edgeFeatures,
-			final Attributes< V > vertexAttributes,
-			final Attributes< E > edgeAttributes,
-			final L edits )
+			final GraphIdBimap< V, E > idmap,
+			final AttributeSerializer< V > vertexSerializer,
+			final AttributeSerializer< E > edgeSerializer,
+			final List< Property< V > > vertexProperties,
+			final List< Property< E > > edgeProperties )
 	{
 		recording = true;
-		this.edits = edits;
+		final UndoIdBimap< V > vertexUndoIdBimap = new UndoIdBimap<>( idmap.vertexIdBimap() );
+		final UndoIdBimap< E > edgeUndoIdBimap = new UndoIdBimap<>( idmap.edgeIdBimap() );
+		edits = new GraphUndoRedoStack<>( initialCapacity, graph, vertexSerializer, edgeSerializer, vertexUndoIdBimap, edgeUndoIdBimap );
 		graph.addGraphListener( this );
-		vertexFeatures.addFeatureChangeListener( beforeVertexFeatureChange );
-		edgeFeatures.addFeatureChangeListener( beforeEdgeFeatureChange );
-		vertexAttributes.addAttributeChangeListener( beforeVertexAttributeChange );
-		edgeAttributes.addAttributeChangeListener( beforeEdgeAttributeChange );
+
+		vertexPropertyRecorders = new ArrayList<>();
+		edgePropertyRecorders = new ArrayList<>();
+
+		addVertex = edits.createAddVertexRecorder();
+		removeVertex = edits.createRemoveVertexRecorder();
+		addEdge = edits.createAddEdgeRecorder();
+		removeEdge = edits.createRemoveEdgeRecorder();
+
+		for ( final Property< V > property  : vertexProperties )
+		{
+			final PropertyUndoRedoStack< V > propertyUndoRedoStack = property.createUndoRedoStack();
+			final Recorder< V > recorder = edits.createSetVertexPropertyRecorder( propertyUndoRedoStack );
+			property.addBeforePropertyChangeListener( vertex -> {
+				if ( recording )
+					recorder.record( vertex );
+			} );
+			if ( property instanceof PropertyMap )
+			{
+				@SuppressWarnings( "unchecked" )
+				final PropertyMap< V, ? > pm = ( PropertyMap< V, ? > ) property;
+				vertexPropertyRecorders.add( new PropertyMapAndRecorder<>( pm, recorder ) );
+			}
+		}
+
+		for ( final Property< E > property  : edgeProperties )
+		{
+			final PropertyUndoRedoStack< E > propertyUndoRedoStack = property.createUndoRedoStack();
+			final Recorder< E > recorder = edits.createSetEdgePropertyRecorder( propertyUndoRedoStack );
+			property.addBeforePropertyChangeListener( edge -> {
+				if ( recording )
+					recorder.record( edge );
+			} );
+			if ( property instanceof PropertyMap )
+			{
+				@SuppressWarnings( "unchecked" )
+				final PropertyMap< E, ? > pm = ( PropertyMap< E, ? > ) property;
+				edgePropertyRecorders.add( new PropertyMapAndRecorder<>( pm, recorder ) );
+			}
+		}
 	}
 
 	@Override
@@ -117,7 +146,7 @@ public class GraphUndoRecorder<
 		if ( recording )
 		{
 //			System.out.println( "UndoRecorder.vertexAdded()" );
-			edits.recordAddVertex( vertex );
+			addVertex.record( vertex );
 		}
 	}
 
@@ -127,7 +156,8 @@ public class GraphUndoRecorder<
 		if ( recording )
 		{
 //			System.out.println( "UndoRecorder.vertexRemoved()" );
-			edits.recordRemoveVertex( vertex );
+			vertexPropertyRecorders.forEach( r -> r.recordIfSet( vertex ) );
+			removeVertex.record( vertex );
 		}
 	}
 
@@ -137,7 +167,7 @@ public class GraphUndoRecorder<
 		if ( recording )
 		{
 //			System.out.println( "UndoRecorder.edgeAdded()" );
-			edits.recordAddEdge( edge );
+			addEdge.record( edge );
 		}
 	}
 
@@ -147,47 +177,8 @@ public class GraphUndoRecorder<
 		if ( recording )
 		{
 //			System.out.println( "UndoRecorder.edgeRemoved()" );
-			edits.recordRemoveEdge( edge );
+			edgePropertyRecorders.forEach( r -> r.recordIfSet( edge ) );
+			removeEdge.record( edge );
 		}
 	}
-
-	private final FeatureChangeListener< V > beforeVertexFeatureChange = new FeatureChangeListener< V >()
-	{
-		@Override
-		public void beforeFeatureChange( final Feature< ?, V, ? > feature, final V vertex )
-		{
-			if ( recording )
-				edits.recordSetVertexFeature( feature, vertex );
-		}
-	};
-
-	private final FeatureChangeListener< E > beforeEdgeFeatureChange = new FeatureChangeListener< E >()
-	{
-		@Override
-		public void beforeFeatureChange( final Feature< ?, E, ? > feature, final E edge )
-		{
-			if ( recording )
-				edits.recordSetEdgeFeature( feature, edge );
-		}
-	};
-
-	private final AttributeChangeListener< V > beforeVertexAttributeChange = new AttributeChangeListener< V >()
-	{
-		@Override
-		public void beforeAttributeChange( final Attribute< V > attribute, final V vertex )
-		{
-			if ( recording )
-				edits.recordSetVertexAttribute( attribute, vertex );
-		}
-	};
-
-	private final AttributeChangeListener< E > beforeEdgeAttributeChange = new AttributeChangeListener< E >()
-	{
-		@Override
-		public void beforeAttributeChange( final Attribute< E > attribute, final E edge )
-		{
-			if ( recording )
-				edits.recordSetEdgeAttribute( attribute, edge );
-		}
-	};
 }

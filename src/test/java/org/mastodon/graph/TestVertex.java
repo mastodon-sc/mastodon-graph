@@ -1,23 +1,17 @@
 package org.mastodon.graph;
 
-import static org.mastodon.pool.ByteUtils.INT_SIZE;
-
 import org.mastodon.graph.ref.AbstractVertex;
-import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.pool.ByteMappedElement;
+import org.mastodon.pool.attributes.IntAttributeValue;
 
-public class TestVertex extends AbstractVertex< TestVertex, TestEdge, ByteMappedElement >
+public class TestVertex extends AbstractVertex< TestVertex, TestEdge, TestVertexPool, ByteMappedElement >
 {
-	protected static final int ID_OFFSET = AbstractVertex.SIZE_IN_BYTES;
+	private final IntAttributeValue id;
 
-	protected static final int SIZE_IN_BYTES = ID_OFFSET + INT_SIZE;
-
-	public final AbstractVertexPool< TestVertex, ?, ByteMappedElement > creatingPool;
-
-	protected TestVertex( final AbstractVertexPool< TestVertex, ?, ByteMappedElement > pool )
+	protected TestVertex( final TestVertexPool pool )
 	{
 		super( pool );
-		creatingPool = pool;
+		id = pool.id.createQuietAttributeValue( this );
 	}
 
 	public TestVertex init( final int id )
@@ -28,19 +22,19 @@ public class TestVertex extends AbstractVertex< TestVertex, TestEdge, ByteMapped
 
 	public int getId()
 	{
-		return access.getInt( ID_OFFSET );
+		return id.get();
 	}
 
 	public void setId( final int id )
 	{
-		access.putInt( id, ID_OFFSET );
+		this.id.set( id );
 	}
 
 	@Override
 	public String toString()
 	{
 		final StringBuilder sb = new StringBuilder();
-		sb.append( "v(" );
+		sb.append( "nsv(" );
 		sb.append( getId() );
 		sb.append( ")" );
 		return sb.toString();

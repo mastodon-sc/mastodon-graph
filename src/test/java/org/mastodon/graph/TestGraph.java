@@ -24,4 +24,21 @@ public class TestGraph extends GraphImp< TestVertexPool, TestEdgePool, TestVerte
 	{
 		return edgePool;
 	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuffer sb = new StringBuffer( "TestNonSimpleGraph {\n" );
+		sb.append( "  vertices = {\n" );
+		for ( final TestVertex v : vertexPool )
+			sb.append( "    " + v + "\n" );
+		sb.append( "  },\n" );
+
+		sb.append( "  edges = {\n" );
+		for ( final TestEdge e : edgePool )
+			sb.append( "    " + e + "\n" );
+		sb.append( "  }\n" );
+		sb.append( "}" );
+		return sb.toString();
+	}
 }
