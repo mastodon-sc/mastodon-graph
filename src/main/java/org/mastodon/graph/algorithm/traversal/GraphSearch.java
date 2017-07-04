@@ -147,15 +147,35 @@ public abstract class GraphSearch< T extends GraphSearch< T, V, E >, V extends V
 
 	/**
 	 * Enumeration of the possible edge class during a graph search.
+	 * <p>
+	 * A graph search generates a spanning tree from the graph iterated. As they
+	 * are crossed during the search, graph edges can be assigned a class
+	 * depending on how they relate to the spanning tree.
 	 *
 	 * @author Jean-Yves Tinevez
 	 */
 	public static enum EdgeClass
 	{
+		/**
+		 * Graph edges that belong to the search tree.
+		 */
 		TREE,
+		/**
+		 * Graph edges that link to an ancestor vertex in the search tree.
+		 */
 		BACK,
+		/**
+		 * Graph edges that link to a indirect descendant vertex in the search
+		 * tree.
+		 */
 		FORWARD,
+		/**
+		 * Graph edges that link to another branch in the search tree.
+		 */
 		CROSS,
+		/**
+		 * Graph edges that have not been classified yet.
+		 */
 		UNCLASSIFIED;
 	}
 
