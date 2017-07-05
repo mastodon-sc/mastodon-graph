@@ -1,5 +1,6 @@
 package org.mastodon.graph.object;
 
+import java.util.NoSuchElementException;
 import org.mastodon.RefPool;
 
 import gnu.trove.map.TIntObjectArrayMap;
@@ -35,8 +36,14 @@ public abstract class AbstractObjectIdBimap< O > implements RefPool< O >
 	{
 		final O o = idToObj.get( id );
 		if ( o == null )
-			throw new IllegalArgumentException();
+			throw new NoSuchElementException();
 		return o;
+	}
+
+	@Override
+	public O getObjectIfExists( final int id, final O ref )
+	{
+		return idToObj.get( id );
 	}
 
 	@Override
