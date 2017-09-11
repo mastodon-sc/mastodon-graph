@@ -35,6 +35,11 @@ public class GraphIdBimap< V, E >
 		return vertexBimap.getObject( id, ref );
 	}
 
+	public V getVertexIfExists( final int id, final V ref )
+	{
+		return vertexBimap.getObjectIfExists( id, ref );
+	}
+
 	public int getEdgeId( final E e )
 	{
 		return edgeBimap.getId( e );
@@ -43,6 +48,11 @@ public class GraphIdBimap< V, E >
 	public E getEdge( final int id, final E ref )
 	{
 		return edgeBimap.getObject( id, ref );
+	}
+
+	public E getEdgeIfExists( final int id, final E ref )
+	{
+		return edgeBimap.getObjectIfExists( id, ref );
 	}
 
 	public RefPool< V > vertexIdBimap()
