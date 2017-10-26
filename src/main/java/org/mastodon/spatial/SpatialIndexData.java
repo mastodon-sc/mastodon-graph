@@ -513,7 +513,7 @@ class SpatialIndexData< O extends RealLocalizable >
 			if ( nextTree == null && search.hasNext() )
 				nextTree = search.next();
 
-			if ( nextTree == null || ( nextAdded != null && comparator.compare( nextAdded, nextTree ) > 0 ) )
+			if ( nextTree == null || ( nextAdded != null && comparator.compare( nextAdded, nextTree ) < 0 ) )
 			{
 				current = addedQueue.poll( ref2 );
 				if ( current != null )
