@@ -1,3 +1,5 @@
+[![](https://travis-ci.org/bigdataviewer/mastodon-graph.svg?branch=master)](https://travis-ci.org/bigdataviewer/mastodon-graph)
+
 TrackMate3
 ==========
 
