@@ -71,8 +71,9 @@
 		<license.projectName>Mastodon Graphs</license.projectName>
 		<license.organizationName>Mastodon authors</license.organizationName>
 		<license.copyrightOwners>Tobias Pietzsch, Jean-Yves Tinevez</license.copyrightOwners>
-	</properties>
 
+		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
+		<releaseProfiles>deploy-to-imagej</releaseProfiles>	</properties>
 	<developers>
 		<developer>
 			<id>tinevez</id>
