@@ -120,12 +120,6 @@ public class GraphImp<
 	}
 
 	@Override
-	public void removeAllLinkedEdges( final V vertex )
-	{
-		edgePool.deleteAllLinkedEdges( vertex );
-	}
-
-	@Override
 	public V vertexRef()
 	{
 		return vertexPool.createRef();

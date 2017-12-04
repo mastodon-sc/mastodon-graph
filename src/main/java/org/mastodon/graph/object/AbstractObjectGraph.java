@@ -139,19 +139,6 @@ public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E 
 	}
 
 	@Override
-	public void removeAllLinkedEdges( final V vertex )
-	{
-		for ( final E edge : vertex.incoming )
-			edge.getSource().outgoing.edges.remove( edge );
-		edges.removeAll( vertex.incoming.edges );
-		vertex.incoming.edges.clear();
-		for ( final E edge : vertex.outgoing )
-			edge.getTarget().incoming.edges.remove( edge );
-		edges.removeAll( vertex.outgoing.edges );
-		vertex.outgoing.edges.clear();
-	}
-
-	@Override
 	public RefCollection< V > vertices()
 	{
 		return unmodifiableVertices;

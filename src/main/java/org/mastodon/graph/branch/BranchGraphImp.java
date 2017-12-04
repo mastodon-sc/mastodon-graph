@@ -229,18 +229,6 @@ public abstract class BranchGraphImp<
 		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
 	}
 
-	/**
-	 * Unsupported operation as the branch graph is read-only.
-	 *
-	 * @throws UnsupportedOperationException
-	 *             when called.
-	 */
-	@Override
-	public void removeAllLinkedEdges( final BV vertex )
-	{
-		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
-	}
-
 	/*
 	 * Query branch graph.
 	 */

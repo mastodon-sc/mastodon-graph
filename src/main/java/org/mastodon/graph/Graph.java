@@ -89,7 +89,4 @@ public interface Graph< V extends Vertex< E >, E extends Edge< V > > extends Rea
 	public void remove( final V vertex );
 
 	public void remove( final E edge );
-
-	// TODO: remove
-	public void removeAllLinkedEdges( final V vertex );
 }

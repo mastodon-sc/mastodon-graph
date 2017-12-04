@@ -81,16 +81,6 @@ public class ListenableGraphImp<
 	}
 
 	@Override
-	public void removeAllLinkedEdges( final V vertex )
-	{
-		if ( emitEvents )
-			for ( final E edge : vertex.edges() )
-				for ( final GraphListener< V, E > listener : listeners )
-					listener.edgeRemoved( edge );
-		edgePool.deleteAllLinkedEdges( vertex );
-	}
-
-	@Override
 	public synchronized boolean addGraphListener( final GraphListener< V, E > listener )
 	{
 		if ( ! listeners.contains( listener ) )
