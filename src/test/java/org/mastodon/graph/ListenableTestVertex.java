@@ -60,5 +60,8 @@ public class ListenableTestVertex
 		return sb.toString();
 	}
 
-
+	void notifyVertexAdded()
+	{
+		super.initDone();
+	}
 }

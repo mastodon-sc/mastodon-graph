@@ -1,8 +1,12 @@
 package org.mastodon.graph;
 
+import org.mastodon.graph.ref.AbstractEdgePool;
 import org.mastodon.graph.ref.AbstractListenableVertexPool;
+import org.mastodon.graph.ref.AbstractVertexPool;
+import org.mastodon.io.AttributeSerializer;
 import org.mastodon.pool.ByteMappedElement;
 import org.mastodon.pool.ByteMappedElementArray;
+import org.mastodon.pool.PoolObjectAttributeSerializer;
 import org.mastodon.pool.SingleArrayMemPool;
 import org.mastodon.pool.attributes.IntAttribute;
 
@@ -34,4 +38,15 @@ public class ListenableTestVertexPool extends AbstractListenableVertexPool< List
 	{
 		return new ListenableTestVertex( this );
 	}
+
+	public static final AttributeSerializer< ListenableTestVertex > vertexSerializer = new PoolObjectAttributeSerializer< ListenableTestVertex >(
+			AbstractVertexPool.layout.getSizeInBytes(),
+			layout.getSizeInBytes() - AbstractVertexPool.layout.getSizeInBytes() )
+	{
+		@Override
+		public void notifySet( final ListenableTestVertex vertex )
+		{
+			vertex.notifyVertexAdded();
+		}
+	};
 }

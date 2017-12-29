@@ -31,4 +31,9 @@ public class ListenableTestEdge extends AbstractListenableEdge< ListenableTestEd
 		this.vertexPool.releaseRef( v );
 		return sb.toString();
 	}
+
+	void notifyEdgeAdded()
+	{
+		super.initDone();
+	}
 }
