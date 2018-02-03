@@ -215,7 +215,8 @@ class SpatialIndexData< O extends RealLocalizable >
 				return true;
 			}
 		}
-		else if ( added.remove( obj ) )
+
+		if ( added.remove( obj ) )
 		{
 			--size;
 			return true;
