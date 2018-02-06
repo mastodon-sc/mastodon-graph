@@ -2,6 +2,7 @@ package org.mastodon.undo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.GraphIdBimap;
@@ -19,6 +20,8 @@ public class GraphUndoRecorder<
 		implements GraphListener< V, E >, UndoPointMarker
 {
 	protected boolean recording;
+
+	private final Lock lock;
 
 	private final GraphUndoRedoStack< V, E > edits;
 
@@ -59,12 +62,14 @@ public class GraphUndoRecorder<
 			final int initialCapacity,
 			final ListenableGraph< V, E > graph,
 			final GraphIdBimap< V, E > idmap,
+			final Lock writeLock,
 			final AttributeSerializer< V > vertexSerializer,
 			final AttributeSerializer< E > edgeSerializer,
 			final List< Property< V > > vertexProperties,
 			final List< Property< E > > edgeProperties )
 	{
 		recording = true;
+		this.lock = writeLock;
 		final UndoIdBimap< V > vertexUndoIdBimap = new UndoIdBimap<>( idmap.vertexIdBimap() );
 		final UndoIdBimap< E > edgeUndoIdBimap = new UndoIdBimap<>( idmap.edgeIdBimap() );
 		edits = new GraphUndoRedoStack<>( initialCapacity, graph, vertexSerializer, edgeSerializer, vertexUndoIdBimap, edgeUndoIdBimap );
@@ -114,7 +119,15 @@ public class GraphUndoRecorder<
 	{
 //		System.out.println( "UndoRecorder.undo()" );
 		recording = false;
-		edits.undo();
+		lock.lock();
+		try
+		{
+			edits.undo();
+		}
+		finally
+		{
+			lock.unlock();
+		}
 		recording = true;
 	}
 
@@ -122,7 +135,15 @@ public class GraphUndoRecorder<
 	{
 //		System.out.println( "UndoRecorder.redo()" );
 		recording = false;
-		edits.redo();
+		lock.lock();
+		try
+		{
+			edits.redo();
+		}
+		finally
+		{
+			lock.unlock();
+		}
 		recording = true;
 	}
 
