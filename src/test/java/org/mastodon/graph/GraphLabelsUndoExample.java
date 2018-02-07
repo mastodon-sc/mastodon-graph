@@ -2,7 +2,6 @@ package org.mastodon.graph;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.mastodon.labels.LabelSets;
 import org.mastodon.properties.ObjPropertyMap;
@@ -34,7 +33,6 @@ public class GraphLabelsUndoExample
 		name = new ObjPropertyMap<>( graph.getVertexPool() );
 
 		final GraphIdBimap< ListenableTestVertex, ListenableTestEdge > idmap = new GraphIdBimap<>( graph.getVertexPool(), graph.getEdgePool() );
-		final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 		final List< Property< ListenableTestVertex > > vertexUndoableProperties = new ArrayList<>();
 		vertexUndoableProperties.add( labelsets );
 		vertexUndoableProperties.add( name );
@@ -43,7 +41,6 @@ public class GraphLabelsUndoExample
 				initialCapacity,
 				graph,
 				idmap,
-				lock.writeLock(),
 				ListenableTestVertexPool.vertexSerializer,
 				ListenableTestEdgePool.edgeSerializer,
 				vertexUndoableProperties,
