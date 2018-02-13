@@ -10,7 +10,7 @@
 
 	<groupId>org.mastodon</groupId>
 	<artifactId>mastodon-graph</artifactId>
-	<version>1.0.0-beta-10-SNAPSHOT</version>
+	<version>1.0.0-beta-10</version>
 
 	<name>Mastodon Graphs</name>
 	<description>graph interfaces, object- and pool-based implementations, graph algorithms, undo framework</description>
@@ -52,7 +52,7 @@
 	<scm>
 		<connection>scm:git:git://github.com/bigdataviewer/mastodon-graph</connection>
 		<developerConnection>scm:git:git@github.com:bigdataviewer/mastodon-graph</developerConnection>
-		<tag>HEAD</tag>
+		<tag>mastodon-graph-1.0.0-beta-10</tag>
 		<url>https://github.com/bigdataviewer/mastodon-graph</url>
 	</scm>
 	<issueManagement>
