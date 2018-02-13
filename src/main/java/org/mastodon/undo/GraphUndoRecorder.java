@@ -104,6 +104,11 @@ public class GraphUndoRecorder<
 		}
 	}
 
+	public < T extends UndoableEdit > Recorder< T > createGenericUndoableEditRecorder()
+	{
+		return edits.createGenericUndoableEditRecorder();
+	}
+
 	@Override
 	public void setUndoPoint()
 	{
