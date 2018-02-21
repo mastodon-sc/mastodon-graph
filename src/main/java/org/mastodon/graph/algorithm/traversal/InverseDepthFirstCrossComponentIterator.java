@@ -1,7 +1,7 @@
 package org.mastodon.graph.algorithm.traversal;
 
 import org.mastodon.graph.Edge;
-import org.mastodon.graph.Graph;
+import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.LeafFinder;
 
@@ -28,7 +28,7 @@ public class InverseDepthFirstCrossComponentIterator< V extends Vertex< E >, E e
 	 * @param graph
 	 *            the graph to iterate over.
 	 */
-	public InverseDepthFirstCrossComponentIterator( final V start, final Graph< V, E > graph )
+	public InverseDepthFirstCrossComponentIterator( final V start, final ReadOnlyGraph< V, E > graph )
 	{
 		this( start, graph, LeafFinder.getLeaves( graph ) );
 	}
@@ -52,7 +52,7 @@ public class InverseDepthFirstCrossComponentIterator< V extends Vertex< E >, E e
 	 * @param leaves
 	 *            an iterable over the collection of leaves.
 	 */
-	public InverseDepthFirstCrossComponentIterator( final V start, final Graph< V, E > graph, final Iterable< V > leaves )
+	public InverseDepthFirstCrossComponentIterator( final V start, final ReadOnlyGraph< V, E > graph, final Iterable< V > leaves )
 	{
 		super( start, graph, leaves );
 	}

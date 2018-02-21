@@ -5,7 +5,7 @@ import java.util.Comparator;
 
 import org.mastodon.collection.RefList;
 import org.mastodon.graph.Edge;
-import org.mastodon.graph.Graph;
+import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 
 public abstract class AbstractGraphSortedIteratorAlgorithm< V extends Vertex< E >, E extends Edge< V > > extends AbstractGraphIteratorAlgorithm< V, E >
@@ -14,7 +14,7 @@ public abstract class AbstractGraphSortedIteratorAlgorithm< V extends Vertex< E 
 
 	protected final RefList< V > list;
 
-	public AbstractGraphSortedIteratorAlgorithm( final Graph< V, E > graph, final Comparator< V > comparator )
+	public AbstractGraphSortedIteratorAlgorithm( final ReadOnlyGraph< V, E > graph, final Comparator< V > comparator )
 	{
 		super( graph );
 		this.comparator = comparator;

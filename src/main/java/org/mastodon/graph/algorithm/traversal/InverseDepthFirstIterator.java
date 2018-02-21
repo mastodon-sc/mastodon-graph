@@ -4,7 +4,7 @@
 package org.mastodon.graph.algorithm.traversal;
 
 import org.mastodon.graph.Edge;
-import org.mastodon.graph.Graph;
+import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 
 /**
@@ -15,7 +15,7 @@ import org.mastodon.graph.Vertex;
  */
 public class InverseDepthFirstIterator< V extends Vertex< E >, E extends Edge< V > > extends DepthFirstIterator< V, E >
 {
-	public InverseDepthFirstIterator( final V root, final Graph< V, E > graph )
+	public InverseDepthFirstIterator( final V root, final ReadOnlyGraph< V, E > graph )
 	{
 		super( root, graph );
 	}

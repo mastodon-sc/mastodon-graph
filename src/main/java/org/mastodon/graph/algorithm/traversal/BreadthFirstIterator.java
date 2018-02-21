@@ -2,7 +2,7 @@ package org.mastodon.graph.algorithm.traversal;
 
 import org.mastodon.collection.RefDeque;
 import org.mastodon.graph.Edge;
-import org.mastodon.graph.Graph;
+import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 
 /**
@@ -23,7 +23,7 @@ public class BreadthFirstIterator< V extends Vertex< E >, E extends Edge< V > > 
 {
 	private final RefDeque< V > queue;
 
-	public BreadthFirstIterator( final V root, final Graph< V, E > graph )
+	public BreadthFirstIterator( final V root, final ReadOnlyGraph< V, E > graph )
 	{
 		super( graph );
 		this.queue = createVertexDeque();
@@ -56,7 +56,7 @@ public class BreadthFirstIterator< V extends Vertex< E >, E extends Edge< V > > 
 		return !queue.isEmpty();
 	}
 
-	static < V extends Vertex< E >, E extends Edge< V > > BreadthFirstIterator< V, E > create( final V root, final Graph< V, E > graph )
+	static < V extends Vertex< E >, E extends Edge< V > > BreadthFirstIterator< V, E > create( final V root, final ReadOnlyGraph< V, E > graph )
 	{
 		return new BreadthFirstIterator< V, E >( root, graph );
 	}

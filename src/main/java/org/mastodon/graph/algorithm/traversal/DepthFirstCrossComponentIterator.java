@@ -3,7 +3,7 @@ package org.mastodon.graph.algorithm.traversal;
 import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefStack;
 import org.mastodon.graph.Edge;
-import org.mastodon.graph.Graph;
+import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.RootFinder;
 
@@ -52,7 +52,7 @@ public class DepthFirstCrossComponentIterator< V extends Vertex< E >, E extends 
 	 * @param graph
 	 *            the graph to iterate over.
 	 */
-	public DepthFirstCrossComponentIterator( final V start, final Graph< V, E > graph )
+	public DepthFirstCrossComponentIterator( final V start, final ReadOnlyGraph< V, E > graph )
 	{
 		this( start, graph, RootFinder.getRoots( graph ) );
 	}
@@ -76,7 +76,7 @@ public class DepthFirstCrossComponentIterator< V extends Vertex< E >, E extends 
 	 * @param roots
 	 *            an iterable over the collection of roots.
 	 */
-	public DepthFirstCrossComponentIterator( final V start, final Graph< V, E > graph, final Iterable< V > roots )
+	public DepthFirstCrossComponentIterator( final V start, final ReadOnlyGraph< V, E > graph, final Iterable< V > roots )
 	{
 		super( graph );
 		stack = createVertexStack();
@@ -119,7 +119,7 @@ public class DepthFirstCrossComponentIterator< V extends Vertex< E >, E extends 
 		return !stack.isEmpty();
 	}
 
-	static < V extends Vertex< E >, E extends Edge< V > > DepthFirstIterator< V, E > create( final V root, final Graph< V, E > graph )
+	static < V extends Vertex< E >, E extends Edge< V > > DepthFirstIterator< V, E > create( final V root, final ReadOnlyGraph< V, E > graph )
 	{
 		return new DepthFirstIterator< >( root, graph );
 	}

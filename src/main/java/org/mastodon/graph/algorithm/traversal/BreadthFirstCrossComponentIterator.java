@@ -3,7 +3,7 @@ package org.mastodon.graph.algorithm.traversal;
 import java.util.Iterator;
 
 import org.mastodon.graph.Edge;
-import org.mastodon.graph.Graph;
+import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.RootFinder;
 
@@ -46,13 +46,13 @@ public class BreadthFirstCrossComponentIterator< V extends Vertex< E >, E extend
 	 * specified vertex.
 	 * <p>
 	 * The collection of roots is determined automatically at creation.
-	 * 
+	 *
 	 * @param start
 	 *            the vertex to start iteration with.
 	 * @param graph
 	 *            the graph to iterate over.
 	 */
-	public BreadthFirstCrossComponentIterator( final V start, final Graph< V, E > graph )
+	public BreadthFirstCrossComponentIterator( final V start, final ReadOnlyGraph< V, E > graph )
 	{
 		this( start, graph, RootFinder.getRoots( graph ) );
 	}
@@ -68,7 +68,7 @@ public class BreadthFirstCrossComponentIterator< V extends Vertex< E >, E extend
 	 * of the graph exactly once, the specified collection of roots must include
 	 * all the roots of the graph, that is: all the vertices that have no
 	 * incoming edges.
-	 * 
+	 *
 	 * @param start
 	 *            the vertex to start iteration with.
 	 * @param graph
@@ -76,7 +76,7 @@ public class BreadthFirstCrossComponentIterator< V extends Vertex< E >, E extend
 	 * @param roots
 	 *            an iterable over the collection of roots.
 	 */
-	public BreadthFirstCrossComponentIterator( final V start, final Graph< V, E > graph, final Iterable< V > roots )
+	public BreadthFirstCrossComponentIterator( final V start, final ReadOnlyGraph< V, E > graph, final Iterable< V > roots )
 	{
 		super( start, graph );
 		this.rit = roots.iterator();
