@@ -118,9 +118,4 @@ public class DepthFirstCrossComponentIterator< V extends Vertex< E >, E extends 
 	{
 		return !stack.isEmpty();
 	}
-
-	static < V extends Vertex< E >, E extends Edge< V > > DepthFirstIterator< V, E > create( final V root, final ReadOnlyGraph< V, E > graph )
-	{
-		return new DepthFirstIterator< >( root, graph );
-	}
 }

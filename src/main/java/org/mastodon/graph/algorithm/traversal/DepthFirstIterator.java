@@ -54,9 +54,4 @@ public class DepthFirstIterator< V extends Vertex< E >, E extends Edge< V > > ex
 	{
 		return !stack.isEmpty();
 	}
-
-	static < V extends Vertex< E >, E extends Edge< V > > DepthFirstIterator< V, E > create( final V root, final ReadOnlyGraph< V, E > graph )
-	{
-		return new DepthFirstIterator< V, E >( root, graph );
-	}
 }

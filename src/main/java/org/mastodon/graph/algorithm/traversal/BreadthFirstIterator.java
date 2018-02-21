@@ -55,9 +55,4 @@ public class BreadthFirstIterator< V extends Vertex< E >, E extends Edge< V > > 
 	{
 		return !queue.isEmpty();
 	}
-
-	static < V extends Vertex< E >, E extends Edge< V > > BreadthFirstIterator< V, E > create( final V root, final ReadOnlyGraph< V, E > graph )
-	{
-		return new BreadthFirstIterator< V, E >( root, graph );
-	}
 }
