@@ -41,9 +41,17 @@ public class TreeOutputter< V extends Vertex< E >, E extends Edge< V > > extends
 
 	private RefSet< V > visited;
 
+	private final java.util.function.Function< V, String > strFunction;
+
 	public TreeOutputter( final ReadOnlyGraph< V, E > graph )
 	{
+		this( graph, V::toString );
+	}
+
+	public TreeOutputter( final ReadOnlyGraph< V, E > graph, final java.util.function.Function< V, String > strFunction )
+	{
 		super( graph );
+		this.strFunction = strFunction;
 	}
 
 	/**
@@ -110,7 +118,7 @@ public class TreeOutputter< V extends Vertex< E >, E extends Edge< V > > extends
 
 			final StringBuffer sb = new StringBuffer( width );
 			sb.append( spaces( width ) );
-			final String s = vi.toString();
+			final String s = strFunction.apply( vi );
 			final int sl = s.length();
 			final int start = width / 2 - sl / 2;
 			final int end = start + sl;
@@ -350,9 +358,21 @@ public class TreeOutputter< V extends Vertex< E >, E extends Edge< V > > extends
 		@Override
 		public Integer eval( final V input )
 		{
-			return Integer.valueOf( input.toString().length() + 2 );
+			return Integer.valueOf( strFunction.apply( input ).length() + 2 );
 		}
 	};
+
+	public static < V extends Vertex< E >, E extends Edge< V > > String output( final Graph< V, E > graph, final V root, final java.util.function.Function< V, String > strFunction )
+	{
+		return new TreeOutputter< V, E >( graph, strFunction ).get( root );
+	}
+
+	public static < V extends Vertex< E >, E extends Edge< V > > String output( final Graph< V, E > graph, final java.util.function.Function< V, String > strFunction )
+	{
+		final RefSet< V > roots = RootFinder.getRoots( graph );
+		if ( roots.isEmpty() ) { return ""; }
+		return new TreeOutputter< V, E >( graph, strFunction ).get( roots.iterator().next() );
+	}
 
 	public static < V extends Vertex< E >, E extends Edge< V > > String output( final Graph< V, E > graph, final V root )
 	{
