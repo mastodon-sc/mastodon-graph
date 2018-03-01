@@ -140,25 +140,32 @@ public class SpatioTemporalIndexImp<
 	}
 
 	/**
-	 * TODO: Rebuilding of SpatioTemporalIndex must be called periodically from somewhere!
-	 *
 	 * Rebuild one {@link SpatialIndexData} for which the
-	 * {@link SpatialIndexData#modCount()} exceeds the specified maximum.
+	 * {@link SpatialIndexData#modCount()} exceeds the specified threshold.
+	 *
+	 * @param modCountThreshold
+	 *            how many modifications should have happened (at least) to a
+	 *            {@code SpatialIndexData} to make it eligible for rebuilding.
+	 * @return whether any index was rebuild. I.e., if {@code false} is
+	 *         returned, no index had more than {@code maxModCount}
+	 *         modifications.
 	 */
-	void rebuildAny( final int maxModCount )
+	boolean rebuildAny( final int modCountThreshold )
 	{
 		SpatialIndexImp< V > index = null;
 		readLock.lock();
 		try
 		{
 			final TIntObjectIterator< SpatialIndexImp< V > > i = timepointToSpatialIndex.iterator();
-		    while( i.hasNext() )
-		    {
-		    	i.advance();
-		    	index = i.value();
-		    	if ( index.modCount() > maxModCount )
-		    		break;
-		    }
+			while ( i.hasNext() )
+			{
+				i.advance();
+				if ( i.value().modCount() > modCountThreshold )
+				{
+					index = i.value();
+					break;
+				}
+			}
 		}
 		finally
 		{
@@ -167,6 +174,8 @@ public class SpatioTemporalIndexImp<
 
 		if ( index != null )
 			index.rebuild();
+
+		return index != null;
 	}
 
 	@Override
