@@ -80,7 +80,6 @@ public class GraphUndoRecorder<
 
 		for ( final Property< V > property  : vertexProperties )
 		{
-			System.out.println( property );
 			final PropertyUndoRedoStack< V > propertyUndoRedoStack = property.createUndoRedoStack();
 			final Recorder< V > recorder = edits.createSetVertexPropertyRecorder( propertyUndoRedoStack );
 			property.addBeforePropertyChangeListener( vertex -> {
