@@ -45,7 +45,6 @@ public class StronglyConnectedComponentsTest
 		graph.addEdge( v5, v3 );
 		graph.addEdge( v5, v4 );
 		graph.addEdge( v6, v4 );
-		graph.addEdge( v6, v7 );
 		graph.addEdge( v7, v5 );
 		graph.addEdge( v7, v6 );
 		graph.addEdge( v7, v7 );
@@ -56,7 +55,8 @@ public class StronglyConnectedComponentsTest
 		expected.add( new HashSet<>( Arrays.asList( v3, v5 ) ) );
 		expected.add( new HashSet<>( Arrays.asList( v3, v5 ) ) );
 		expected.add( new HashSet<>( Arrays.asList( v4 ) ) );
-		expected.add( new HashSet<>( Arrays.asList( v6, v7 ) ) );
+		expected.add( new HashSet<>( Arrays.asList( v6 ) ) );
+		expected.add( new HashSet<>( Arrays.asList( v7 ) ) );
 
 		final Set< RefSet< TestSimpleVertex > > actual = StronglyConnectedComponents.stronglyConnectedComponents( graph );
 
