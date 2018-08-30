@@ -122,7 +122,7 @@ public class StronglyConnectedComponents< V extends Vertex< E >, E extends Edge<
 			{
 				// Successor w has not yet been visited; recurse on it
 				strongconnect( w );
-				lowlink.set( v, Math.min( lowlink.get( v ), lowlink.get( w ) ) );
+				lowlink.set( v, Math.min( lowlink.getInt( v ), lowlink.getInt( w ) ) );
 			}
 			else if ( onStack.contains( w ) )
 			{
@@ -130,12 +130,12 @@ public class StronglyConnectedComponents< V extends Vertex< E >, E extends Edge<
 				// If w is not on stack, then (v, w) is a cross-edge in the DFS tree and must be ignored
 				// Note: The next line may look odd - but is correct.
 				// It says w.index not w.lowlink; that is deliberate and from the original paper
-				lowlink.set( v, Math.min( lowlink.get( v ), index.get( w ) ) );
+				lowlink.set( v, Math.min( lowlink.getInt( v ), index.getInt( w ) ) );
 			}
 		}
 
 		// If v is a root node, pop the stack and generate an SCC
-		if ( lowlink.get( v ) == index.get( v ) )
+		if ( lowlink.getInt( v ) == index.getInt( v ) )
 		{
 			// start a new strongly connected component
 			final RefSet< V > scc = createVertexSet();
