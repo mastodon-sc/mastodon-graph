@@ -24,9 +24,9 @@ public abstract class AbstractGraphSortedIteratorAlgorithm< V extends Vertex< E 
 	@Override
 	protected void fetchNext()
 	{
-		while ( canFetch() )
+		if ( canFetch() )
 		{
-			fetched = fetch( fetched );
+			fetched = fetch( fetchedRef );
 			list.clear();
 			for ( final E e : neighbors( fetched ) )
 			{
@@ -38,18 +38,16 @@ public abstract class AbstractGraphSortedIteratorAlgorithm< V extends Vertex< E 
 				}
 			}
 
-			Collections.sort( list, comparator );
+			list.sort( comparator );
 			// To have right order when pop from stack:
 			for ( int i = 0; i < list.size(); i++ )
 			{
 				final V target = list.get( i );
 				toss( target );
 			}
-			return;
 		}
-		releaseRef( tmpRef );
-		releaseRef( fetched );
-		fetched = null;
+		else
+			fetched = null;
 	}
 
 }

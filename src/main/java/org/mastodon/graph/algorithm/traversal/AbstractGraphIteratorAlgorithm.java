@@ -28,24 +28,34 @@ public abstract class AbstractGraphIteratorAlgorithm< V extends Vertex< E >, E e
 	protected V fetched;
 
 	/**
-	 * A utility ref.
+	 * utility refs.
 	 */
 	protected final V tmpRef;
+	protected final V nextRef;
+	protected final V fetchedRef;
 
 	public AbstractGraphIteratorAlgorithm( final ReadOnlyGraph< V, E > graph )
 	{
 		super( graph );
 		visited = createVertexSet();
-		next = vertexRef();
-		fetched = vertexRef();
 		tmpRef = vertexRef();
+		nextRef = vertexRef();
+		fetchedRef = vertexRef();
+		reset();
+	}
+
+	protected void reset()
+	{
+		visited.clear();
+		next = null;
+		fetched = null;
 	}
 
 	@Override
 	public boolean isRefIterator()
 	{
 		final V v = graph.vertexRef();
-		final boolean isRefIterator = v != null && v instanceof PoolObject;
+		final boolean isRefIterator = v instanceof PoolObject;
 		graph.releaseRef( v );
 		return isRefIterator;
 	}
@@ -59,16 +69,16 @@ public abstract class AbstractGraphIteratorAlgorithm< V extends Vertex< E >, E e
 	@Override
 	public V next()
 	{
-		next = assign( fetched, next );
+		next = assign( fetched, nextRef );
 		fetchNext();
 		return next;
 	}
 
 	protected void fetchNext()
 	{
-		while ( canFetch() )
+		if ( canFetch() )
 		{
-			fetched = fetch( fetched );
+			fetched = fetch( fetchedRef );
 			for ( final E e : neighbors( fetched ) )
 			{
 				final V target = targetOf( e, tmpRef );
@@ -78,13 +88,9 @@ public abstract class AbstractGraphIteratorAlgorithm< V extends Vertex< E >, E e
 					toss( target );
 				}
 			}
-			return;
 		}
-		releaseRef( tmpRef );
-		releaseRef( fetched );
-		// we cannot release next, because it might still be in used outside of
-		// the iterator
-		fetched = null;
+		else
+			fetched = null;
 	}
 
 	@Override

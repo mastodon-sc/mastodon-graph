@@ -398,4 +398,31 @@ public class InverseDepthFirstIteratorTest
 
 		assertFalse( "Iteration should be finished, but is not.", it.hasNext() );
 	}
+
+	@Test
+	public void testReset()
+	{
+		final GraphTestBundle< TestSimpleVertex, TestSimpleEdge > bundle = GraphsForTests.diamondPoolObjects();
+
+		final TestSimpleVertex first = bundle.vertices.get( 3 );
+		final InverseDepthFirstIterator< TestSimpleVertex, TestSimpleEdge > it = new InverseDepthFirstIterator<>( bundle.graph );
+
+		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
+		expected.add( bundle.vertices.get( 3 ) );
+		expected.add( bundle.vertices.get( 2 ) );
+		expected.add( bundle.vertices.get( 0 ) );
+		expected.add( bundle.vertices.get( 1 ) );
+
+		for ( int i = 0; i < 3; ++i )
+		{
+			it.reset( first );
+			final Iterator< TestSimpleVertex > eit = expected.iterator();
+			while ( eit.hasNext() )
+			{
+				assertTrue( "Iterator should not be finished, but is.", it.hasNext() );
+				assertEquals( "Unexpected vertex met during iteration.", eit.next(), it.next() );
+			}
+			assertFalse( "Iteration should be finished, but is not.", it.hasNext() );
+		}
+	}
 }

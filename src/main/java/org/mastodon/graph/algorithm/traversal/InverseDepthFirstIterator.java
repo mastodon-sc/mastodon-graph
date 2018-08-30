@@ -20,6 +20,11 @@ public class InverseDepthFirstIterator< V extends Vertex< E >, E extends Edge< V
 		super( root, graph );
 	}
 
+	public InverseDepthFirstIterator( final ReadOnlyGraph< V, E > graph )
+	{
+		super( graph );
+	}
+
 	@Override
 	protected Iterable< E > neighbors( final V vertex )
 	{
