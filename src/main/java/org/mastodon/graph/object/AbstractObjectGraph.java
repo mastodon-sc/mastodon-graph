@@ -37,6 +37,12 @@ public abstract class AbstractObjectGraph< V extends AbstractObjectVertex< V, E 
 		unmodifiableEdges = new RefCollectionWrapper<>( Collections.unmodifiableCollection( edges ) );
 	}
 
+	protected void clear()
+	{
+		vertices.clear();
+		edges.clear();
+	}
+
 	@Override
 	public V addVertex()
 	{
