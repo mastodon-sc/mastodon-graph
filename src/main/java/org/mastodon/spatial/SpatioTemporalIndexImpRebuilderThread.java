@@ -49,6 +49,7 @@ public class SpatioTemporalIndexImpRebuilderThread extends Thread
 			final boolean rebuildAll )
 	{
 		super( name );
+		setDaemon( true );
 		this.index = new WeakReference<>( index );
 		this.modCountThreshold = modCountThreshold;
 		this.timeout = timeout;
