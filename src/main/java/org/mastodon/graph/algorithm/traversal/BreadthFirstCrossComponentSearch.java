@@ -94,7 +94,7 @@ public class BreadthFirstCrossComponentSearch< V extends Vertex< E >, E extends 
 	protected void visit( final V start )
 	{
 		super.visit( start );
-		while (rit.hasNext() )
+		while ( rit.hasNext() )
 		{
 			final V next = rit.next();
 			if ( discovered.contains( next ) )
