@@ -30,7 +30,7 @@ public abstract class AbstractGraphSortedIteratorAlgorithm< V extends Vertex< E 
 			list.clear();
 			for ( final E e : neighbors( fetched ) )
 			{
-				final V target = targetOf( e, tmpRef );
+				final V target = targetOf( fetched, e, tmpRef );
 				if ( !visited.contains( target ) )
 				{
 					visited.add( target );

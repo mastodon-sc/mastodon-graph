@@ -81,7 +81,7 @@ public abstract class AbstractGraphIteratorAlgorithm< V extends Vertex< E >, E e
 			fetched = fetch( fetchedRef );
 			for ( final E e : neighbors( fetched ) )
 			{
-				final V target = targetOf( e, tmpRef );
+				final V target = targetOf( fetched, e, tmpRef );
 				if ( !visited.contains( target ) )
 				{
 					visited.add( target );
@@ -106,6 +106,9 @@ public abstract class AbstractGraphIteratorAlgorithm< V extends Vertex< E >, E e
 	 * {@link Edge#getTarget(Vertex)}. Overriding this method allows for coding
 	 * reverse iterators.
 	 *
+	 * @param source
+	 *            the vertex from which this edge is iterated (the source of the
+	 *            edge from the point of view of this iterator.)
 	 * @param edge
 	 *            the edge to return the target of.
 	 * @param ref
@@ -114,7 +117,7 @@ public abstract class AbstractGraphIteratorAlgorithm< V extends Vertex< E >, E e
 	 * @return the target of the edge, as defined by this concrete iterator
 	 *         implementation.
 	 */
-	protected V targetOf( E edge, V ref )
+	protected V targetOf( V source, E edge, V ref )
 	{
 		return edge.getTarget( tmpRef );
 	}

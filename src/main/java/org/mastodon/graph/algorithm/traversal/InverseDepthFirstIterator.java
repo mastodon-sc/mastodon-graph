@@ -32,7 +32,7 @@ public class InverseDepthFirstIterator< V extends Vertex< E >, E extends Edge< V
 	}
 
 	@Override
-	protected V targetOf( final E edge, final V ref )
+	protected V targetOf( final V source, final E edge, final V ref )
 	{
 		return edge.getSource( ref );
 	}

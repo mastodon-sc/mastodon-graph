@@ -64,7 +64,7 @@ public class InverseDepthFirstCrossComponentIterator< V extends Vertex< E >, E e
 	}
 
 	@Override
-	protected V targetOf( final E edge, final V ref )
+	protected V targetOf( final V source, final E edge, final V ref )
 	{
 		return edge.getSource( ref );
 	}

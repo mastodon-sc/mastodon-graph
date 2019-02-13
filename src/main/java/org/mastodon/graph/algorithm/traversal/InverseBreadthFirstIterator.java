@@ -28,7 +28,7 @@ public class InverseBreadthFirstIterator< V extends Vertex< E >, E extends Edge<
 	}
 
 	@Override
-	protected V targetOf( final E edge, final V ref )
+	protected V targetOf( final V source, final E edge, final V ref )
 	{
 		return edge.getSource( ref );
 	}
