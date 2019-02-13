@@ -1,4 +1,4 @@
-package org.mastodon.graph.traversal;
+package org.mastodon.graph.algorithm.traversal;
 
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.BACK;
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.CROSS;
@@ -13,13 +13,12 @@ import org.junit.Test;
 import org.mastodon.collection.RefCollections;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.traversal.BreadthFirstSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.GraphTestBundle;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.TraversalTester;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
-import org.mastodon.graph.traversal.GraphsForTests.GraphTestBundle;
-import org.mastodon.graph.traversal.GraphsForTests.TraversalTester;
 
 /**
  * We assume that for unsorted search, child vertices are returned in the order
@@ -48,8 +47,8 @@ public class BreadthFirstSearchReversedTest
 
 		final TraversalTester< TestSimpleVertex, TestSimpleEdge, BreadthFirstSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
-						vertices.iterator(), 
-						vertices.iterator(), 
+						vertices.iterator(),
+						vertices.iterator(),
 						edges.iterator(),
 				edgeClass.iterator() );
 
@@ -77,8 +76,8 @@ public class BreadthFirstSearchReversedTest
 
 		final TraversalTester< ObjectVertex< Integer >, ObjectEdge< Integer >, BreadthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer > >> traversalTester =
 				new TraversalTester<>(
-						vertices.iterator(), 
-						vertices.iterator(), 
+						vertices.iterator(),
+						vertices.iterator(),
 						edges.iterator(),
 				edgeClass.iterator() );
 
@@ -117,8 +116,8 @@ public class BreadthFirstSearchReversedTest
 
 		final TraversalTester< TestSimpleVertex, TestSimpleEdge, BreadthFirstSearch< TestSimpleVertex, TestSimpleEdge >> traversalTester =
 				new TraversalTester<>(
-						vertices.iterator(), 
-						vertices.iterator(), 
+						vertices.iterator(),
+						vertices.iterator(),
 						edges.iterator(),
 				edgeClass.iterator() );
 
@@ -182,7 +181,7 @@ public class BreadthFirstSearchReversedTest
 		final List< TestSimpleVertex > processedVertices = expectedVertices;
 		final List< TestSimpleEdge > expectedEdges = Arrays.asList( new TestSimpleEdge[] {
 				bundle.edges.get( 2 ),
-				bundle.edges.get( 5 ), 
+				bundle.edges.get( 5 ),
 				bundle.edges.get( 4 ),
 				bundle.edges.get( 0 )
 		} );

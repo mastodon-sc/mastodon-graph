@@ -1,4 +1,4 @@
-package org.mastodon.graph.traversal;
+package org.mastodon.graph.algorithm.traversal;
 
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.BACK;
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.CROSS;
@@ -13,13 +13,12 @@ import org.junit.Test;
 import org.mastodon.collection.RefCollections;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.traversal.DepthFirstSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.GraphTestBundle;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.TraversalTester;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
-import org.mastodon.graph.traversal.GraphsForTests.GraphTestBundle;
-import org.mastodon.graph.traversal.GraphsForTests.TraversalTester;
 
 /**
  * We assume that for unsorted search, child vertices are returned in the order
@@ -37,12 +36,12 @@ public class DepthFirstSearchReversedTest
 		final TestSimpleVertex first = bundle.vertices.get( 1 );
 		final DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > dfs = new DepthFirstSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE );
 
 		final List< TestSimpleVertex > expectedVertices = RefCollections.createRefList( bundle.graph.vertices() );
 		expectedVertices.add( bundle.vertices.get( 1 ) );
 		expectedVertices.add( bundle.vertices.get( 0 ) );
-		
+
 		final List< TestSimpleVertex > processedVertices = RefCollections.createRefList( bundle.graph.vertices() );
 		processedVertices.add( bundle.vertices.get( 0 ) );
 		processedVertices.add( bundle.vertices.get( 1 ) );
@@ -70,7 +69,7 @@ public class DepthFirstSearchReversedTest
 		final ObjectVertex< Integer > first = bundle.vertices.get( 1 );
 		final DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer > > dfs = new DepthFirstSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE );
 
 		final List< ObjectVertex< Integer > > expectedVertices = new ArrayList<>();
 		expectedVertices.add( bundle.vertices.get( 1 ) );
@@ -82,7 +81,7 @@ public class DepthFirstSearchReversedTest
 
 		final List< ObjectEdge< Integer > > edges = new ArrayList<>();
 		edges.add( bundle.edges.get( 0 ) );
-		
+
 		final TraversalTester< ObjectVertex< Integer >, ObjectEdge< Integer >, DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer >>> traversalTester =
 				new TraversalTester<>(
 						expectedVertices.iterator(),
@@ -103,7 +102,7 @@ public class DepthFirstSearchReversedTest
 		final TestSimpleVertex first = bundle.vertices.get( 0 );
 		final DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > dfs = new DepthFirstSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, TREE, TREE, TREE, BACK } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, TREE, TREE, TREE, BACK );
 
 		final List< TestSimpleVertex > expectedvertices = RefCollections.createRefList( bundle.graph.vertices() );
 		expectedvertices.add( bundle.vertices.get( 0 ) );
@@ -135,7 +134,7 @@ public class DepthFirstSearchReversedTest
 		final TraversalTester< TestSimpleVertex, TestSimpleEdge, DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
 						expectedvertices.iterator(),
-						processedvertices.iterator(), 
+						processedvertices.iterator(),
 						edges.iterator(),
 						edgeClass.iterator() );
 
@@ -152,7 +151,7 @@ public class DepthFirstSearchReversedTest
 		final ObjectVertex< Integer > first = bundle.vertices.get( 0 );
 		final DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer > > dfs = new DepthFirstSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, TREE, TREE, TREE, BACK } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, TREE, TREE, TREE, BACK );
 
 		final List< ObjectVertex< Integer > > expectedvertices = new ArrayList<>( 7 );
 		expectedvertices.add( bundle.vertices.get( 0 ) );
@@ -183,8 +182,8 @@ public class DepthFirstSearchReversedTest
 
 		final TraversalTester< ObjectVertex< Integer >, ObjectEdge< Integer >, DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer >>> traversalTester =
 				new TraversalTester<>(
-						expectedvertices.iterator(), 
-						processedvertices.iterator(), 
+						expectedvertices.iterator(),
+						processedvertices.iterator(),
 						edges.iterator(),
 						edgeClass.iterator() );
 
@@ -219,7 +218,7 @@ public class DepthFirstSearchReversedTest
 		expectedEdges.add( bundle.edges.get( 4 ) );
 		expectedEdges.add( bundle.edges.get( 0 ) );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, CROSS } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, CROSS );
 
 		final TraversalTester< TestSimpleVertex, TestSimpleEdge, DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
@@ -259,7 +258,7 @@ public class DepthFirstSearchReversedTest
 		expectedEdges.add( bundle.edges.get( 4 ) );
 		expectedEdges.add( bundle.edges.get( 0 ) );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, CROSS } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, CROSS );
 
 		final TraversalTester< ObjectVertex< Integer >, ObjectEdge< Integer >, DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer >>> traversalTester =
 				new TraversalTester<>(
@@ -292,7 +291,7 @@ public class DepthFirstSearchReversedTest
 		final List< TestSimpleEdge > expectedEdges = RefCollections.createRefList( bundle.graph.edges() );
 		expectedEdges.add( bundle.edges.get( 0 ) );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE );
 
 		final TraversalTester< TestSimpleVertex, TestSimpleEdge, DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
@@ -325,7 +324,7 @@ public class DepthFirstSearchReversedTest
 		final List< ObjectEdge< Integer > > expectedEdges = RefCollections.createRefList( bundle.graph.edges() );
 		expectedEdges.add( bundle.edges.get( 0 ) );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE );
 
 		final TraversalTester< ObjectVertex< Integer >, ObjectEdge< Integer >, DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer >>> traversalTester =
 				new TraversalTester<>(
@@ -347,7 +346,7 @@ public class DepthFirstSearchReversedTest
 		final TestSimpleVertex first = bundle.vertices.get( 4 );
 		final DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > dfs = new DepthFirstSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, TREE } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, TREE );
 
 		final List< TestSimpleVertex > expectedvertices = RefCollections.createRefList( bundle.graph.vertices() );
 		expectedvertices.add( bundle.vertices.get( 4 ) );
@@ -389,7 +388,7 @@ public class DepthFirstSearchReversedTest
 		final ObjectVertex< Integer > first = bundle.vertices.get( 4 );
 		final DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer > > dfs = new DepthFirstSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, TREE } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, TREE );
 
 		final List< ObjectVertex< Integer > > expectedvertices = RefCollections.createRefList( bundle.graph.vertices() );
 		expectedvertices.add( bundle.vertices.get( 4 ) );
@@ -449,7 +448,7 @@ public class DepthFirstSearchReversedTest
 		expectedEdges.add( bundle.edges.get( 4 ) );
 		expectedEdges.add( bundle.edges.get( 0 ) );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, CROSS } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, CROSS );
 
 		final TraversalTester< TestSimpleVertex, TestSimpleEdge, DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
@@ -489,7 +488,7 @@ public class DepthFirstSearchReversedTest
 		expectedEdges.add( bundle.edges.get( 4 ) );
 		expectedEdges.add( bundle.edges.get( 0 ) );
 
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, CROSS } );
+		final List< EdgeClass > edgeClass = Arrays.asList( TREE, TREE, TREE, CROSS );
 
 		final TraversalTester< ObjectVertex< Integer >, ObjectEdge< Integer >, DepthFirstSearch< ObjectVertex< Integer >, ObjectEdge< Integer >>> traversalTester =
 				new TraversalTester<>(
@@ -511,13 +510,9 @@ public class DepthFirstSearchReversedTest
 		final TestSimpleVertex first = bundle.vertices.get( 0 );
 		final DepthFirstSearch< TestSimpleVertex, TestSimpleEdge > dfs = new DepthFirstSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< TestSimpleVertex > expectedVertices = Arrays.asList( new TestSimpleVertex[] {
-				bundle.vertices.get( 0 )
-		} );
+		final List< TestSimpleVertex > expectedVertices = Arrays.asList( bundle.vertices.get( 0 ) );
 
-		final List< TestSimpleVertex > processedVertices = Arrays.asList( new TestSimpleVertex[] {
-				bundle.vertices.get( 0 )
-		} );
+		final List< TestSimpleVertex > processedVertices = Arrays.asList( bundle.vertices.get( 0 ) );
 
 		final List< TestSimpleEdge > expectedEdges = Collections.emptyList();
 

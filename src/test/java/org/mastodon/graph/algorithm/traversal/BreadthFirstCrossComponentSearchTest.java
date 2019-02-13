@@ -1,4 +1,4 @@
-package org.mastodon.graph.traversal;
+package org.mastodon.graph.algorithm.traversal;
 
 import static org.junit.Assert.assertEquals;
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.CROSS;
@@ -16,14 +16,12 @@ import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefMaps;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.traversal.BreadthFirstCrossComponentSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
-import org.mastodon.graph.algorithm.traversal.SearchListener;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.GraphTestBundle;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.TraversalTester;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
-import org.mastodon.graph.traversal.GraphsForTests.GraphTestBundle;
-import org.mastodon.graph.traversal.GraphsForTests.TraversalTester;
 
 /**
  * We assume that for unsorted search, child vertices are returned in the order

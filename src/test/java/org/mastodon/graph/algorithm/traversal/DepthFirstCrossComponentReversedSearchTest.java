@@ -1,4 +1,4 @@
-package org.mastodon.graph.traversal;
+package org.mastodon.graph.algorithm.traversal;
 
 import static org.junit.Assert.assertEquals;
 import static org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass.CROSS;
@@ -16,14 +16,12 @@ import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefMaps;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.traversal.DepthFirstCrossComponentSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
-import org.mastodon.graph.algorithm.traversal.SearchListener;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.GraphTestBundle;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.TraversalTester;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
-import org.mastodon.graph.traversal.GraphsForTests.GraphTestBundle;
-import org.mastodon.graph.traversal.GraphsForTests.TraversalTester;
 
 public class DepthFirstCrossComponentReversedSearchTest
 {
@@ -36,7 +34,7 @@ public class DepthFirstCrossComponentReversedSearchTest
 		final TestSimpleVertex first = bundle.vertices.get( 3 );
 		final DepthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > dfs = new DepthFirstCrossComponentSearch<>( bundle.graph, SearchDirection.REVERSED );
 
-		final List< TestSimpleVertex > expectedVertices = Arrays.asList( new TestSimpleVertex[] {
+		final List< TestSimpleVertex > expectedVertices = Arrays.asList(
 				bundle.vertices.get( 3 ),
 				bundle.vertices.get( 1 ),
 				bundle.vertices.get( 0 ),
@@ -52,10 +50,8 @@ public class DepthFirstCrossComponentReversedSearchTest
 				bundle.vertices.get( 6 ),
 				bundle.vertices.get( 2 ),
 				bundle.vertices.get( 4 ),
-				bundle.vertices.get( 5 ),
-
-		} );
-		final List< TestSimpleVertex > processedVertices = Arrays.asList( new TestSimpleVertex[] {
+				bundle.vertices.get( 5 ) );
+		final List< TestSimpleVertex > processedVertices = Arrays.asList(
 				bundle.vertices.get( 0 ),
 				bundle.vertices.get( 1 ),
 				bundle.vertices.get( 3 ),
@@ -71,10 +67,8 @@ public class DepthFirstCrossComponentReversedSearchTest
 				bundle.vertices.get( 2 ),
 				bundle.vertices.get( 6 ),
 				bundle.vertices.get( 5 ),
-				bundle.vertices.get( 4 ),
-
-		} );
-		final List< TestSimpleEdge > expectedEdges = Arrays.asList( new TestSimpleEdge[] {
+				bundle.vertices.get( 4 ) );
+		final List< TestSimpleEdge > expectedEdges = Arrays.asList(
 				bundle.edges.get( 3 ),
 				bundle.edges.get( 0 ),
 
@@ -90,14 +84,12 @@ public class DepthFirstCrossComponentReversedSearchTest
 				bundle.edges.get( 2 ),
 
 				bundle.edges.get( 5 ),
-				bundle.edges.get( 4 ),
-
-		} );
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] {
+				bundle.edges.get( 4 ) );
+		final List< EdgeClass > edgeClass = Arrays.asList(
 				TREE, TREE,
 				TREE, TREE, TREE, TREE, TREE, TREE,
 				TREE, CROSS, CROSS,
-				TREE, CROSS } );
+				TREE, CROSS );
 
 		final TraversalTester< TestSimpleVertex, TestSimpleEdge, DepthFirstCrossComponentSearch< TestSimpleVertex, TestSimpleEdge > > traversalTester =
 				new TraversalTester<>(
@@ -124,8 +116,7 @@ public class DepthFirstCrossComponentReversedSearchTest
 
 		final DepthFirstCrossComponentSearch< ObjectVertex< Integer >, ObjectEdge< Integer > > dfs = new DepthFirstCrossComponentSearch<>( bundle.graph, SearchDirection.REVERSED, leaves );
 
-		@SuppressWarnings( "unchecked" )
-		final List< ObjectVertex< Integer > > expectedVertices = Arrays.asList( new ObjectVertex[] {
+		final List< ObjectVertex< Integer > > expectedVertices = Arrays.asList(
 				bundle.vertices.get( 3 ),
 				bundle.vertices.get( 1 ),
 				bundle.vertices.get( 0 ),
@@ -142,11 +133,8 @@ public class DepthFirstCrossComponentReversedSearchTest
 				bundle.vertices.get( 2 ),
 
 				bundle.vertices.get( 4 ),
-				bundle.vertices.get( 5 ),
-
-		} );
-		@SuppressWarnings( "unchecked" )
-		final List< ObjectVertex< Integer > > processedVertices = Arrays.asList( new ObjectVertex[] {
+				bundle.vertices.get( 5 ) );
+		final List< ObjectVertex< Integer > > processedVertices = Arrays.asList(
 				bundle.vertices.get( 0 ),
 				bundle.vertices.get( 1 ),
 				bundle.vertices.get( 3 ),
@@ -162,11 +150,8 @@ public class DepthFirstCrossComponentReversedSearchTest
 				bundle.vertices.get( 2 ),
 				bundle.vertices.get( 6 ),
 				bundle.vertices.get( 5 ),
-				bundle.vertices.get( 4 ),
-
-		} );
-		@SuppressWarnings( "unchecked" )
-		final List< ObjectEdge< Integer > > expectedEdges = Arrays.asList( new ObjectEdge[] {
+				bundle.vertices.get( 4 ) );
+		final List< ObjectEdge< Integer > > expectedEdges = Arrays.asList(
 				bundle.edges.get( 3 ),
 				bundle.edges.get( 0 ),
 
@@ -182,14 +167,12 @@ public class DepthFirstCrossComponentReversedSearchTest
 				bundle.edges.get( 2 ),
 
 				bundle.edges.get( 5 ),
-				bundle.edges.get( 4 ),
-
-		} );
-		final List< EdgeClass > edgeClass = Arrays.asList( new EdgeClass[] {
+				bundle.edges.get( 4 ) );
+		final List< EdgeClass > edgeClass = Arrays.asList(
 				TREE, TREE,
 				TREE, TREE, TREE, TREE, TREE, TREE,
 				TREE, CROSS, CROSS,
-				TREE, CROSS } );
+				TREE, CROSS );
 
 		final TraversalTester< ObjectVertex< Integer >, ObjectEdge< Integer >, DepthFirstCrossComponentSearch< ObjectVertex< Integer >, ObjectEdge< Integer > > > traversalTester =
 				new TraversalTester<>(
@@ -210,7 +193,7 @@ public class DepthFirstCrossComponentReversedSearchTest
 
 		final List< EdgeClass > edgeClass = new ArrayList<>();
 		for ( int i = 0; i < 4; i++ )
-			edgeClass.addAll( Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, CROSS } ) );
+			edgeClass.addAll( Arrays.asList( TREE, TREE, TREE, CROSS ) );
 
 		// Expected iteration order.
 		final RefList< TestSimpleVertex > expected = RefCollections.createRefList( bundle.graph.vertices() );
@@ -306,7 +289,7 @@ public class DepthFirstCrossComponentReversedSearchTest
 
 		final List< EdgeClass > edgeClass = new ArrayList<>();
 		for ( int i = 0; i < 4; i++ )
-			edgeClass.addAll( Arrays.asList( new EdgeClass[] { TREE, TREE, TREE, CROSS } ) );
+			edgeClass.addAll( Arrays.asList( TREE, TREE, TREE, CROSS ) );
 
 		// Expected iteration order.
 		final RefList< ObjectVertex< Integer > > expected = RefCollections.createRefList( bundle.graph.vertices() );

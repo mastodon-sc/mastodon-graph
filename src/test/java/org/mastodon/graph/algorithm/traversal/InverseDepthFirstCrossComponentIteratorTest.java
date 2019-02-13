@@ -1,4 +1,4 @@
-package org.mastodon.graph.traversal;
+package org.mastodon.graph.algorithm.traversal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,10 +13,9 @@ import org.mastodon.collection.RefList;
 import org.mastodon.graph.Graph;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.traversal.InverseDepthFirstCrossComponentIterator;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.GraphTestBundle;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectVertex;
-import org.mastodon.graph.traversal.GraphsForTests.GraphTestBundle;
 
 public class InverseDepthFirstCrossComponentIteratorTest
 {

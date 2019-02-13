@@ -1,4 +1,4 @@
-package org.mastodon.graph.traversal;
+package org.mastodon.graph.algorithm.traversal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -400,10 +400,10 @@ public class GraphsForTests
 
 		final TestSimpleVertex A = graph.addVertex().init( 1 );
 		final TestSimpleVertex B = graph.addVertex().init( 2 );
-		bundle.vertices = Arrays.asList( new TestSimpleVertex[] { A, B } );
+		bundle.vertices = Arrays.asList( A, B );
 
 		final TestSimpleEdge eAB = graph.addEdge( A, B );
-		bundle.edges = Arrays.asList( new TestSimpleEdge[] { eAB } );
+		bundle.edges = Arrays.asList( eAB );
 
 		bundle.name = "Single edge pool objects";
 		return bundle;
@@ -440,11 +440,11 @@ public class GraphsForTests
 		final TestSimpleVertex A = graph.addVertex().init( 1 );
 		final TestSimpleVertex B = graph.addVertex().init( 2 );
 		final TestSimpleVertex C = graph.addVertex().init( 3 );
-		bundle.vertices = Arrays.asList( new TestSimpleVertex[] { A, B, C } );
+		bundle.vertices = Arrays.asList( A, B, C );
 
 		final TestSimpleEdge eAB = graph.addEdge( A, B );
 		final TestSimpleEdge eAC = graph.addEdge( A, C );
-		bundle.edges = Arrays.asList( new TestSimpleEdge[] { eAB, eAC } );
+		bundle.edges = Arrays.asList( eAB, eAC );
 
 		bundle.name = "Fork pool objects";
 		return bundle;
@@ -461,13 +461,13 @@ public class GraphsForTests
 		final TestSimpleVertex B = graph.addVertex().init( 2 );
 		final TestSimpleVertex C = graph.addVertex().init( 3 );
 		final TestSimpleVertex D = graph.addVertex().init( 4 );
-		bundle.vertices = Arrays.asList( new TestSimpleVertex[] { A, B, C, D } );
+		bundle.vertices = Arrays.asList( A, B, C, D );
 
 		final TestSimpleEdge eAB = graph.addEdge( A, B );
 		final TestSimpleEdge eAC = graph.addEdge( A, C );
 		final TestSimpleEdge eBD = graph.addEdge( B, D );
 		final TestSimpleEdge eCD = graph.addEdge( C, D );
-		bundle.edges = Arrays.asList( new TestSimpleEdge[] { eAB, eAC, eBD, eCD } );
+		bundle.edges = Arrays.asList( eAB, eAC, eBD, eCD );
 
 		bundle.name = "Diamond pool objects";
 		return bundle;
@@ -485,13 +485,13 @@ public class GraphsForTests
 		final ObjectVertex< Integer > B = graph.addVertex().init( 2 );
 		final ObjectVertex< Integer > C = graph.addVertex().init( 3 );
 		final ObjectVertex< Integer > D = graph.addVertex().init( 4 );
-		bundle.vertices = Arrays.asList( new ObjectVertex[] { A, B, C, D } );
+		bundle.vertices = Arrays.asList( A, B, C, D );
 
 		final ObjectEdge< Integer > eAB = graph.addEdge( A, B );
 		final ObjectEdge< Integer > eAC = graph.addEdge( A, C );
 		final ObjectEdge< Integer > eBD = graph.addEdge( B, D );
 		final ObjectEdge< Integer > eCD = graph.addEdge( C, D );
-		bundle.edges = Arrays.asList( new ObjectEdge[] { eAB, eAC, eBD, eCD } );
+		bundle.edges = Arrays.asList( eAB, eAC, eBD, eCD );
 
 		bundle.name = "Diamond std objects";
 		return bundle;
@@ -533,7 +533,7 @@ public class GraphsForTests
 		final TestSimpleVertex E = bundle.graph.addVertex().init( 15 );
 		final TestSimpleVertex F = bundle.graph.addVertex().init( 16 );
 		final TestSimpleVertex G = bundle.graph.addVertex().init( 17 );
-		bundle.vertices.addAll( Arrays.asList( new TestSimpleVertex[] { A, B, C, D, E, F, G } ) );
+		bundle.vertices.addAll( Arrays.asList( A, B, C, D, E, F, G ) );
 
 		final TestSimpleEdge eAB = bundle.graph.addEdge( A, B );
 		final TestSimpleEdge eBC = bundle.graph.addEdge( B, C );
@@ -541,7 +541,7 @@ public class GraphsForTests
 		final TestSimpleEdge eDE = bundle.graph.addEdge( D, E );
 		final TestSimpleEdge eEF = bundle.graph.addEdge( E, F );
 		final TestSimpleEdge eFG = bundle.graph.addEdge( F, G );
-		bundle.edges.addAll( Arrays.asList( new TestSimpleEdge[] { eAB, eBC, eCD, eDE, eEF, eFG } ) );
+		bundle.edges.addAll( Arrays.asList( eAB, eBC, eCD, eDE, eEF, eFG ) );
 
 		bundle.name = "Two components pool objects";
 		return bundle;

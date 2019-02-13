@@ -12,10 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.ShortestPath;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
-import org.mastodon.graph.traversal.GraphsForTests;
-import org.mastodon.graph.traversal.GraphsForTests.GraphTestBundle;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests;
+import org.mastodon.graph.algorithm.traversal.GraphsForTests.GraphTestBundle;
 
 public class ShortestPathTest
 {
