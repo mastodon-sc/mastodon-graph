@@ -151,7 +151,7 @@ public abstract class BranchGraphImp<
 	 *             when called.
 	 */
 	@Override
-	public BE addEdge( final BV source, final BV target, final BE edge )
+	public BE addEdge( final BV source, final BV target, final BE ref )
 	{
 		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
 	}
@@ -175,7 +175,7 @@ public abstract class BranchGraphImp<
 	 *             when called.
 	 */
 	@Override
-	public BE insertEdge( final BV source, final int sourceOutIndex, final BV target, final int targetInIndex, final BE edge )
+	public BE insertEdge( final BV source, final int sourceOutIndex, final BV target, final int targetInIndex, final BE ref )
 	{
 		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
 	}
@@ -199,7 +199,7 @@ public abstract class BranchGraphImp<
 	 *             when called.
 	 */
 	@Override
-	public BV addVertex( final BV vertex )
+	public BV addVertex( final BV ref )
 	{
 		throw new UnsupportedOperationException( "Cannot modify a branch graph." );
 	}

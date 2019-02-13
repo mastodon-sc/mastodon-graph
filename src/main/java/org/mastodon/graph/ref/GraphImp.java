@@ -40,9 +40,9 @@ public class GraphImp<
 	}
 
 	@Override
-	public V addVertex( final V vertex )
+	public V addVertex( final V ref )
 	{
-		return vertexPool.create( vertex );
+		return vertexPool.create( ref );
 	}
 
 	@Override
@@ -52,9 +52,9 @@ public class GraphImp<
 	}
 
 	@Override
-	public E addEdge( final V source, final V target, final E edge )
+	public E addEdge( final V source, final V target, final E ref )
 	{
-		return edgePool.addEdge( source, target, edge );
+		return edgePool.addEdge( source, target, ref );
 	}
 
 	@Override
@@ -64,9 +64,9 @@ public class GraphImp<
 	}
 
 	@Override
-	public E insertEdge( final V source, final int sourceOutIndex, final V target, final int targetInIndex, final E edge )
+	public E insertEdge( final V source, final int sourceOutIndex, final V target, final int targetInIndex, final E ref )
 	{
-		return edgePool.insertEdge( source, sourceOutIndex, target, targetInIndex, edge );
+		return edgePool.insertEdge( source, sourceOutIndex, target, targetInIndex, ref );
 	}
 
 	@Override
@@ -76,9 +76,9 @@ public class GraphImp<
 	}
 
 	@Override
-	public E getEdge( final V source, final V target, final E edge )
+	public E getEdge( final V source, final V target, final E ref )
 	{
-		return edgePool.getEdge( source, target, edge );
+		return edgePool.getEdge( source, target, ref );
 	}
 
 	@Override
