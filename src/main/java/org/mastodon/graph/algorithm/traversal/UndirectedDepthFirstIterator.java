@@ -7,7 +7,7 @@ import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.util.Graphs;
 
 /**
- * A Depth-first iterator, that traverses edges following either direction.
+ * A Depth-first iterator, that traverses edges regardless of direction.
  * <p>
  * With {@code A -> B}, the iterator will move from A to B, and also from B
  * to A.
