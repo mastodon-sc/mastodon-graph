@@ -132,6 +132,9 @@ public class ListenableGraphImp<
 	 * Pause sending events to {@link GraphListener}s. This is called before
 	 * large modifications to the graph are made, for example when the graph is
 	 * loaded from a file.
+	 * <p>
+	 * Note that pausing and resuming listeners basically means that undo
+	 * history is lost and restarted.
 	 */
 	protected void pauseListeners()
 	{
@@ -145,6 +148,9 @@ public class ListenableGraphImp<
 	 * {@link GraphListener#graphRebuilt()} to all registered listeners. This is
 	 * called after large modifications to the graph are made, for example when
 	 * the graph is loaded from a file.
+	 * <p>
+	 * Note that pausing and resuming listeners basically means that undo
+	 * history is lost and restarted.
 	 */
 	protected void resumeListeners()
 	{
