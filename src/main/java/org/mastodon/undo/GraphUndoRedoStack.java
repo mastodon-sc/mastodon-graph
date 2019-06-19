@@ -3,6 +3,7 @@ package org.mastodon.undo;
 import static org.mastodon.pool.ByteUtils.INT_SIZE;
 import static org.mastodon.pool.ByteUtils.SHORT_SIZE;
 
+import java.util.ArrayList;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
@@ -39,6 +40,10 @@ public class GraphUndoRedoStack<
 
 	protected final ByteArrayUndoRedoStack dataStack;
 
+	protected final ArrayList< PropertyUndoRedoStack< ? > > propertyUndoRedoStacks;
+
+	protected final ArrayList< UndoableEditUndoRedoStack > genericUndoRedoStacks;
+
 	public GraphUndoRedoStack(
 			final int initialCapacity,
 			final ListenableGraph< V, E > graph,
@@ -55,6 +60,8 @@ public class GraphUndoRedoStack<
 		this.edgeUndoIdBimap = edgeUndoIdBimap;
 
 		dataStack = new ByteArrayUndoRedoStack( 1024 * 1024 * 32 );
+		propertyUndoRedoStacks = new ArrayList<>();
+		genericUndoRedoStacks = new ArrayList<>();
 	}
 
 	public Recorder< V > createAddVertexRecorder()
@@ -79,17 +86,31 @@ public class GraphUndoRedoStack<
 
 	public Recorder< V > createSetVertexPropertyRecorder( final PropertyUndoRedoStack< V > propertyUndoRedoStack )
 	{
+		propertyUndoRedoStacks.add( propertyUndoRedoStack );
 		return new SetPropertyType<>( propertyUndoRedoStack, vertexUndoIdBimap, dataStack, this );
 	}
 
 	public Recorder< E > createSetEdgePropertyRecorder( final PropertyUndoRedoStack< E > propertyUndoRedoStack )
 	{
+		propertyUndoRedoStacks.add( propertyUndoRedoStack );
 		return new SetPropertyType<>( propertyUndoRedoStack, edgeUndoIdBimap, dataStack, this );
 	}
 
 	public < T extends UndoableEdit > Recorder< T > createGenericUndoableEditRecorder()
 	{
-		return new GenericUndoableEditType<>( this );
+		final UndoableEditUndoRedoStack undoableEditUndoRedoStack = new UndoableEditUndoRedoStack();
+		genericUndoRedoStacks.add( undoableEditUndoRedoStack );
+		return new GenericUndoableEditType<>( undoableEditUndoRedoStack, this );
+	}
+
+	public void clear()
+	{
+		vertexUndoIdBimap.clear();
+		edgeUndoIdBimap.clear();
+		dataStack.clear();
+		propertyUndoRedoStacks.forEach( PropertyUndoRedoStack::clear );
+		genericUndoRedoStacks.forEach( UndoableEditUndoRedoStack::clear );
+		super.clear();
 	}
 
 	private class AddVertexType extends AbstractUndoableEditType implements Recorder< V >

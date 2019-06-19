@@ -133,8 +133,8 @@ public class GraphUndoRecorder<
 	@Override
 	public void graphRebuilt()
 	{
-		System.out.println( "UndoRecorder.graphRebuilt()" );
-		System.out.println( "TODO!!!!" );
+//		System.out.println( "UndoRecorder.graphRebuilt()" );
+		edits.clear();
 	}
 
 	@Override
