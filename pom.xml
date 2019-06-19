@@ -18,7 +18,7 @@
 	<inceptionYear>2015</inceptionYear>
 	<organization>
 		<name>BigDataViewer</name>
-		<url>http://github.com/bigdataviewer</url>
+		<url>https://github.com/bigdataviewer</url>
 	</organization>
 	<licenses>
 		<license>
@@ -80,7 +80,7 @@
 			<id>tinevez</id>
 			<name>Jean-Yves Tinevez</name>
 			<email>jean-yves.tinevez@pasteur.fr</email>
-			<url>http://imagej.net/User:JeanYvesTinevez</url>
+			<url>https://imagej.net/User:JeanYvesTinevez</url>
 			<roles>
 				<role>developer</role>
 				<role>debugger</role>
@@ -93,7 +93,7 @@
 			<id>tpietzsch</id>
 			<name>Tobias Pietzsch</name>
 			<email>pietzsch@mpi-cbg.de</email>
-			<url>http://imagej.net/User:Pietzsch</url>
+			<url>https://imagej.net/User:Pietzsch</url>
 			<roles>
 				<role>lead</role>
 				<role>developer</role>
@@ -110,7 +110,7 @@
 	<repositories>
 		<repository>
 			<id>scijava.public</id>
-			<url>http://maven.scijava.org/content/groups/public</url>
+			<url>https://maven.scijava.org/content/groups/public</url>
 		</repository>
 	</repositories>
 </project>
