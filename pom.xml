@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>26.0.0</version>
+		<version>28.0.0</version>
 	</parent>
 
 	<groupId>org.mastodon</groupId>
@@ -14,11 +14,11 @@
 
 	<name>Mastodon Graphs</name>
 	<description>graph interfaces, object- and pool-based implementations, graph algorithms, undo framework</description>
-	<url>https://github.com/bigdataviewer/mastodon-graph</url>
+	<url>https://github.com/mastodon-sc/mastodon-graph</url>
 	<inceptionYear>2015</inceptionYear>
 	<organization>
-		<name>BigDataViewer</name>
-		<url>https://github.com/bigdataviewer</url>
+		<name>Mastodon Science</name>
+		<url>https://mastodon.org</url>
 	</organization>
 	<licenses>
 		<license>
@@ -45,23 +45,23 @@
 	<mailingLists>
 		<mailingList>
 			<name>Image.sc Forum</name>
-			<archive>https://forum.image.sc/tags/bigdataviewer</archive>
+			<archive>https://forum.image.sc/</archive>
 		</mailingList>
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/bigdataviewer/mastodon-graph</connection>
-		<developerConnection>scm:git:git@github.com:bigdataviewer/mastodon-graph</developerConnection>
+		<connection>scm:git:git://github.com/mastodon-sc/mastodon-graph</connection>
+		<developerConnection>scm:git:git@github.com:mastodon-sc/mastodon-graph</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/bigdataviewer/mastodon-graph</url>
+		<url>https://github.com/mastodon-sc/mastodon-graph</url>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/bigdataviewer/mastodon-graph/issues</url>
+		<url>https://github.com/mastodon-sc/mastodon-graph/issues</url>
 	</issueManagement>
 	<ciManagement>
 		<system>Travis CI</system>
-		<url>https://travis-ci.org/bigdataviewer/mastodon-graph</url>
+		<url>https://travis-ci.org/mastodon-sc/mastodon-graph</url>
 	</ciManagement>
 
 	<properties>
@@ -80,7 +80,7 @@
 			<id>tinevez</id>
 			<name>Jean-Yves Tinevez</name>
 			<email>jean-yves.tinevez@pasteur.fr</email>
-			<url>https://imagej.net/User:JeanYvesTinevez</url>
+			<url>https://research.pasteur.fr/en/member/jean-yves-tinevez/</url>
 			<roles>
 				<role>developer</role>
 				<role>debugger</role>
