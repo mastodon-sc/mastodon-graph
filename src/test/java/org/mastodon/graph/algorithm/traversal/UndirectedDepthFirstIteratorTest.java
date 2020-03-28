@@ -1,20 +1,18 @@
 package org.mastodon.graph.algorithm.traversal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefList;
-import org.mastodon.graph.Graph;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.algorithm.traversal.GraphsForTests.GraphTestBundle;
-import org.mastodon.graph.object.ObjectEdge;
-import org.mastodon.graph.object.ObjectVertex;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class UndirectedDepthFirstIteratorTest
 {

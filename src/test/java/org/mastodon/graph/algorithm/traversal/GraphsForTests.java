@@ -15,10 +15,7 @@ import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleGraph;
 import org.mastodon.graph.TestSimpleVertex;
 import org.mastodon.graph.Vertex;
-import org.mastodon.graph.algorithm.traversal.AbstractBreadthFirstSearch;
-import org.mastodon.graph.algorithm.traversal.GraphSearch;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.EdgeClass;
-import org.mastodon.graph.algorithm.traversal.SearchListener;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectGraph;
 import org.mastodon.graph.object.ObjectVertex;
@@ -473,7 +470,6 @@ public class GraphsForTests
 		return bundle;
 	}
 
-	@SuppressWarnings( "unchecked" )
 	public static final GraphTestBundle< ObjectVertex< Integer >, ObjectEdge< Integer >> diamondStdObjects()
 	{
 		final GraphTestBundle< ObjectVertex< Integer >, ObjectEdge< Integer > > bundle = new GraphTestBundle<>();

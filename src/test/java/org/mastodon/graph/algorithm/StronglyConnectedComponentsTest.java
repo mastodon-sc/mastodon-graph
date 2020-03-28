@@ -1,23 +1,17 @@
 package org.mastodon.graph.algorithm;
 
-import gnu.trove.set.hash.TIntHashSet;
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Set;
-import org.junit.Before;
+
 import org.junit.Test;
-import org.mastodon.collection.RefCollection;
 import org.mastodon.collection.RefCollections;
-import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefSet;
-import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleGraph;
 import org.mastodon.graph.TestSimpleVertex;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class StronglyConnectedComponentsTest
 {
@@ -63,15 +57,15 @@ public class StronglyConnectedComponentsTest
 		assertEquals( expected, comparableCopy( actual ) );
 	}
 
-	private static < T > Set< Set< T > > comparableCopy( Set< RefSet< T > > setOfSets )
+	private static < T > Set< Set< T > > comparableCopy( final Set< RefSet< T > > setOfSets )
 	{
 		final Set< Set< T > > copy = new HashSet<>();
-		for ( RefSet< T > set : setOfSets )
+		for ( final RefSet< T > set : setOfSets )
 			copy.add( comparableCopy( set ) );
 		return copy;
 	}
 
-	private static < T > Set< T > comparableCopy( RefSet< T > set )
+	private static < T > Set< T > comparableCopy( final RefSet< T > set )
 	{
 		final Set< T > copy = new HashSet<>();
 		final Iterator< T > it = RefCollections.safeIterator( set.iterator(), set );

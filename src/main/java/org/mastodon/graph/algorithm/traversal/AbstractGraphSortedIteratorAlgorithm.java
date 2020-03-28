@@ -1,6 +1,5 @@
 package org.mastodon.graph.algorithm.traversal;
 
-import java.util.Collections;
 import java.util.Comparator;
 
 import org.mastodon.collection.RefList;

@@ -1,6 +1,5 @@
 package org.mastodon.graph;
 
-import org.mastodon.graph.ref.AbstractEdgePool;
 import org.mastodon.graph.ref.AbstractListenableVertexPool;
 import org.mastodon.graph.ref.AbstractVertexPool;
 import org.mastodon.io.AttributeSerializer;

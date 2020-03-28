@@ -126,7 +126,6 @@ public class DepthFirstSearchUndirectedTest
 		traversalTester.searchDone();
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Test
 	public void testLoopStdObjects()
 	{
