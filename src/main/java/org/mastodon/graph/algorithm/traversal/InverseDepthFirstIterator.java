@@ -11,7 +11,13 @@ import org.mastodon.graph.Vertex;
  * Same as {@link DepthFirstIterator} on a graph where all directed edges are
  * pointing in the opposite direction.
  *
- * @author Jean-Yves Tinevez &lt;jeanyves.tinevez@gmail.com&gt;
+ * @param <V>
+ *            the type of vertices in the graph.
+ * 
+ * @param <E>
+ *            the type of edges in the graph.
+ * 
+ * @author Jean-Yves Tinevez
  */
 public class InverseDepthFirstIterator< V extends Vertex< E >, E extends Edge< V > > extends DepthFirstIterator< V, E >
 {

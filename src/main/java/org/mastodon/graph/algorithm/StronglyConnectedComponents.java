@@ -34,6 +34,14 @@ public class StronglyConnectedComponents< V extends Vertex< E >, E extends Edge<
 	/**
 	 * Get the strongly connected components of the specified directed
 	 * {@code graph}.
+	 * 
+	 * @param graph
+	 *            the graph.
+	 * @param <V>
+	 *            the type of vertices in the graph.
+	 * @param <E>
+	 *            the type of edges in the graph.
+	 * @return a new set of sets. One set of vertices per connected component.
 	 */
 	public static < V extends Vertex< E >, E extends Edge< V > >
 			Set< RefSet< V > > stronglyConnectedComponents( final ReadOnlyGraph< V, E > graph )

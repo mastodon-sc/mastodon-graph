@@ -35,12 +35,16 @@ import org.mastodon.pool.MappedElement;
  * TODO: It would be nice to be able to enforce this at compile time, but I
  * couldn't find a good solution to achieve that.
  *
- * @param <V>
  * @param <E>
+ *            the concrete type of this edge.
+ * @param <V>
+ *            the type of vertex in the graph.
  * @param <EP>
+ *            the type of the pool on which edges are built
  * @param <T>
+ *            the type of mapped element on which the edge pool is built.
  *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ * @author Tobias Pietzsch
  */
 public class AbstractListenableEdge<
 			E extends AbstractListenableEdge< E, V, EP, T >,

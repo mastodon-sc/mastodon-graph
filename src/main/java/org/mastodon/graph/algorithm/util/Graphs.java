@@ -25,6 +25,10 @@ public class Graphs
 	 *            an object reference that can be used for retrieval. Depending
 	 *            on concrete implementation, this object can be cleared,
 	 *            ignored or re-used.
+	 * @param <V>
+	 *            the type of vertices in the graph.
+	 * @param <E>
+	 *            the type of edges in the graph.
 	 * @return the vertex opposite to the specified vertex across the specified
 	 *         edge.
 	 */
@@ -42,19 +46,24 @@ public class Graphs
 	 * More precisely:
 	 * <ul>
 	 * <li>The first list is sorted according to the specified comparator.
-	 * <li>The second list has its elements rearranged so that is {@code O}
-	 * and {@code P} share the same index in {@code listO} and
-	 * {@code listP}, then they also share the same index after sort.
+	 * <li>The second list has its elements rearranged so that is {@code O} and
+	 * {@code P} share the same index in {@code listO} and {@code listP}, then
+	 * they also share the same index after sort.
 	 * </ul>
 	 * 
 	 * @param listO
 	 *            the first list, that will be sorted.
 	 * @param comparatorO
-	 *            the comparator used to sort the first list. {@code null}
-	 *            is not permitted.
+	 *            the comparator used to sort the first list. {@code null} is
+	 *            not permitted.
 	 * @param listP
 	 *            the second list, rearranged according to the sort order of the
 	 *            first list. Must be of the same size than the first list.
+	 * @param <O>
+	 *            the type of objects in the first list (the one to be sorted).
+	 * @param <P>
+	 *            the type of objects in the second list (the one whose sorting
+	 *            order will be matched to the first one).
 	 * @throws IllegalArgumentException
 	 *             is the two lists are not of the same size.
 	 */

@@ -3,6 +3,7 @@ package org.mastodon.graph.ref;
 import org.mastodon.graph.Graph;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableReadOnlyGraph;
+import org.mastodon.graph.Vertex;
 import org.mastodon.pool.MappedElement;
 
 /**
@@ -34,11 +35,15 @@ import org.mastodon.pool.MappedElement;
  *
  *
  * @param <V>
+ *            the concrete type of this vertex.
  * @param <E>
+ *            the type of edges in the graph..
  * @param <VP>
+ *            the type of the pool on which vertices are built
  * @param <T>
- *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ *            the type of mapped element on which the vertex pool is built.
+ * 
+ * @author Tobias Pietzsch
  */
 public class AbstractListenableVertex<
 			V extends AbstractListenableVertex< V, E, VP, T >,

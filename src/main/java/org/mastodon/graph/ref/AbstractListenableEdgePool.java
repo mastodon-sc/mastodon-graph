@@ -9,6 +9,13 @@ import org.mastodon.pool.Properties;
  * <p>
  * Graphs based on this edge pool do not have a limitation on the number of
  * edges between a source and target vertices.
+ * 
+ * @param <E>
+ *            the concrete type of edges in this pool.
+ * @param <V>
+ *            the type of vertex in the graph.
+ * @param <T>
+ *            the type of mapped element on which this edge pool is built.
  */
 public abstract class AbstractListenableEdgePool<
 			E extends AbstractListenableEdge< E, V, ?, T >,

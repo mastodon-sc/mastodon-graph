@@ -5,14 +5,18 @@ import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
 
 /**
- * TODO: javadoc
+ * Abstract class for vertices in a Mastodon graph.
  *
  * @param <V>
+ *            the concrete type of this vertex.
  * @param <E>
+ *            the type of edges in the graph..
  * @param <VP>
+ *            the type of the pool on which vertices are built
  * @param <T>
- *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ *            the type of mapped element on which the vertex pool is built.
+ * 
+ * @author Tobias Pietzsch
  */
 public class AbstractVertex<
 			V extends AbstractVertex< V, E, VP, T >,

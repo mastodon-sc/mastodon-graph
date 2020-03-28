@@ -1,6 +1,7 @@
 package org.mastodon.graph.algorithm;
 
 import java.util.Set;
+
 import org.mastodon.collection.RefSet;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.ReadOnlyGraph;
@@ -10,8 +11,19 @@ import org.mastodon.graph.algorithm.traversal.InverseDepthFirstIterator;
 public class AncestorFinder< V extends Vertex< E >, E extends Edge< V > > extends AbstractGraphAlgorithm< V, E >
 {
 	/**
-	 * Get ancestors of the specified {@code initial} vertices in the specified {@code graph}.
-	 * (The set of ancestors includes the {@code initial} vertices.)
+	 * Gets the ancestors of the specified {@code initial} vertices in the
+	 * specified {@code graph}. (The set of ancestors includes the
+	 * {@code initial} vertices.)
+	 * 
+	 * @param graph
+	 *            the graph.
+	 * @param initial
+	 *            the vertices.
+	 * @param <V>
+	 *            the type of vertices in the graph.
+	 * @param <E>
+	 *            the type of edges in the graph.
+	 * @return a new {@link RefSet}.
 	 */
 	public static < V extends Vertex< E >, E extends Edge< V > >
 		RefSet< V > ancestors( final ReadOnlyGraph< V, E > graph, final Set< V > initial )
@@ -37,12 +49,12 @@ public class AncestorFinder< V extends Vertex< E >, E extends Edge< V > > extend
 	 *  vertices from which to start traversal.
 	 * @return a new {@link Set} containing the ancestors of {@code initial}.
 	 */
-	public RefSet< V > get( Set< V > initial )
+	public RefSet< V > get( final Set< V > initial )
 	{
 		final RefSet< V > ancestors = createVertexSet();
 		iter.reset();
 		iter.clearVisited();
-		for ( V v : initial )
+		for ( final V v : initial )
 		{
 			iter.reset( v );
 			while ( iter.hasNext() )

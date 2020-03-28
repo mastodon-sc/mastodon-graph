@@ -5,13 +5,18 @@ import org.mastodon.pool.MappedElement;
 import org.mastodon.pool.PoolObject;
 
 /**
- * TODO: javadoc
+ * Abstract mother class for edges in a Mastodon graph.
  *
  * @param <E>
+ *            the concrete type of this edge.
  * @param <V>
+ *            the type of vertex in the graph.
+ * @param <EP>
+ *            the type of the pool on which edges are built
  * @param <T>
+ *            the type of mapped element on which the edge pool is built.
  *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ * @author Tobias Pietzsch
  */
 public class AbstractEdge<
 			E extends AbstractEdge< E, V, EP, T >,

@@ -1,6 +1,7 @@
 package org.mastodon.graph.object;
 
 import java.util.NoSuchElementException;
+
 import org.mastodon.RefPool;
 
 import gnu.trove.map.TIntObjectArrayMap;
@@ -13,8 +14,9 @@ import gnu.trove.map.TIntObjectMap;
  * IDs are assigned to objects when first requested ({@link #getId(Object)}).
  *
  * @param <O>
+ *            the type of objects in this map.
  *
- * @author Tobias Pietzsch &lt;tobias.pietzsch@gmail.com&gt;
+ * @author Tobias Pietzsch
  */
 public abstract class AbstractObjectIdBimap< O > implements RefPool< O >
 {

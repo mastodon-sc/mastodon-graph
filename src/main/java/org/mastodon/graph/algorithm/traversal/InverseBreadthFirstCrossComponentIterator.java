@@ -12,6 +12,10 @@ import org.mastodon.graph.algorithm.LeafFinder;
  * It is therefore capital to specify the leaves of the graph to ensure
  * iteration of the whole graph.
  *
+ * @param <V>
+ *            the type of vertices in the graph.
+ * @param <E>
+ *            the type of edges in the graph.
  * @author Jean-Yves Tinevez
  */
 public class InverseBreadthFirstCrossComponentIterator< V extends Vertex< E >, E extends Edge< V > > extends BreadthFirstCrossComponentIterator< V, E >

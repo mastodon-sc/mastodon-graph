@@ -20,7 +20,9 @@ public interface Graph< V extends Vertex< E >, E extends Edge< V > > extends Rea
 	 * Add a new directed {@link Edge} from {@code source} to {@code target}.
 	 *
 	 * @param source
+	 *            the source vertex.
 	 * @param target
+	 *            the target vertex.
 	 * @return the newly created edge.
 	 */
 	public E addEdge( final V source, final V target );
@@ -33,7 +35,9 @@ public interface Graph< V extends Vertex< E >, E extends Edge< V > > extends Rea
 	 * {@link #addEdge(Vertex, Vertex)}.
 	 *
 	 * @param source
+	 *            the source vertex.
 	 * @param target
+	 *            the target vertex.
 	 * @param ref
 	 *            an edge reference that can be used for returning the newly
 	 *            created edge. Depending on concrete implementation, this
@@ -53,9 +57,15 @@ public interface Graph< V extends Vertex< E >, E extends Edge< V > > extends Rea
 	 * Optional operation implemented by graphs that maintain edge order.
 	 *
 	 * @param source
+	 *            the source vertex.
 	 * @param sourceOutIndex
+	 *            the index at which to insert the source vertex in the source
+	 *            list.
 	 * @param target
+	 *            the target vertex.
 	 * @param targetInIndex
+	 *            the index at which to insert the target vertex in the target
+	 *            list.
 	 * @return the newly created edge.
 	 */
 	public E insertEdge( final V source, final int sourceOutIndex, final V target, final int targetInIndex );
@@ -74,9 +84,15 @@ public interface Graph< V extends Vertex< E >, E extends Edge< V > > extends Rea
 	 * {@link #insertEdge(Vertex, int, Vertex, int)}.
 	 *
 	 * @param source
+	 *            the source vertex.
 	 * @param sourceOutIndex
+	 *            the index at which to insert the source vertex in the source
+	 *            list.
 	 * @param target
+	 *            the target vertex.
 	 * @param targetInIndex
+	 *            the index at which to insert the target vertex in the target
+	 *            list.
 	 * @param ref
 	 *            an edge reference that can be used for returning the newly
 	 *            created edge. Depending on concrete implementation, this

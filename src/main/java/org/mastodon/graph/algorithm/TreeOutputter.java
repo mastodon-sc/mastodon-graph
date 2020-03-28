@@ -19,7 +19,11 @@ import org.mastodon.graph.algorithm.traversal.DepthFirstIterator;
  * where all vertices have at most one predecessor. If this class is provided
  * with a graph that is not a tree, vertices that are not accessible by
  * descending from the specified root will be plainly ignored.
- *
+ * 
+ * @param <V>
+ *            the type of vertices in the graph.
+ * @param <E>
+ *            the type of edges in the graph.
  * @author Jean-Yves Tinevez
  */
 public class TreeOutputter< V extends Vertex< E >, E extends Edge< V > > extends AbstractGraphAlgorithm< V, E >

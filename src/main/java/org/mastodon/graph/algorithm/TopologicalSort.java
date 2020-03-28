@@ -14,10 +14,11 @@ import org.mastodon.graph.Vertex;
  * If the graph provided is not acyclic, the flag returned by the
  * {@link #hasFailed()} method set to {@code true} to indicate the problem.
  *
- * @author Jean-Yves Tinevez
- *
  * @param <V>
- *            the vertices type.
+ *            the type of vertices in the graph.
+ * @param <E>
+ *            the type of edges in the graph.
+ * @author Jean-Yves Tinevez
  */
 public class TopologicalSort< V extends Vertex< E >, E extends Edge< V > > extends AbstractGraphAlgorithm< V, E >
 {
