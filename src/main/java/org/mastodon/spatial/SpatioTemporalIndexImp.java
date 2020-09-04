@@ -1,6 +1,8 @@
 package org.mastodon.spatial;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -13,6 +15,7 @@ import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableReadOnlyGraph;
 import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
+import org.mastodon.graph.algorithm.Assigner;
 
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -41,6 +44,7 @@ public class SpatioTemporalIndexImp<
 		E extends Edge< V > >
 	implements GraphListener< V, E >, VertexPositionListener< V >, SpatioTemporalIndex< V >
 {
+
 	/**
 	 * Int value used to declare that the requested timepoint is not in a map.
 	 * Timepoints are always &gt;= 0, so -1 works...
@@ -55,7 +59,7 @@ public class SpatioTemporalIndexImp<
 
 	private final Lock readLock;
 
-    private final Lock writeLock;
+	private final Lock writeLock;
 
 	/**
 	 * Creates a new spatio-temporal index for the specified graph, using the
@@ -84,9 +88,9 @@ public class SpatioTemporalIndexImp<
 			p.addVertexPositionListener( this );
 		}
 		final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
-	    readLock = rwl.readLock();
-	    writeLock = rwl.writeLock();
-	    init();
+		readLock = rwl.readLock();
+		writeLock = rwl.writeLock();
+		init();
 	}
 
 	private void init()
@@ -122,8 +126,7 @@ public class SpatioTemporalIndexImp<
 	@Override
 	public Iterator< V > iterator()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new SpatioTemporalIndexIterator();
 	}
 
 	@Override
@@ -247,5 +250,67 @@ public class SpatioTemporalIndexImp<
 			timepointToSpatialIndex.put( timepoint, index );
 		}
 		return index;
+	}
+
+	private class SpatioTemporalIndexIterator implements Iterator< V >
+	{
+
+		private final OfInt timeIterator;
+
+		private Iterator< V > valueIterator;
+
+		private boolean hasNext;
+
+		private final Assigner< V > assigner;
+
+		private V next;
+
+		private V current;
+
+		public SpatioTemporalIndexIterator()
+		{
+			final int[] keys = timepointToSpatialIndex.keys();
+			Arrays.sort( keys );
+			this.timeIterator = Arrays.stream( keys ).iterator();
+			this.current = vertexPool.createRef();
+			this.assigner = Assigner.getFor( current );
+			hasNext = timeIterator.hasNext();
+			if ( hasNext )
+			{
+				valueIterator = timepointToSpatialIndex.get( timeIterator.nextInt() ).iterator();
+				prefetch();
+			}
+		}
+
+		private void prefetch()
+		{
+			if ( valueIterator.hasNext() )
+			{
+				next = valueIterator.next();
+				return;
+			}
+			if ( timeIterator.hasNext() )
+			{
+				valueIterator = timepointToSpatialIndex.get( timeIterator.nextInt() ).iterator();
+				prefetch();
+				return;
+			}
+			hasNext = false;
+			next = null;
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return hasNext;
+		}
+
+		@Override
+		public V next()
+		{
+			current = assigner.assign( next, current );
+			prefetch();
+			return current;
+		}
 	}
 }
