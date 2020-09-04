@@ -28,7 +28,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.mastodon</groupId>
+			<groupId>${mastodon.group}</groupId>
 			<artifactId>mastodon-collection</artifactId>
 		</dependency>
 
