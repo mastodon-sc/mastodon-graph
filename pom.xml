@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>org.mastodon</groupId>
 			<artifactId>mastodon-collection</artifactId>
-			<version>1.0.0-beta-18</version>
+			<version>${mastodon-collection.version}</version>
 		</dependency>
 
 		<!-- Test dependencies -->
@@ -71,6 +71,8 @@
 		<license.projectName>Mastodon Graphs</license.projectName>
 		<license.organizationName>Mastodon authors</license.organizationName>
 		<license.copyrightOwners>Tobias Pietzsch, Jean-Yves Tinevez</license.copyrightOwners>
+
+		<mastodon-collection.version>1.0.0-beta-19</mastodon-collection.version>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
