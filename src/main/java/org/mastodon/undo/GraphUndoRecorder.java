@@ -110,7 +110,7 @@ public class GraphUndoRecorder<
 		{
 			final PropertyUndoRedoStack< V > propertyUndoRedoStack = property.createUndoRedoStack();
 			final Recorder< V > recorder = edits.createSetVertexPropertyRecorder( propertyUndoRedoStack );
-			property.addBeforePropertyChangeListener( vertex -> {
+			property.beforePropertyChangeListeners().add( vertex -> {
 				if ( recording )
 					recorder.record( vertex );
 			} );
@@ -122,7 +122,7 @@ public class GraphUndoRecorder<
 		{
 			final PropertyUndoRedoStack< E > propertyUndoRedoStack = property.createUndoRedoStack();
 			final Recorder< E > recorder = edits.createSetEdgePropertyRecorder( propertyUndoRedoStack );
-			property.addBeforePropertyChangeListener( edge -> {
+			property.beforePropertyChangeListeners().add( edge -> {
 				if ( recording )
 					recorder.record( edge );
 			} );
