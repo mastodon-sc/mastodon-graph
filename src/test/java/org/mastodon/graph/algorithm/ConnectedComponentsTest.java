@@ -37,13 +37,12 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefSet;
-import org.mastodon.collection.RefCollections;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleGraph;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.ConnectedComponents;
 
 import gnu.trove.set.hash.TIntHashSet;
 
@@ -165,7 +164,7 @@ public class ConnectedComponentsTest
 	@Test
 	public void testBehavior()
 	{
-		final ConnectedComponents< TestSimpleVertex, TestSimpleEdge > cc = new ConnectedComponents< TestSimpleVertex, TestSimpleEdge >( graph );
+		final ConnectedComponents< TestSimpleVertex, TestSimpleEdge > cc = new ConnectedComponents< >( graph );
 		final Set< RefSet< TestSimpleVertex >> components = cc.get();
 		final TIntHashSet componentIds = new TIntHashSet( components.size() );
 

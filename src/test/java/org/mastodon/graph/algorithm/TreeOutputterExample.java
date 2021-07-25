@@ -32,8 +32,6 @@ import org.mastodon.collection.RefSet;
 import org.mastodon.graph.TestSimpleEdge;
 import org.mastodon.graph.TestSimpleGraph;
 import org.mastodon.graph.TestSimpleVertex;
-import org.mastodon.graph.algorithm.RootFinder;
-import org.mastodon.graph.algorithm.TreeOutputter;
 import org.mastodon.graph.object.ObjectEdge;
 import org.mastodon.graph.object.ObjectGraph;
 import org.mastodon.graph.object.ObjectVertex;
@@ -49,7 +47,7 @@ public class TreeOutputterExample
 		final ObjectGraph< String > graph = createCElegansLineage();
 
 		final RefSet< ObjectVertex< String >> roots = RootFinder.getRoots( graph );
-		final TreeOutputter< ObjectVertex< String >, ObjectEdge< String > > treeOutputter = new TreeOutputter< ObjectVertex< String >, ObjectEdge< String > >( graph );
+		final TreeOutputter< ObjectVertex< String >, ObjectEdge< String > > treeOutputter = new TreeOutputter< >( graph );
 
 		for ( final ObjectVertex< String > root : roots )
 		{
@@ -60,7 +58,7 @@ public class TreeOutputterExample
 		System.out.println();
 
 		createTrackMateGraph();
-		final TreeOutputter< TestSimpleVertex, TestSimpleEdge > tsto = new TreeOutputter< TestSimpleVertex, TestSimpleEdge >( tsg );
+		final TreeOutputter< TestSimpleVertex, TestSimpleEdge > tsto = new TreeOutputter< >( tsg );
 		System.out.println( tsto.get( A ) );
 
 	}
@@ -98,7 +96,7 @@ public class TreeOutputterExample
 
 	public static ObjectGraph< String > createCElegansLineage()
 	{
-		final ObjectGraph< String > graph = new ObjectGraph< String >();
+		final ObjectGraph< String > graph = new ObjectGraph< >();
 
 		// AB lineage
 

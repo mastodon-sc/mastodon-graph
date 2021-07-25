@@ -32,9 +32,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.mastodon.graph.object.ObjectEdge;
-import org.mastodon.graph.object.ObjectGraph;
-import org.mastodon.graph.object.ObjectVertex;
 
 public class ObjectGraphTest
 {
