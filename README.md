@@ -1,4 +1,4 @@
-[![](https://travis-ci.com/mastodon-sc/mastodon-graph.svg?branch=master)](https://travis-ci.com/mastodon-sc/mastodon-graph)
+[![](https://github.com/mastodon-sc/mastodon-graph/actions/workflows/build-main.yml/badge.svg)](https://github.com/mastodon-sc/mastodon-graph/actions/workflows/build-main.yml)
 
 TrackMate3
 ==========
