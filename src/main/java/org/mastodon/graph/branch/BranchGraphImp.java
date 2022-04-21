@@ -461,14 +461,24 @@ public abstract class BranchGraphImp<
 		final V vRef = graph.vertexRef();
 		final BV bvRef = vertexRef();
 		final BE beRef = edgeRef();
-		V v = assigner.assign( begin, vRef );
 
-		while ( !v.equals( end ) )
+//		V v = assigner.assign( begin, vRef );
+//		while ( !v.equals( end ) )
+//		{
+//			vbvMap.removeWithRef( v, bvRef );
+//			vbeMap.put( v, branchEdge, beRef );
+//			final E e = v.outgoingEdges().get( 0, eRef );
+//			v = e.getTarget( vRef );
+//			ebeMap.put( e, branchEdge, beRef );
+//		}
+
+		V v = assigner.assign( end, vRef );
+		while ( !v.equals( begin ) )
 		{
+			final E e = v.incomingEdges().get( 0, eRef );
+			v = e.getSource( vRef );
 			vbvMap.removeWithRef( v, bvRef );
 			vbeMap.put( v, branchEdge, beRef );
-			final E e = v.outgoingEdges().get( 0, eRef );
-			v = e.getTarget( vRef );
 			ebeMap.put( e, branchEdge, beRef );
 		}
 
@@ -501,6 +511,14 @@ public abstract class BranchGraphImp<
 		else
 			svt = split( target, vertexRef2 );
 
+		// Store source & target branch vertices.
+		final BV vref1 = vertexRef();
+		final BV vref2 = vertexRef();
+		final BE beRef = edgeRef();
+		final BE be = ebeMap.get( edge, beRef );
+		final BV bs = be.getSource( vref1 );
+		final BV bt = be.getTarget( vref2 );
+
 		for ( final BE se : svs.outgoingEdges() )
 			if ( se.getTarget().equals( svt ) )
 			{
@@ -508,8 +526,13 @@ public abstract class BranchGraphImp<
 				super.remove( se );
 			}
 
+		// Check whether branch vertices should be fused.
+		checkFuse( bs );
+		checkFuse( bt );
+
 		releaseRef( vertexRef1 );
 		releaseRef( vertexRef2 );
+		releaseRef( beRef );
 		graph.releaseRef( eRef );
 		graph.releaseRef( vRef1 );
 		graph.releaseRef( vRef2 );
@@ -672,8 +695,11 @@ public abstract class BranchGraphImp<
 	@Override
 	public void edgeRemoved( final E edge )
 	{
+		// Possibly add branch vertices to make up for removed link.
 		releaseBranchEdgeFor( edge );
 
+		
+		// Remove edge from map.
 		final BE beRef = edgeRef();
 		ebeMap.removeWithRef( edge, beRef );
 		releaseRef( beRef );
