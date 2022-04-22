@@ -383,9 +383,18 @@ public abstract class BranchGraphImp<
 		}
 	}
 
+	/**
+	 * Creates a new branch vertex linked to the specified vertex, and inserts
+	 * it in the branch graph.
+	 * 
+	 * @param v
+	 *            the vertex.
+	 * @param ref
+	 *            a branch vertex ref used to return the new branch vertex.
+	 * @return the new branch vertex.
+	 */
 	private BV split( final V v, final BV ref )
 	{
-		final E refE1 = graph.edgeRef();
 		final E refE2 = graph.edgeRef();
 		final E refE3 = graph.edgeRef();
 		final E refE4 = graph.edgeRef();
@@ -399,24 +408,69 @@ public abstract class BranchGraphImp<
 		final BE refBE2 = edgeRef();
 		final BE refBE3 = edgeRef();
 
+		// Initially, the specified vertex (v) was mapped to this branch edge:
 		final BE initialBE = vbeMap.get( v, refBE0 );
-		final E outgoingEdge = v.outgoingEdges().get( 0, refE1 );
+		// (It was mapped to a branch *edge* because it was part of a branch.
+		// Hence there were no branch vertex mapped to it, and this method
+		// will create it for it.)
 
+		// The initial branch started with this edge.
 		final E branchStartingEdge = beeMap.get( initialBE, refE2 );
 
+		// The source branch vertex of this branch:
 		final BV beSource = initialBE.getSource( refBV1 );
+		// The target branch vertex of this branch: (The new branch vertex will
+		// be inserted between these 2.)
 		final BV beTarget = initialBE.getTarget( refBV2 );
-		final V branchSecondVertex = branchStartingEdge.getTarget( refV1 );
+
+		// The last vertex of the branch.
 		final V branchLastVertex = bvvMap.get( beTarget, refV2 );
 
-		beeMap.removeWithRef( initialBE, refE5 );
-		super.remove( initialBE );
+		// We now need to find the edge going out of v, but that originates
+		// backward from the branch last vertex (branchLastVertex). We have to
+		// do that in case v has more that one outgoing edge. The true outgoing
+		// edge is the one that is linked to the initial branch edge (that we
+		// will remove later).
+		E outgoingEdge = null;
+		for ( final E e : v.outgoingEdges() )
+		{
+			final BE be = ebeMap.get( e );
+			if ( be != null && be.equals( initialBE ) )
+			{
+				outgoingEdge = e;
+				break;
+			}
+		}
 
+		// Unmap the initial branch edge.
+		beeMap.removeWithRef( initialBE, refE5 );
+		// Remove the initial branch edge.
+		super.remove( initialBE );
+		// Now beSource and beTarget are dangling alone.
+
+		/*
+		 * The splitting point.
+		 */
+
+		// Create a new branch vertex, linked to v.
 		final BV newVertex = init( super.addVertex( ref ), v );
 
+		/*
+		 * Make branch edge before the splitting point.
+		 */
+
+		// Link the branch source to this new branch vertex. And map it to the
+		// branch starting edge.
 		final BE newEdge1 = init( super.addEdge( beSource, newVertex, refBE1 ), branchStartingEdge );
 		beeMap.put( newEdge1, branchStartingEdge, refE3 );
+		// The second vertex of the branch:
+		final V branchSecondVertex = branchStartingEdge.getTarget( refV1 );
 		linkBranchEdge( branchSecondVertex, v, newEdge1 );
+
+		/*
+		 * Make branch edge after the splitting point. (It works now because we
+		 * were cautious to search the right outgoing edge).
+		 */
 
 		final BE newEdge2 = init( super.addEdge( newVertex, beTarget, refBE2 ), outgoingEdge );
 		beeMap.put( newEdge2, outgoingEdge, refE4 );
@@ -426,7 +480,6 @@ public abstract class BranchGraphImp<
 		vbvMap.put( v, newVertex );
 		vbeMap.removeWithRef( v, refBE3 );
 
-		graph.releaseRef( refE1 );
 		graph.releaseRef( refE2 );
 		graph.releaseRef( refE3 );
 		graph.releaseRef( refE4 );
