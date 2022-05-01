@@ -73,15 +73,14 @@ import org.mastodon.pool.MappedElement;
  *            the type of {@link MappedElement} used for the vertex and edge
  *            pool.
  */
-public abstract class BranchGraphImp<
-	V extends Vertex< E >,
-	E extends Edge< V >,
-	BV extends AbstractListenableVertex< BV, BE, BVP, T >,
-	BE extends AbstractListenableEdge< BE, BV, BEP, T >,
-	BVP extends AbstractListenableVertexPool< BV, BE, T >,
-	BEP extends AbstractListenableEdgePool< BE, BV, T >,
-	T extends MappedElement >
-		extends ListenableGraphImp<	BVP, BEP, BV, BE, T >
+public abstract class BranchGraphImp< 
+	V extends Vertex< E >, 
+	E extends Edge< V >, 
+	BV extends AbstractListenableVertex< BV, BE, BVP, T >, 
+	BE extends AbstractListenableEdge< BE, BV, BEP, T >, 
+	BVP extends AbstractListenableVertexPool< BV, BE, T >, 
+	BEP extends AbstractListenableEdgePool< BE, BV, T >, T extends MappedElement >
+		extends	ListenableGraphImp< BVP, BEP, BV, BE, T >
 		implements GraphListener< V, E >, BranchGraph< BV, BE, V, E >
 {
 
@@ -605,6 +604,8 @@ public abstract class BranchGraphImp<
 
 		for ( final E e : graph.edges() )
 			edgeAdded( e );
+
+		notifyGraphChanged();
 	}
 
 	@Override
@@ -621,6 +622,8 @@ public abstract class BranchGraphImp<
 		releaseRef( bvRef1 );
 		releaseRef( bvRef2 );
 		graph.releaseRef( vRef );
+
+		notifyGraphChanged();
 	}
 
 	@Override
@@ -642,6 +645,8 @@ public abstract class BranchGraphImp<
 		releaseRef( bvRef2 );
 		releaseRef( beRef );
 		graph.releaseRef( vRef );
+
+		notifyGraphChanged();
 	}
 
 	@Override
@@ -743,6 +748,8 @@ public abstract class BranchGraphImp<
 		graph.releaseRef( ref2 );
 		releaseRef( vref1 );
 		releaseRef( vref2 );
+
+		notifyGraphChanged();
 	}
 
 	@Override
@@ -751,11 +758,12 @@ public abstract class BranchGraphImp<
 		// Possibly add branch vertices to make up for removed link.
 		releaseBranchEdgeFor( edge );
 
-		
 		// Remove edge from map.
 		final BE beRef = edgeRef();
 		ebeMap.removeWithRef( edge, beRef );
 		releaseRef( beRef );
+
+		notifyGraphChanged();
 	}
 
 	/*
