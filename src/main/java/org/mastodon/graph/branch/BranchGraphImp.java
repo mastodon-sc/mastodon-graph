@@ -31,9 +31,12 @@ package org.mastodon.graph.branch;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.mastodon.collection.RefCollections;
 import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefMaps;
 import org.mastodon.collection.RefRefMap;
+import org.mastodon.collection.RefSet;
+import org.mastodon.collection.RefStack;
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.Edges;
 import org.mastodon.graph.GraphIdBimap;
@@ -41,7 +44,9 @@ import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.Assigner;
+import org.mastodon.graph.algorithm.RootFinder;
 import org.mastodon.graph.algorithm.ShortestPath;
+import org.mastodon.graph.algorithm.traversal.DepthFirstIterator;
 import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
 import org.mastodon.graph.ref.AbstractListenableEdge;
 import org.mastodon.graph.ref.AbstractListenableEdgePool;
@@ -635,11 +640,90 @@ public abstract class BranchGraphImp<
 	{
 		clear();
 
-		for ( final V v : graph.vertices() )
-			vertexAdded( v );
+		final BV bvRef1 = vertexRef(); // -> bv of a root.
+		final BV bvRef2 = vertexRef(); // -> previous mapping of root.
+		final BV bvRef3 = vertexRef(); // -> to create a new bv.
+		final BE beRef1 = edgeRef(); // -> new be of a branch.
+		final BE beRef2 = edgeRef(); // -> previous mapping of first edge.
+		final V vRef1 = graph.vertexRef(); // -> root of a branch.
+		final V vRef2 = graph.vertexRef(); // -> previous mapping of bv root.
+		final V vRef3 = graph.vertexRef(); // -> second vertex of a branch.
+		final E eRef = graph.edgeRef(); // -> previous mapping of be.
 
-		for ( final E e : graph.edges() )
-			edgeAdded( e );
+		final DepthFirstIterator< V, E > it = new DepthFirstIterator<>( graph );
+
+		// Keep track of what we should iterate from.
+		final RefSet< V > roots = RootFinder.getRoots( graph );
+		final RefStack< V > queue = RefCollections.createRefStack( graph.vertices() );
+		queue.addAll( roots );
+
+		// To avoid iterating several times the same branch when we have graphs
+		// with merge events.
+		final RefSet< V > visited = RefCollections.createRefSet( graph.vertices() );
+
+		while ( !queue.isEmpty() )
+		{
+			final V root = queue.pop( vRef1 );
+
+			// Create or get first node.
+			BV bvBegin = vbvMap.get( root, bvRef1 );
+			if ( bvBegin == null )
+			{
+				bvBegin = init( super.addVertex( bvRef1 ), root );
+				vbvMap.put( root, bvBegin, bvRef2 );
+				bvvMap.put( bvBegin, root, vRef2 );
+			}
+
+			// Successors of the node.
+			for ( final E firstEdge : root.outgoingEdges() )
+			{
+				final V firstTarget = firstEdge.getTarget( vRef3 );
+				if ( visited.contains( firstTarget ) )
+					continue;
+				visited.add( firstTarget );
+
+				it.reset( firstTarget );
+				while ( it.hasNext() )
+				{
+					final V v = it.next();
+					if ( v.incomingEdges().size() != 1 || v.outgoingEdges().size() != 1 )
+					{
+						// Merge point, we have to create a branch.
+						// Does a BV already exists for this vertex?
+						BV bvEnd = vbvMap.get( v, bvRef1 );
+						if ( bvEnd == null )
+						{
+							// Create node.
+							bvEnd = init( super.addVertex( bvRef3 ), v );
+							vbvMap.put( v, bvEnd, bvRef2 );
+							bvvMap.put( bvEnd, v, vRef2 );
+						}
+
+						// Edge that connect to previous node.
+						final BE be = init( super.addEdge( bvBegin, bvEnd, beRef1 ), firstEdge );
+						ebeMap.put( firstEdge, be, beRef2 );
+						beeMap.put( be, firstEdge, eRef );
+
+						// Walk back the branch to map it properly.
+						linkBranchEdge( firstTarget, v, be );
+
+						// Reset iteration.
+						queue.add( v );
+						break;
+					}
+				}
+			}
+		}
+
+		releaseRef( bvRef1 );
+		releaseRef( bvRef2 );
+		releaseRef( bvRef3 );
+		releaseRef( beRef1 );
+		releaseRef( beRef2 );
+		graph.releaseRef( vRef1 );
+		graph.releaseRef( vRef2 );
+		graph.releaseRef( vRef3 );
+		graph.releaseRef( eRef );
 
 		notifyGraphChanged();
 	}
