@@ -31,14 +31,18 @@ package org.mastodon.graph.branch;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.mastodon.collection.RefList;
 import org.mastodon.collection.RefMaps;
 import org.mastodon.collection.RefRefMap;
 import org.mastodon.graph.Edge;
+import org.mastodon.graph.Edges;
 import org.mastodon.graph.GraphIdBimap;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
 import org.mastodon.graph.algorithm.Assigner;
+import org.mastodon.graph.algorithm.ShortestPath;
+import org.mastodon.graph.algorithm.traversal.GraphSearch.SearchDirection;
 import org.mastodon.graph.ref.AbstractListenableEdge;
 import org.mastodon.graph.ref.AbstractListenableEdgePool;
 import org.mastodon.graph.ref.AbstractListenableVertex;
@@ -122,6 +126,8 @@ public abstract class BranchGraphImp<
 
 	private final GraphIdBimap< BV, BE > idmap;
 
+	private final ShortestPath< V, E > shortestPath;
+
 	/**
 	 * Instantiates a branch graph linked to the specified graph. This instance
 	 * registers itself as a listener of the linked graph.
@@ -145,6 +151,7 @@ public abstract class BranchGraphImp<
 		this.beeMap = RefMaps.createRefRefMap( edges(), graph.edges() );
 		final V vertexRef = graph.vertexRef();
 		this.assigner = Assigner.getFor( vertexRef );
+		this.shortestPath = new ShortestPath<>( graph, SearchDirection.DIRECTED );
 
 		graph.releaseRef( vertexRef );
 		graphRebuilt();
@@ -525,32 +532,46 @@ public abstract class BranchGraphImp<
 	private void linkBranchEdge( final V begin, final V end, final BE branchEdge )
 	{
 		final E eRef = graph.edgeRef();
-		final V vRef = graph.vertexRef();
+		final V vRef1 = graph.vertexRef();
+		final V vRef2 = graph.vertexRef();
 		final BV bvRef = vertexRef();
 		final BE beRef = edgeRef();
 
-//		V v = assigner.assign( begin, vRef );
-//		while ( !v.equals( end ) )
-//		{
-//			vbvMap.removeWithRef( v, bvRef );
-//			vbeMap.put( v, branchEdge, beRef );
-//			final E e = v.outgoingEdges().get( 0, eRef );
-//			v = e.getTarget( vRef );
-//			ebeMap.put( e, branchEdge, beRef );
-//		}
-
-		V v = assigner.assign( end, vRef );
-		while ( !v.equals( begin ) )
+		final RefList< V > path = shortestPath.findPath( begin, end );
+		// From end to begin.
+		final V previous = vRef1;
+		final Iterator< V > it = path.iterator();
+		assigner.assign( previous, it.next() );
+		while ( it.hasNext() )
 		{
-			final E e = v.incomingEdges().get( 0, eRef );
-			v = e.getSource( vRef );
-			vbvMap.removeWithRef( v, bvRef );
-			vbeMap.put( v, branchEdge, beRef );
-			ebeMap.put( e, branchEdge, beRef );
+			final V next = it.next();
+
+			final Edges< E > edges = next.outgoingEdges();
+			// Look for the right edge.
+			E edge = null;
+			if ( edges.size() == 1 )
+			{
+				edge = edges.get( 0, eRef );
+			}
+			else
+			{
+				for ( int i = 0; i < edges.size(); i++ )
+				{
+					edge = edges.get( i, eRef );
+					if ( edge.getTarget( vRef2 ).equals( previous ) )
+						break;
+				}
+			}
+			ebeMap.put( edge, branchEdge, beRef );
+			vbeMap.put( next, branchEdge, beRef );
+			vbvMap.removeWithRef( next, bvRef );
+
+			assigner.assign( previous, next );
 		}
 
 		graph.releaseRef( eRef );
-		graph.releaseRef( vRef );
+		graph.releaseRef( vRef1 );
+		graph.releaseRef( vRef2 );
 		releaseRef( beRef );
 		releaseRef( bvRef );
 	}
