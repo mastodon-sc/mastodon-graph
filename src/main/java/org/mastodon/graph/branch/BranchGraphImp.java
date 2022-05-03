@@ -372,10 +372,8 @@ public abstract class BranchGraphImp<
 				 * cautious and unmap the links TO its edges, as well as the
 				 * mapping FROM it.
 				 */
-				final E e1 = beeMap.removeWithRef( beIn, refLE3 );
-				final E e2 = beeMap.removeWithRef( beOut, refLE4 );
-				ebeMap.removeWithRef( e1, refBE4 );
-				ebeMap.removeWithRef( e2, refBE5 );
+				beeMap.removeWithRef( beIn, refLE3 );
+				beeMap.removeWithRef( beOut, refLE4 );
 				bvvMap.removeWithRef( bv, refLV3 );
 				beeMap.removeWithRef( beIn, refLE3 );
 				beeMap.removeWithRef( beOut, refLE4 );
@@ -387,8 +385,7 @@ public abstract class BranchGraphImp<
 				// reference f3 from every source graph vertex on the path
 				linkBranchEdge( lv1, lv2, beNew );
 
-				// link from f3 to source edge that was previously linked from
-				// f1
+				// link from f3 to source edge that was previously linked from f1
 				beeMap.put( beNew, le, refLE2 );
 			}
 
@@ -907,6 +904,31 @@ public abstract class BranchGraphImp<
 		for ( final BE be : edges() )
 			sb.append( "    " + str( be, eref ) + "\n" );
 		sb.append( "  }\n" );
+
+		sb.append( "  mapping v->bv = {\n" );
+		for ( final V v : vbvMap.keySet() )
+			sb.append( "    " + v + " -> " + vbvMap.get( v ) + "\n" );
+		sb.append( "  },\n" );
+
+		sb.append( "  mapping bv->v = {\n" );
+		for ( final BV bv : bvvMap.keySet() )
+			sb.append( "    " + bv + " -> " + bvvMap.get( bv ) + "\n" );
+		sb.append( "  },\n" );
+
+		sb.append( "  mapping v->be = {\n" );
+		for ( final V v : vbeMap.keySet() )
+			sb.append( "    " + v + " -> " + vbeMap.get( v ) + "\n" );
+		sb.append( "  },\n" );
+
+		sb.append( "  mapping e->be = {\n" );
+		for ( final E e : ebeMap.keySet() )
+			sb.append( "    " + e + " -> " + ebeMap.get( e ) + "\n" );
+		sb.append( "  },\n" );
+		sb.append( "  mapping be->e = {\n" );
+		for ( final BE be : beeMap.keySet() )
+			sb.append( "    " + be + " -> " + beeMap.get( be ) + "\n" );
+		sb.append( "  },\n" );
+
 		sb.append( "}" );
 
 		graph.releaseRef( vref );
