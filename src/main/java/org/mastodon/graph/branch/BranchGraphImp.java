@@ -79,8 +79,9 @@ public abstract class BranchGraphImp<
 	BV extends AbstractListenableVertex< BV, BE, BVP, T >, 
 	BE extends AbstractListenableEdge< BE, BV, BEP, T >, 
 	BVP extends AbstractListenableVertexPool< BV, BE, T >, 
-	BEP extends AbstractListenableEdgePool< BE, BV, T >, T extends MappedElement >
-		extends	ListenableGraphImp< BVP, BEP, BV, BE, T >
+	BEP extends AbstractListenableEdgePool< BE, BV, T >, 
+	T extends MappedElement >
+		extends ListenableGraphImp< BVP, BEP, BV, BE, T >
 		implements GraphListener< V, E >, BranchGraph< BV, BE, V, E >
 {
 
@@ -144,6 +145,7 @@ public abstract class BranchGraphImp<
 		this.beeMap = RefMaps.createRefRefMap( edges(), graph.edges() );
 		final V vertexRef = graph.vertexRef();
 		this.assigner = Assigner.getFor( vertexRef );
+
 		graph.releaseRef( vertexRef );
 		graphRebuilt();
 		graph.addGraphListener( this );
@@ -308,6 +310,8 @@ public abstract class BranchGraphImp<
 			final BE refBE1 = edgeRef();
 			final BE refBE2 = edgeRef();
 			final BE refBE3 = edgeRef();
+			final BE refBE4 = edgeRef();
+			final BE refBE5 = edgeRef();
 			final BV refBV1 = vertexRef();
 			final BV refBV2 = vertexRef();
 			final V refLV1 = graph.vertexRef();
@@ -351,10 +355,19 @@ public abstract class BranchGraphImp<
 				final V lv2 = bvvMap.get( bvTarget, refLV2 );
 
 				// Remove bv, beIn, beOut from branch graph.
-				super.remove( bv );
+				/*
+				 * We will remove bv from the graph. So we also need to be
+				 * cautious and unmap the links TO its edges, as well as the
+				 * mapping FROM it.
+				 */
+				final E e1 = beeMap.removeWithRef( beIn, refLE3 );
+				final E e2 = beeMap.removeWithRef( beOut, refLE4 );
+				ebeMap.removeWithRef( e1, refBE4 );
+				ebeMap.removeWithRef( e2, refBE5 );
 				bvvMap.removeWithRef( bv, refLV3 );
 				beeMap.removeWithRef( beIn, refLE3 );
 				beeMap.removeWithRef( beOut, refLE4 );
+				super.remove( bv );
 
 				// beNew := new branch edge between bvSource and bvTarget.
 				final BE beNew = init( super.addEdge( bvSource, bvTarget, refBE3 ), le );
@@ -379,6 +392,8 @@ public abstract class BranchGraphImp<
 			releaseRef( refBE1 );
 			releaseRef( refBE2 );
 			releaseRef( refBE3 );
+			releaseRef( refBE4 );
+			releaseRef( refBE5 );
 		}
 	}
 
