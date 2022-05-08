@@ -160,7 +160,6 @@ public abstract class BranchGraphImp<
 
 		graph.releaseRef( vertexRef );
 		graphRebuilt();
-		graph.addGraphListener( this );
 	}
 
 	@Override
