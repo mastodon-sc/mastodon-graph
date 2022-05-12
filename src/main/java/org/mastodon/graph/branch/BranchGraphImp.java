@@ -384,7 +384,8 @@ public abstract class BranchGraphImp<
 				// reference f3 from every source graph vertex on the path
 				linkBranchEdge( lv1, lv2, beNew );
 
-				// link from f3 to source edge that was previously linked from f1
+				// link from f3 to source edge that was previously linked from
+				// f1
 				beeMap.put( beNew, le, refLE2 );
 			}
 
@@ -635,7 +636,6 @@ public abstract class BranchGraphImp<
 	public void graphRebuilt()
 	{
 		clear();
-
 		final BV bvRef1 = vertexRef(); // -> bv of a root.
 		final BV bvRef2 = vertexRef(); // -> previous mapping of root.
 		final BV bvRef3 = vertexRef(); // -> to create a new bv.
@@ -646,82 +646,86 @@ public abstract class BranchGraphImp<
 		final V vRef3 = graph.vertexRef(); // -> second vertex of a branch.
 		final E eRef = graph.edgeRef(); // -> previous mapping of be.
 
-		final DepthFirstIterator< V, E > it = new DepthFirstIterator<>( graph );
-
-		// Keep track of what we should iterate from.
-		final RefSet< V > roots = RootFinder.getRoots( graph );
-		final RefStack< V > queue = RefCollections.createRefStack( graph.vertices() );
-		queue.addAll( roots );
-
-		// To avoid iterating several times the same branch when we have graphs
-		// with merge events.
-		final RefSet< V > visited = RefCollections.createRefSet( graph.vertices() );
-
-		while ( !queue.isEmpty() )
+		try
 		{
-			final V root = queue.pop( vRef1 );
+			final DepthFirstIterator< V, E > it = new DepthFirstIterator<>( graph );
 
-			// Create or get first node.
-			BV bvBegin = vbvMap.get( root, bvRef1 );
-			if ( bvBegin == null )
+			// Keep track of what we should iterate from.
+			final RefSet< V > roots = RootFinder.getRoots( graph );
+			final RefStack< V > queue = RefCollections.createRefStack( graph.vertices() );
+			queue.addAll( roots );
+
+			// To avoid iterating several times the same branch when we have
+			// graphs with merge events.
+			final RefSet< V > visited = RefCollections.createRefSet( graph.vertices() );
+
+			while ( !queue.isEmpty() )
 			{
-				bvBegin = init( super.addVertex( bvRef1 ), root );
-				vbvMap.put( root, bvBegin, bvRef2 );
-				bvvMap.put( bvBegin, root, vRef2 );
-			}
+				final V root = queue.pop( vRef1 );
 
-			// Successors of the node.
-			for ( final E firstEdge : root.outgoingEdges() )
-			{
-				final V firstTarget = firstEdge.getTarget( vRef3 );
-				if ( visited.contains( firstTarget ) )
-					continue;
-				visited.add( firstTarget );
-
-				it.reset( firstTarget );
-				while ( it.hasNext() )
+				// Create or get first node.
+				BV bvBegin = vbvMap.get( root, bvRef1 );
+				if ( bvBegin == null )
 				{
-					final V v = it.next();
-					if ( v.incomingEdges().size() != 1 || v.outgoingEdges().size() != 1 )
+					bvBegin = init( super.addVertex( bvRef1 ), root );
+					vbvMap.put( root, bvBegin, bvRef2 );
+					bvvMap.put( bvBegin, root, vRef2 );
+				}
+
+				// Successors of the node.
+				for ( final E firstEdge : root.outgoingEdges() )
+				{
+					final V firstTarget = firstEdge.getTarget( vRef3 );
+					if ( visited.contains( firstTarget ) )
+						continue;
+					visited.add( firstTarget );
+
+					it.reset( firstTarget );
+					while ( it.hasNext() )
 					{
-						// Merge point, we have to create a branch.
-						// Does a BV already exists for this vertex?
-						BV bvEnd = vbvMap.get( v, bvRef3 );
-						if ( bvEnd == null )
+						final V v = it.next();
+						if ( v.incomingEdges().size() != 1 || v.outgoingEdges().size() != 1 )
 						{
-							// Create node.
-							bvEnd = init( super.addVertex( bvRef3 ), v );
-							vbvMap.put( v, bvEnd, bvRef2 );
-							bvvMap.put( bvEnd, v, vRef2 );
+							// Merge point, we have to create a branch.
+							// Does a BV already exists for this vertex?
+							BV bvEnd = vbvMap.get( v, bvRef3 );
+							if ( bvEnd == null )
+							{
+								// Create node.
+								bvEnd = init( super.addVertex( bvRef3 ), v );
+								vbvMap.put( v, bvEnd, bvRef2 );
+								bvvMap.put( bvEnd, v, vRef2 );
+							}
+
+							// Edge that connect to previous node.
+							final BE be = init( super.addEdge( bvBegin, bvEnd, beRef1 ), firstEdge );
+							ebeMap.put( firstEdge, be, beRef2 );
+							beeMap.put( be, firstEdge, eRef );
+
+							// Walk back the branch to map it properly.
+							linkBranchEdge( firstTarget, v, be );
+
+							// Reset iteration.
+							queue.add( v );
+							break;
 						}
-
-						// Edge that connect to previous node.
-						final BE be = init( super.addEdge( bvBegin, bvEnd, beRef1 ), firstEdge );
-						ebeMap.put( firstEdge, be, beRef2 );
-						beeMap.put( be, firstEdge, eRef );
-
-						// Walk back the branch to map it properly.
-						linkBranchEdge( firstTarget, v, be );
-
-						// Reset iteration.
-						queue.add( v );
-						break;
 					}
 				}
 			}
+			notifyGraphChanged();
 		}
-
-		releaseRef( bvRef1 );
-		releaseRef( bvRef2 );
-		releaseRef( bvRef3 );
-		releaseRef( beRef1 );
-		releaseRef( beRef2 );
-		graph.releaseRef( vRef1 );
-		graph.releaseRef( vRef2 );
-		graph.releaseRef( vRef3 );
-		graph.releaseRef( eRef );
-
-		notifyGraphChanged();
+		finally
+		{
+			releaseRef( bvRef1 );
+			releaseRef( bvRef2 );
+			releaseRef( bvRef3 );
+			releaseRef( beRef1 );
+			releaseRef( beRef2 );
+			graph.releaseRef( vRef1 );
+			graph.releaseRef( vRef2 );
+			graph.releaseRef( vRef3 );
+			graph.releaseRef( eRef );
+		}
 	}
 
 	@Override
