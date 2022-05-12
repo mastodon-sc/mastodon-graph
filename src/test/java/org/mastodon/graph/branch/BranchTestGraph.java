@@ -46,6 +46,8 @@ public class BranchTestGraph extends BranchGraphImp<
 	public BranchTestGraph( final ListenableGraph< ListenableTestVertex, ListenableTestEdge > graph, final BranchTestEdgePool branchEdgePool )
 	{
 		super( graph, branchEdgePool );
+		// Listen to incremental changes.
+		graph.addGraphListener( this );
 	}
 
 	@Override
