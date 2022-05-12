@@ -686,7 +686,7 @@ public abstract class BranchGraphImp<
 					{
 						// Merge point, we have to create a branch.
 						// Does a BV already exists for this vertex?
-						BV bvEnd = vbvMap.get( v, bvRef1 );
+						BV bvEnd = vbvMap.get( v, bvRef3 );
 						if ( bvEnd == null )
 						{
 							// Create node.
