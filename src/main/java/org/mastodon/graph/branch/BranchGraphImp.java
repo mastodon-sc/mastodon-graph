@@ -303,6 +303,17 @@ public abstract class BranchGraphImp<
 		return beeMap.get( be, ref );
 	}
 
+	@Override
+	protected void clear()
+	{
+		vbvMap.clear();
+		vbeMap.clear();
+		ebeMap.clear();
+		bvvMap.clear();
+		beeMap.clear();
+		super.clear();
+	}
+
 	/*
 	 * Graph listener
 	 */
