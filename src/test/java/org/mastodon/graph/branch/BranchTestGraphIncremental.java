@@ -33,7 +33,12 @@ import org.mastodon.graph.ListenableTestEdge;
 import org.mastodon.graph.ListenableTestVertex;
 import org.mastodon.pool.ByteMappedElement;
 
-public class BranchTestGraph extends BranchGraphImp<
+/**
+ * Version of the BranchTestGraph that listens to incremental changes.
+ * 
+ * @author Jean-Yves Tinevez
+ */
+public class BranchTestGraphIncremental extends BranchGraphImpIncremental<
 	ListenableTestVertex,
 	ListenableTestEdge,
 	BranchTestVertex,
@@ -43,9 +48,11 @@ public class BranchTestGraph extends BranchGraphImp<
 	ByteMappedElement >
 {
 
-	public BranchTestGraph( final ListenableGraph< ListenableTestVertex, ListenableTestEdge > graph, final BranchTestEdgePool branchEdgePool )
+	public BranchTestGraphIncremental( final ListenableGraph< ListenableTestVertex, ListenableTestEdge > graph, final BranchTestEdgePool branchEdgePool )
 	{
 		super( graph, branchEdgePool );
+		// Listen to incremental changes.
+		graph.addGraphListener( this );
 	}
 
 	@Override
