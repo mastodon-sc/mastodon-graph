@@ -69,7 +69,7 @@ import org.mastodon.pool.MappedElement;
  * connected component in the core-graph looks like this:
  * 
  * <pre>
- * A -> B -> C -> D -> A
+ * A -&gt; B -&gt; C -&gt; D -&gt; A
  * </pre>
  * 
  * (edge direction is important), it won't be discovered in the branch-graph,
@@ -77,13 +77,13 @@ import org.mastodon.pool.MappedElement;
  * edges. 'Diamonds' connected components:
  * 
  * <pre>
- * A -> B -> D
+ * A -&gt; B -&gt; D
  * </pre>
  * 
  * and
  * 
  * <pre>
- * A -> C -> D
+ * A -&gt; C -&gt; D
  * </pre>
  * 
  * are supported.
