@@ -158,6 +158,16 @@ public class GraphUndoRecorder<
 		recording = true;
 	}
 
+	public void setSavePoint()
+	{
+		edits.setSavePoint();
+	}
+
+	public boolean isSavePoint()
+	{
+		return edits.isSavePoint();
+	}
+
 	@Override
 	public void graphRebuilt()
 	{
