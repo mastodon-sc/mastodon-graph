@@ -6,13 +6,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,42 +28,27 @@
  */
 package org.mastodon.graph.branch;
 
-import org.mastodon.graph.ListenableGraph;
-import org.mastodon.graph.ListenableTestEdge;
-import org.mastodon.graph.ListenableTestVertex;
-import org.mastodon.pool.ByteMappedElement;
+import org.junit.Test;
+import org.mastodon.graph.ListenableTestGraph;
 
-/**
- * Version of the BranchTestGraph that listens to incremental changes.
- * 
- * @author Jean-Yves Tinevez
- */
-public class BranchTestGraphIncremental extends BranchGraphImpIncremental<
-	ListenableTestVertex,
-	ListenableTestEdge,
-	BranchTestVertex,
-	BranchTestEdge,
-	BranchTestVertexPool,
-	BranchTestEdgePool,
-	ByteMappedElement >
+import static org.junit.Assert.assertEquals;
+
+public class TestGraphBuilderTest
 {
-
-	public BranchTestGraphIncremental( final ListenableGraph< ListenableTestVertex, ListenableTestEdge > graph, final BranchTestEdgePool branchEdgePool )
-	{
-		super( graph, branchEdgePool );
-		// Listen to incremental changes.
-		graph.addGraphListener( this );
+	@Test
+	public void testAddNodes() {
+		ListenableTestGraph graph = TestGraphBuilder.build("1,2,3");
+		assertEquals("1, 2, 3", graphToString( graph ) );
 	}
 
-	@Override
-	public BranchTestVertex init( final BranchTestVertex bv, final ListenableTestVertex v )
-	{
-		return bv.init( v.getId(), v.getTimepoint() );
+	@Test
+	public void testAddEdges() {
+		ListenableTestGraph graph = TestGraphBuilder.build( "1 -> 2 -> 3" );
+		assertEquals( "1->2, 2->3", graphToString( graph ) );
 	}
 
-	@Override
-	public BranchTestEdge init( final BranchTestEdge be, final ListenableTestEdge e )
+	private String graphToString( ListenableTestGraph graph )
 	{
-		return be.init();
+		return GraphToString.toString( graph, vertex -> "" + vertex.getId() );
 	}
 }

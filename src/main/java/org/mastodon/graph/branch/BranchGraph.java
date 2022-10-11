@@ -28,49 +28,36 @@
  */
 package org.mastodon.graph.branch;
 
-import java.util.Iterator;
-
 import org.mastodon.graph.Edge;
 import org.mastodon.graph.GraphIdBimap;
-import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.ListenableReadOnlyGraph;
 import org.mastodon.graph.Vertex;
 
+import java.util.Iterator;
+
 /**
- * Branch graph: a branch simplification view of a source graph.
+ * Branch graph is a simplified view of a source graph.
  * <p>
- * This specific instance supports branch edges and vertices with features.
+ * This specific instance supports branch-edges and vertices with features.
  * <p>
- * This class implements a view of a source {@link ListenableGraph} (called here
+ * This class implements a view of a source {@link org.mastodon.graph.ListenableGraph} (called here
  * <i>linked graph</i>) that offers a coarser level of details by representing
- * branches of the linked graph as a single vertex and edge in the branch graph.
+ * branches of the linked graph as a single vertex in the branch graph.
  * <p>
- * A branch in the linked graph is defined as connected vertices that have
- * exactly 1 incoming edge and 1 outgoing edge. In the branch graph, a branch is
- * represented as follow. If in the linked graph a branch is like this:
+ * A branch in the linked graph is defined as sequence of connected vertices,
+ * where all except the last vertex have exactly one outgoing edge, and all
+ * except the first vertex have exactly one incoming edge.
+ * <p>
+ * If in the linked graph has a branch like this:
  *
  * <pre>
  * v0 &#8594; v1 &#8594; v2 &#8594; v3
  * </pre>
  *
- * The its representation in the branch graph is:
- *
- * <pre>
- *  bv0 &#8594; bv1
- * </pre>
- *
- * where:
- * <ul>
- * <li><code>bv0</code> links to <code>v0</code>,
- * <li><code>bv1</code> links to <code>v3</code>,
- * <li>all linked vertices in-between linked to the branch edge between
- * <code>bv0</code> and <code>bv1</code>,
- * <li>as well as all the linked edges in the branch.
- * <li>The branch edge between <code>bv0</code> and <code>bv1</code> links to
- * the outgoing edge of <code>v0</code>.
- * </ul>
+ * It's represented in the branch graph as a single vertex: <i>bv0</i><br>
+ * Where bv0 links to all the nodes, and edges: v0 &#8594; v1 &#8594; v2 &#8594; v3.
  * <p>
- * For instance, a graph laid as following:
+ * A small graph like this:
  *
  * <pre>
  *                 v3 &#8594; v4 &#8594; v5
@@ -83,23 +70,26 @@ import org.mastodon.graph.Vertex;
  * will be represented by the following branch graph:
  *
  * <pre>
- *            bv2
- *          /
- * bv0 &#8594; bv1
- *          \
- *            bv3
+ *       bv1
+ *     /
+ * bv0
+ *     \
+ *       bv2
  * </pre>
  *
- * In the example above, <code>v0</code>, <code>v2</code>, <code>v5</code> and
- * <code>v8</code> are <b>branch extremities</b>; they are linked to a unique
- * branch vertex in the branch graph. <code>v1</code>, <code>v3</code>,
- * <code>v4</code>, <code>v6</code> and <code>v7</code> belongs to a branch.
- * They link to a branch edge.
- *
+ * The vertices and edge of the branch graph are linked to the vertices and
+ * edges of the original graph as follows:
  * <p>
- * The branch graph is based on a non-simple directed graph. There might be more
- * than one edge between the same source and target branch vertices. This
- * happens for instance when there is a diamond-like shape in the linked graph:
+ * <ul>
+ *     <li>bv0 is linked to v0 &#8594; v1 &#8594; v2</li>
+ *     <li>bv1 is linked to v3 &#8594; v4 &#8594; v5</li>
+ *     <li>bv2 is linked to v6 &#8594; v7 &#8594; v8</li>
+ *     <li>The edge bv0 &#8594; bv1 is linked to the edge v2 &#8594; v3 </li>
+ *     <li>The edge bv0 &#8594; bv2 is linked to the edge v2 &#8594; v6 </li>
+ * </ul>
+ * <p>
+ *
+ * Let's look at a diamond shaped graph like this:
  *
  * <pre>
  *     v1 &#8594; v2 &#8594; v3
@@ -112,43 +102,16 @@ import org.mastodon.graph.Vertex;
  * In the branch graph, this becomes:
  *
  * <pre>
- *     ____
- *    /    \
- * bv0      bv1
- *    \____/
+ *     __ bv1 __
+ *    /         \
+ * bv0           bv1
+ *    \__ bv2 __/
  * </pre>
- *
- * The branch graph can also handle ring-link structures in the linked graph. In
- * that case, such a ring;
- *
- * <pre>
- *     v1 &#8594; v2 &#8594; v3
- *   /             \
- * v0               v4
- *   \             /
- *     v7 &#8592; v6 &#8592; v5
- * </pre>
- *
- * is represented by a single vertex having a loop-edge:
- *
- * <pre>
- *    _
- * bv0 \
- *  \__/
- * </pre>
- *
- * In such a loop, the vertex linked to <code>bv0</code> and the edge linked to
- * the branch edge are determined by the order in which the vertices and edges
- * are added in the linked graph.
- * <p>
- * The branch graph is defined and tested only for <b>simple, directed
- * graphs</b> as linked graph. Using any other classes of graphs will result in
- * unexpected behavior.
  *
  * @param <BV>
- *            the type of the branch vertices.
+ *            the type of the branch-vertices.
  * @param <BE>
- *            the type of the branch edges.
+ *            the type of the branch-edges.
  * @param <V>
  *            the type of linked vertices.
  * @param <E>
@@ -163,30 +126,28 @@ public interface BranchGraph<
 {
 
 	/**
-	 * Returns the edge linked to the specified branch edge. The linked edge is
-	 * the first edge of the branch in the linked graph.
+	 * Returns the edge linked to the specified branch-edge.
 	 * <p>
 	 * For instance, in
 	 * <pre>
 	 *     LINKED-GRAPH                  BRANCH-GRAPH
 	 *
-	 *           v0                           bv0
-	 *           |  e0                         |
-	 *           v1                            |  be0
-	 *           |  e1                         |
-	 *           v2                           bv1
-	 *       e2 / \  e4                       / \
-	 *         /   \                    be1  /   \  be2
-	 *        v3    v5                      /     \
-	 *     e3 |     | e5                   /       \
-	 *        v4    v6                    bv2      bv3
+	 *           v0
+	 *           |  e0
+	 *           v1                           bv0
+	 *           |  e1                        / \
+	 *           v2                     be1  /   \  be2
+	 *       e2 / \  e4                     /     \
+	 *         /   \                       /       \
+	 *        v3    v5                    bv1      bv2
+	 *     e3 |     | e5
+	 *        v4    v6
 	 * </pre>
-	 * the edge linked to <code>be1</code> is <code>e2</code>. The edge linked
+	 * The edge linked to <code>be1</code> is <code>e2</code>. The edge linked
 	 * to <code>be2</code> is <code>e4</code>.
 	 *
-	 *
 	 * @param be
-	 *            the branch edge.
+	 *            the branch-edge.
 	 * @param ref
 	 *            a reference to a linked graph edge used for retrieval.
 	 *            Depending on concrete implementation of the linked graph, this
@@ -196,164 +157,222 @@ public interface BranchGraph<
 	public E getLinkedEdge( BE be, E ref );
 
 	/**
-	 * Returns the vertex linked to the specified branch vertex. The linked
-	 * vertex is a branch extremity.
+	 * Returns the first vertex linked to the specified branch-vertex.
 	 * <p>
 	 * For instance, in
-	 *
 	 * <pre>
 	 *     LINKED-GRAPH                  BRANCH-GRAPH
 	 *
-	 *           v0                           bv0
-	 *           |  e0                         |
-	 *           v1                            |  be0
-	 *           |  e1                         |
-	 *           v2                           bv1
-	 *       e2 / \  e4                       / \
-	 *         /   \                    be1  /   \  be2
-	 *        v3    v5                      /     \
-	 *     e3 |     | e5                   /       \
-	 *        v4    v6                    bv2      bv3
+	 *           v0
+	 *           |  e0
+	 *           v1                           bv0
+	 *           |  e1                        / \
+	 *           v2                     be1  /   \  be2
+	 *       e2 / \  e4                     /     \
+	 *         /   \                       /       \
+	 *        v3    v5                    bv1      bv2
+	 *     e3 |     | e5
+	 *        v4    v6
 	 * </pre>
-	 *
-	 * the vertex linked to <code>bv0</code> is <code>v0</code>. The vertex
-	 * linked to <code>bv1</code> is <code>v2</code>.
+	 * The first vertex linked to <code>bv0</code> is <code>v0</code>.
+	 * The first vertex linked to <code>bv1</code> is <code>v3</code>.
+	 * The first vertex linked to <code>bv2</code> is <code>v5</code>.
 	 *
 	 * @param bv
-	 *            the branch vertex.
+	 *            the branch-vertex.
 	 * @param ref
 	 *            a reference to a linked graph vertex used for retrieval.
 	 *            Depending on concrete implementation of the linked graph, this
 	 *            object can be cleared, ignored or re-used.
-	 * @return the linked vertex.
+	 * @return the first vertex in the branch linked to the branch-vertex.
 	 */
-	public V getLinkedVertex( BV bv, V ref );
+	public V getFirstLinkedVertex( BV bv, V ref );
 
 	/**
-	 * Returns the branch edge linked to the specified edge.
+	 * Returns the last vertex linked to the specified branch-vertex.
 	 * <p>
 	 * For instance, in
-	 *
 	 * <pre>
 	 *     LINKED-GRAPH                  BRANCH-GRAPH
 	 *
-	 *           v0                           bv0
-	 *           |  e0                         |
-	 *           v1                            |  be0
-	 *           |  e1                         |
-	 *           v2                           bv1
-	 *       e2 / \  e4                       / \
-	 *         /   \                    be1  /   \  be2
-	 *        v3    v5                      /     \
-	 *     e3 |     | e5                   /       \
-	 *        v4    v6                    bv2      bv3
+	 *           v0
+	 *           |  e0
+	 *           v1                           bv0
+	 *           |  e1                        / \
+	 *           v2                     be1  /   \  be2
+	 *       e2 / \  e4                     /     \
+	 *         /   \                       /       \
+	 *        v3    v5                    bv1      bv2
+	 *     e3 |     | e5
+	 *        v4    v6
 	 * </pre>
+	 * The last vertex linked to <code>bv0</code> is <code>v2</code>.
+	 * The last vertex linked to <code>bv1</code> is <code>v4</code>.
+	 * The last vertex linked to <code>bv2</code> is <code>v6</code>.
 	 *
-	 * <code>e0</code> and <code>e1</code> link to <code>be0</code>.
-	 * <code>e2</code> and <code>e3</code> link to <code>be1</code>.
-	 * <code>e4</code> and <code>e5</code> link to <code>be2</code>.
+	 * @param bv
+	 *            the branch-vertex.
+	 * @param ref
+	 *            a reference to a linked graph vertex used for retrieval.
+	 *            Depending on concrete implementation of the linked graph, this
+	 *            object can be cleared, ignored or re-used.
+	 * @return the last vertex in the branch linked to the branch-vertex.
+	 */
+	public V getLastLinkedVertex( BV bv, V ref );
+
+	/**
+	 * Returns the branch-edge linked to the specified edge.
+	 * <p>
+	 * For instance, in
+	 * <pre>
+	 *     LINKED-GRAPH                  BRANCH-GRAPH
+	 *
+	 *           v0
+	 *           |  e0
+	 *           v1                           bv0
+	 *           |  e1                        / \
+	 *           v2                     be1  /   \  be2
+	 *       e2 / \  e4                     /     \
+	 *         /   \                       /       \
+	 *        v3    v5                    bv1      bv2
+	 *     e3 |     | e5
+	 *        v4    v6
+	 * </pre>
+	 * The branch-edge linked to <code>e2</code> is <code>be1</code>.
+	 * The branch-edge linked to <code>e4</code> is <code>be2</code>.
+	 * In this example only these two edges are linked to a corresponding
+	 * branch-edge.
+	 * <p>
+	 * All other edges are part of branches and therefore linked to the
+	 * respective branch-vertex (see {@link #getBranchVertex(Edge, Vertex)} for
+	 * details).
 	 *
 	 * @param edge
-	 *            the linked edge.
+	 *            the branch-edge.
 	 * @param ref
-	 *            a reference object to the branch edge used for retrieval.
-	 * @return a branch edge.
+	 *            a reference to a branch graph edge used for retrieval.
+	 *            Depending on concrete implementation of the linked graph, this
+	 *            object can be cleared, ignored or re-used.
+	 * @return the linked branch-edge. Or null if the edge is not linked to a
+	 *         branch-edge.
 	 */
 	public BE getBranchEdge( E edge, BE ref );
 
 	/**
-	 * Returns the branch edge linked to the specified vertex if it belongs to a
-	 * branch. Returns <code>null</code> if the specified vertex is a branch
-	 * extremity.
+	 * Returns the branch-vertex linked to the specified vertex.
 	 * <p>
 	 * For instance, in
-	 *
 	 * <pre>
 	 *     LINKED-GRAPH                  BRANCH-GRAPH
 	 *
-	 *           v0                           bv0
-	 *           |  e0                         |
-	 *           v1                            |  be0
-	 *           |  e1                         |
-	 *           v2                           bv1
-	 *       e2 / \  e4                       / \
-	 *         /   \                    be1  /   \  be2
-	 *        v3    v5                      /     \
-	 *     e3 |     | e5                   /       \
-	 *        v4    v6                    bv2      bv3
+	 *           v0
+	 *           |  e0
+	 *           v1                           bv0
+	 *           |  e1                        / \
+	 *           v2                     be1  /   \  be2
+	 *       e2 / \  e4                     /     \
+	 *         /   \                       /       \
+	 *        v3    v5                    bv1      bv2
+	 *     e3 |     | e5
+	 *        v4    v6
 	 * </pre>
-	 *
-	 * <code>v1</code> links to <code>be0</code>. <code>v3</code> links to
-	 * <code>be1</code>. <code>v0</code> links to <code>null</code> because this
-	 * vertex is a branch extremity.
+	 * The branch-vertex linked to <code>v0</code> is <code>bv0</code>.
+	 * The branch-vertex linked to <code>v1</code> and <code>v2</code> is also
+	 * <code>bv0</code>.
+	 * The branch-vertex linked to <code>v3</code> and <code>v4</code> is
+	 * <code>bv1</code>.
+	 * The branch-vertex linked to <code>v5</code> and <code>v6</code> is
+	 * <code>bv2</code>.
 	 *
 	 * @param vertex
-	 *            the linked vertex.
+	 *            the vertex.
 	 * @param ref
-	 *            a reference object to the branch edge used for retrieval.
-	 * @return a branch edge or <code>null</code>.
-	 */
-	public BE getBranchEdge( V vertex, BE ref );
-
-	/**
-	 * Returns the branch vertex linked to the specified vertex if it is a
-	 * branch extremity. Returns <code>null</code> if the specified vertex
-	 * belongs to inside a branch.
-	 * <p>
-	 * For instance, in
-	 *
-	 * <pre>
-	 *     LINKED-GRAPH                  BRANCH-GRAPH
-	 *
-	 *           v0                           bv0
-	 *           |  e0                         |
-	 *           v1                            |  be0
-	 *           |  e1                         |
-	 *           v2                           bv1
-	 *       e2 / \  e4                       / \
-	 *         /   \                    be1  /   \  be2
-	 *        v3    v5                      /     \
-	 *     e3 |     | e5                   /       \
-	 *        v4    v6                    bv2      bv3
-	 * </pre>
-	 *
-	 * <code>v1</code> and <code>v3</code> link to <code>null</code> because
-	 * they belong inside a branch. <code>v0</code> links to <code>bv0</code>.
-	 *
-	 * @param vertex
-	 *            the linked vertex.
-	 * @param ref
-	 *            a reference object to the branch vertex used for retrieval.
-	 * @return a branch vertex or <code>null</code>.
+	 *            a reference to a branch graph vertex used for retrieval.
+	 *            Depending on concrete implementation of the linked graph, this
+	 *            object can be cleared, ignored or re-used.
+	 * @return the branch-vertex linked to vertex.
 	 */
 	public BV getBranchVertex( V vertex, BV ref );
 
 	/**
-	 * Returns a graph id map for the branch graph.
+	 * Returns the branch-vertex linked to the specified edge.
+	 * <p>
+	 * For instance, in
+	 * <pre>
+	 *     LINKED-GRAPH                  BRANCH-GRAPH
 	 *
-	 * @return a graph id map.
+	 *           v0
+	 *           |  e0
+	 *           v1                           bv0
+	 *           |  e1                        / \
+	 *           v2                     be1  /   \  be2
+	 *       e2 / \  e4                     /     \
+	 *         /   \                       /       \
+	 *        v3    v5                    bv1      bv2
+	 *     e3 |     | e5
+	 *        v4    v6
+	 * </pre>
+	 * The branch-vertex linked to <code>e0</code> is <code>bv0</code>.
+	 * The branch-vertex linked to <code>e1</code> is also <code>bv0</code>.
+	 * The branch-vertex linked to <code>e3</code> is <code>bv1</code>.
+	 * The branch-vertex linked to <code>e3</code> is <code>bv2</code>.
+	 * <p>
+	 * The edges <code>e2</code> and <code>e4</code> are instead linked to
+	 * branch edges. (see {@link #getBranchEdge(Edge, Edge)})
+	 *
+	 * @param edge
+	 *            the edge.
+	 * @param ref
+	 *            a reference to a linked graph edge used for retrieval.
+	 *            Depending on concrete implementation of the linked graph, this
+	 *            object can be cleared, ignored or re-used.
+	 * @return the linked branch-vertex. Or null if the edge is not linked to a
+	 *         branch-vertex.
+	 */
+	public BV getBranchVertex( E edge, BV ref );
+
+
+	/**
+	 * @return a graph id map for the branch graph.
 	 */
 	public GraphIdBimap< BV, BE > getGraphIdBimap();
 
 	/**
 	 * Returns an iterator that iterates in order over the linked vertices in a
-	 * branch, specified by its branch edge. The first and last vertex iterated
-	 * are the branch extremities.
+	 * branch, specified by its branch-vertex.
+	 * <p>
+	 * The iterator is recycled when released with
+	 * {@link #releaseIterator(Iterator)}.
 	 *
-	 * @param edge
-	 *            the branch edge.
-	 * @return a new iterator.
+	 * @param vertex
+	 *            the branch-vertex.
+	 * @return a iterator.
 	 */
-	public Iterator< V > vertexBranchIterator( BE edge );
+	public Iterator< V > vertexBranchIterator( BV vertex );
 
 	/**
 	 * Returns an iterator that iterates in order over the linked edges of a
-	 * branch, specified by its branch edge.
+	 * branch, specified by its branch-vertex.
+	 * <p>
+	 * The iterator is recycled when released with
+	 * {@link #releaseIterator(Iterator)}.
 	 *
-	 * @param edge
-	 *            the branch edge.
-	 * @return a new iterator.
+	 * @param vertex
+	 *            the branch-vertex.
+	 * @return a iterator.
 	 */
-	public Iterator< E > edgeBranchIterator( BE edge );
+	public Iterator< E > edgeBranchIterator( BV vertex );
 
+
+	/**
+	 * The iterators returned by {@link #vertexBranchIterator(Vertex)}
+	 * and {@link #edgeBranchIterator(Vertex)} should be released after they
+	 * have been used, by calling this method. Iterators that have been released
+	 * will by recycled. This can significantly improve garbage collection
+	 * performance.
+	 *
+	 * @param iterator
+	 *            the iterator that is no longer being used.
+	 */
+	public void releaseIterator( Iterator<?> iterator );
 }

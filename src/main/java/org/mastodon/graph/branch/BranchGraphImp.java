@@ -28,28 +28,26 @@
  */
 package org.mastodon.graph.branch;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import org.mastodon.collection.RefCollections;
-import org.mastodon.collection.RefList;
+import net.imglib2.util.Cast;
 import org.mastodon.collection.RefMaps;
 import org.mastodon.collection.RefRefMap;
-import org.mastodon.collection.RefSet;
-import org.mastodon.collection.RefStack;
 import org.mastodon.graph.Edge;
+import org.mastodon.graph.Edges;
 import org.mastodon.graph.GraphIdBimap;
 import org.mastodon.graph.GraphListener;
 import org.mastodon.graph.ListenableGraph;
 import org.mastodon.graph.Vertex;
-import org.mastodon.graph.algorithm.RootFinder;
-import org.mastodon.graph.algorithm.traversal.DepthFirstIterator;
 import org.mastodon.graph.ref.AbstractListenableEdge;
 import org.mastodon.graph.ref.AbstractListenableEdgePool;
 import org.mastodon.graph.ref.AbstractListenableVertex;
 import org.mastodon.graph.ref.AbstractListenableVertexPool;
 import org.mastodon.graph.ref.ListenableGraphImp;
 import org.mastodon.pool.MappedElement;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * A branch graph implementation for {@link ListenableGraph}s.
@@ -65,29 +63,22 @@ import org.mastodon.pool.MappedElement;
  * {@link #edgeRemoved(Edge)}, {@link #vertexAdded(Vertex)} and
  * {@link #vertexRemoved(Vertex)} do not do anything.
  * <p>
- * As a side effect, this implementation does not support 'rings'. If a
- * connected component in the core-graph looks like this:
- * 
+ * This implementation ignores 'rings'. A connected component in the linked
+ * graph, that looks like this:
+ *
  * <pre>
- * A -&gt; B -&gt; C -&gt; D -&gt; A
+ * {@code A -> B -> C -> D -> A}
  * </pre>
- * 
- * (edge direction is important), it won't be discovered in the branch-graph,
- * which requires 'roots' to be built. Roots are vertices with no incoming
- * edges. 'Diamonds' connected components:
- * 
+ *
+ * (edge direction is important) won't be visible in the BranchGraph.
+ * <p>
+ * 'Diamonds' connected components:
  * <pre>
- * A -&gt; B -&gt; D
+ * {@code  A -> B -> C
+ * and A -> D -> C}
  * </pre>
- * 
- * and
- * 
- * <pre>
- * A -&gt; C -&gt; D
- * </pre>
- * 
  * are supported.
- * 
+ *
  *
  * @author Jean-Yves Tinevez
  * @author Tobias Pietzsch
@@ -108,7 +99,7 @@ import org.mastodon.pool.MappedElement;
  *            the type of {@link MappedElement} used for the vertex and edge
  *            pool.
  */
-public abstract class BranchGraphImp< 
+public abstract class BranchGraphImp<
 	V extends Vertex< E >, 
 	E extends Edge< V >, 
 	BV extends AbstractListenableVertex< BV, BE, BVP, T >, 
@@ -129,12 +120,13 @@ public abstract class BranchGraphImp<
 	private final RefRefMap< V, BV > vbvMap;
 
 	/**
+	 * TODO
 	 * Maps from linked graph vertex to branch edge. Only contains mappings for
 	 * vertices that are actually linked to a branch edge. If a key (a source
 	 * graph vertex) is not present in this map, it means that it is linked to a
 	 * branch vertex.
 	 */
-	private final RefRefMap< V, BE > vbeMap;
+	private final RefRefMap< E, BV > ebvMap;
 
 	/**
 	 * Maps from linked graph edge to a branch edge.
@@ -149,7 +141,12 @@ public abstract class BranchGraphImp<
 	/**
 	 * Maps from branch graph vertex to a linked graph vertex.
 	 */
-	private final RefRefMap< BV, V > bvvMap;
+	private final RefRefMap< BV, V > bvvMapFirst;
+
+	/**
+	 * Maps from branch graph vertex to a linked graph vertex.
+	 */
+	private final RefRefMap< BV, V > bvvMapLast;
 
 	private final ListenableGraph< V, E > graph;
 
@@ -173,9 +170,10 @@ public abstract class BranchGraphImp<
 		this.graph = graph;
 		this.idmap = new GraphIdBimap<>( vertexPool, edgePool );
 		this.vbvMap = RefMaps.createRefRefMap( graph.vertices(), vertices() );
-		this.vbeMap = RefMaps.createRefRefMap( graph.vertices(), edges() );
+		this.ebvMap = RefMaps.createRefRefMap( graph.edges(), vertices() );
 		this.ebeMap = RefMaps.createRefRefMap( graph.edges(), edges() );
-		this.bvvMap = RefMaps.createRefRefMap( vertices(), graph.vertices() );
+		this.bvvMapFirst = RefMaps.createRefRefMap( vertices(), graph.vertices() );
+		this.bvvMapLast = RefMaps.createRefRefMap( vertices(), graph.vertices() );
 		this.beeMap = RefMaps.createRefRefMap( edges(), graph.edges() );
 		graphRebuilt();
 	}
@@ -298,9 +296,9 @@ public abstract class BranchGraphImp<
 	}
 
 	@Override
-	public BE getBranchEdge( final V vertex, final BE ref )
+	public BV getBranchVertex( final E edge, final BV ref )
 	{
-		return vbeMap.get( vertex, ref );
+		return ebvMap.get( edge, ref );
 	}
 
 	@Override
@@ -310,9 +308,15 @@ public abstract class BranchGraphImp<
 	}
 
 	@Override
-	public V getLinkedVertex( final BV bv, final V ref )
+	public V getFirstLinkedVertex( final BV bv, final V ref )
 	{
-		return bvvMap.get( bv, ref );
+		return bvvMapFirst.get( bv, ref );
+	}
+
+	@Override
+	public V getLastLinkedVertex( final BV bv, final V ref )
+	{
+		return bvvMapLast.get( bv, ref );
 	}
 
 	@Override
@@ -325,13 +329,13 @@ public abstract class BranchGraphImp<
 	protected void clear()
 	{
 		vbvMap.clear();
-		vbeMap.clear();
+		ebvMap.clear();
 		ebeMap.clear();
-		bvvMap.clear();
+		bvvMapFirst.clear();
+		bvvMapLast.clear();
 		beeMap.clear();
 		super.clear();
 	}
-
 
 	/*
 	 * Graph listener.
@@ -341,117 +345,109 @@ public abstract class BranchGraphImp<
 	public void graphRebuilt()
 	{
 		clear();
-		final BV bvRef1 = vertexRef(); // -> bv of a root.
-		final BV bvRef2 = vertexRef(); // -> previous mapping of root.
-		final BV bvRef3 = vertexRef(); // -> to create a new bv.
-		final BE beRef1 = edgeRef(); // -> new be of a branch.
-		final BE beRef2 = edgeRef(); // -> previous mapping of first edge.
-		final BE beRef3 = edgeRef(); // -> used to map e to be.
-		final BE beRef4 = edgeRef(); // -> used to map v to be.
-		final V vRef1 = graph.vertexRef(); // -> root of a branch.
-		final V vRef2 = graph.vertexRef(); // -> previous mapping of bv root.
-		final V vRef3 = graph.vertexRef(); // -> second vertex of a branch.
-		final E eRef1 = graph.edgeRef(); // -> previous mapping of be.
-		final E eRef2 = graph.edgeRef(); // -> used to add to the list to tag
 
-		try
-		{
-			final DepthFirstIterator< V, E > it = new DepthFirstIterator<>( graph );
-			final RefList< V > vToTag = RefCollections.createRefList( graph.vertices() );
-			final RefList< E > eToTag = RefCollections.createRefList( graph.edges() );
+		// A branch starts at a node that has a number of incoming edges
+		// other than one, or as a child of a node with number of outgoing
+		// edges more than one.
+		for( V vertex : graph.vertices() ) {
+			if(!sizeEqualsOne( vertex.incomingEdges() ))
+				builtBranch(vertex);
+			if( sizeIsGreaterThanOne( vertex.outgoingEdges() ))
+				builtChildBranches(vertex);
+		}
+		for( V vertex : graph.vertices() ) {
+			if( sizeIsGreaterThanOne( vertex.incomingEdges() ))
+				builtGraphAddEdges(vertex.incomingEdges());
+			if( sizeIsGreaterThanOne( vertex.outgoingEdges() ))
+				builtGraphAddEdges(vertex.outgoingEdges());
+		}
+		notifyGraphChanged();
+	}
 
-			// Keep track of what we should iterate from.
-			final RefSet< V > roots = RootFinder.getRoots( graph );
-			final RefStack< V > queue = RefCollections.createRefStack( graph.vertices() );
-			queue.addAll( roots );
-
-			// To avoid iterating several times the same branch when we have
-			// graphs with merge events.
-			final RefSet< V > visited = RefCollections.createRefSet( graph.vertices() );
-
-			while ( !queue.isEmpty() )
-			{
-				final V root = queue.pop( vRef1 );
-
-				// Create or get first node.
-				BV bvBegin = vbvMap.get( root, bvRef1 );
-				if ( bvBegin == null )
+	public void builtBranch( V vertex )
+	{
+		if(vbvMap.containsKey( vertex ))
+			return;
+		V vRef = graph.vertexRef();
+		V vRef2 = graph.vertexRef();
+		BV bvRef = vertexRef();
+		BV bvRef2 = vertexRef();
+		try {
+			BV branchVertex = super.addVertex( bvRef );
+			bvvMapFirst.put( branchVertex, vertex, vRef2 );
+			vbvMap.put( vertex, branchVertex, bvRef2 );
+			V v = vertex;
+			while( sizeEqualsOne( v.outgoingEdges() )) {
+				E e = v.outgoingEdges().iterator().next();
+				v = e.getTarget(vRef);
+				Edges<E> edges = v.incomingEdges();
+				if( !sizeEqualsOne( edges ) )
 				{
-					bvBegin = init( super.addVertex( bvRef1 ), root );
-					vbvMap.put( root, bvBegin, bvRef2 );
-					bvvMap.put( bvBegin, root, vRef2 );
+					v = e.getSource(vRef);
+					break;
 				}
-
-				// Successors of the node.
-				for ( final E firstEdge : root.outgoingEdges() )
-				{
-					final V firstTarget = firstEdge.getTarget( vRef3 );
-					if ( visited.contains( firstTarget ) )
-						continue;
-					visited.add( firstTarget );
-
-					// Prepare list of edges and vertices of the branch.
-					vToTag.clear();
-					eToTag.clear();
-					eToTag.add( firstEdge );
-
-					it.reset( firstTarget );
-					while ( it.hasNext() )
-					{
-						final V v = it.next();
-						if ( v.incomingEdges().size() != 1 || v.outgoingEdges().size() != 1 )
-						{
-							// Merge point, we have to create a branch.
-							// Does a BV already exists for this vertex?
-							BV bvEnd = vbvMap.get( v, bvRef3 );
-							if ( bvEnd == null )
-							{
-								// Create node.
-								bvEnd = init( super.addVertex( bvRef3 ), v );
-								vbvMap.put( v, bvEnd, bvRef2 );
-								bvvMap.put( bvEnd, v, vRef2 );
-							}
-
-							// Edge that connect to previous node.
-							final BE be = init( super.addEdge( bvBegin, bvEnd, beRef1 ), firstEdge );
-							ebeMap.put( firstEdge, be, beRef2 );
-							beeMap.put( be, firstEdge, eRef1 );
-
-							// Walk back the branch to map it properly.
-							for ( final E e : eToTag )
-								ebeMap.put( e, be, beRef3 );
-							for ( final V v2 : vToTag )
-								vbeMap.put( v2, be, beRef4 );
-
-							// Reset iteration.
-							queue.add( v );
-							break;
-						}
-						else
-						{
-							// Store vertex and edge to map them later to the branch.
-							vToTag.add( v );
-							eToTag.add( v.outgoingEdges().get( 0, eRef1 ) );
-						}
-					}
-				}
+				vbvMap.put( v, branchVertex, bvRef2 );
+				ebvMap.put( e, branchVertex, bvRef2 );
 			}
-			notifyGraphChanged();
+			bvvMapLast.put( branchVertex, v, vRef2 );
+			init(branchVertex, vertex, v);
 		}
 		finally
 		{
+			graph.releaseRef( vRef );
+			graph.releaseRef( vRef2 );
+			releaseRef( bvRef );
+			releaseRef( bvRef2 );
+		}
+	}
+
+	private void builtChildBranches( V vertex )
+	{
+		V vRef = graph.vertexRef();
+		try {
+			for ( E edge : vertex.outgoingEdges() ) {
+				V child = edge.getTarget( vRef );
+				builtBranch( child );
+			}
+		}
+		finally
+		{
+			graph.releaseRef( vRef );
+		}
+	}
+
+	private void builtGraphAddEdges( Edges<E> edges )
+	{
+		for( E edge : edges )
+			builtGraphAddEdge( edge );
+	}
+
+	private void builtGraphAddEdge( E edge )
+	{
+		if(ebeMap.containsKey( edge ))
+			return;
+		V vRef = graph.vertexRef();
+		BV bvRef1 = vertexRef();
+		BV bvRef2 = vertexRef();
+		E eRef = graph.edgeRef();
+		BE beRef1 = edgeRef();
+		BE beRef2 = edgeRef();
+		try {
+			BV source = vbvMap.get( edge.getSource( vRef ), bvRef1 );
+			Objects.requireNonNull(source);
+			BV target = vbvMap.get( edge.getTarget( vRef ), bvRef2 );
+			Objects.requireNonNull(target);
+			BE branchEdge = init( super.addEdge( source, target, beRef1 ), edge );
+			ebeMap.put( edge, branchEdge, beRef2 );
+			beeMap.put( branchEdge, edge, eRef );
+		}
+		finally {
+			graph.releaseRef( vRef );
 			releaseRef( bvRef1 );
 			releaseRef( bvRef2 );
-			releaseRef( bvRef3 );
+			graph.releaseRef( eRef );
 			releaseRef( beRef1 );
 			releaseRef( beRef2 );
-			releaseRef( beRef3 );
-			releaseRef( beRef4 );
-			graph.releaseRef( vRef1 );
-			graph.releaseRef( vRef2 );
-			graph.releaseRef( vRef3 );
-			graph.releaseRef( eRef1 );
-			graph.releaseRef( eRef2 );
 		}
 	}
 
@@ -499,13 +495,8 @@ public abstract class BranchGraphImp<
 		sb.append( "  },\n" );
 
 		sb.append( "  mapping bv->v = {\n" );
-		for ( final BV bv : bvvMap.keySet() )
-			sb.append( "    " + bv + " -> " + bvvMap.get( bv ) + "\n" );
-		sb.append( "  },\n" );
-
-		sb.append( "  mapping v->be = {\n" );
-		for ( final V v : vbeMap.keySet() )
-			sb.append( "    " + v + " -> " + vbeMap.get( v ) + "\n" );
+		for ( final BV bv : bvvMapFirst.keySet() )
+			sb.append( "    " + bv + " -> " + bvvMapFirst.get( bv ) + "\n" );
 		sb.append( "  },\n" );
 
 		sb.append( "  mapping e->be = {\n" );
@@ -532,19 +523,43 @@ public abstract class BranchGraphImp<
 
 	private String str( final BV bv, final V vref )
 	{
-		return "bv(" + bv.getInternalPoolIndex() + ")->" + getLinkedVertex( bv, vref );
+		return "bv(" + bv.getInternalPoolIndex() + ")->" + getFirstLinkedVertex( bv, vref );
+	}
+
+	private final ConcurrentLinkedQueue<VertexBranchIterator> vertexBranchIteratorQueue =
+			new ConcurrentLinkedQueue<>();
+
+	private final ConcurrentLinkedQueue<EdgeBranchIterator> edgeBranchIteratorQueue =
+			new ConcurrentLinkedQueue<>();
+
+	@Override
+	public Iterator< V > vertexBranchIterator( final BV branchVertex )
+	{
+		VertexBranchIterator iterator = vertexBranchIteratorQueue.poll();
+		if(iterator == null)
+			iterator = new VertexBranchIterator();
+		iterator.reset(branchVertex);
+		return iterator;
 	}
 
 	@Override
-	public Iterator< V > vertexBranchIterator( final BE edge )
+	public Iterator< E > edgeBranchIterator( final BV branchVertex )
 	{
-		return new VertexBranchIterator( edge );
+		EdgeBranchIterator iterator = edgeBranchIteratorQueue.poll();
+		if(iterator == null)
+			iterator = new EdgeBranchIterator();
+		iterator.reset(branchVertex);
+		return iterator;
 	}
 
 	@Override
-	public Iterator< E > edgeBranchIterator( final BE edge )
+	public void releaseIterator( final Iterator<?> iterator )
 	{
-		return new EdgeBranchIterator( edge );
+		Class<?> iteratorClass = iterator.getClass();
+		if(VertexBranchIterator.class.equals(iteratorClass))
+			vertexBranchIteratorQueue.add(Cast.unchecked(iterator));
+		else if(EdgeBranchIterator.class.equals(iteratorClass))
+			edgeBranchIteratorQueue.add(Cast.unchecked(iterator));
 	}
 
 	/**
@@ -553,14 +568,15 @@ public abstract class BranchGraphImp<
 	 * that the <code>init()</code> "constructor" method of the vertex is
 	 * called, using fields from the specified linked vertex.
 	 *
-	 * @param bv
+	 * @param branchVertex
 	 *            the branch vertex to initialize.
-	 * @param v
-	 *            the linked vertex corresponding to the branch vertex in the
-	 *            source graph. Used for reading fields, not modified.
+	 * @param branchStart
+	 *            the first linked vertex, corresponding to the branch vertex.
+	 * @param branchEnd
+	 *            the last linked vertex, corresponding to the branch vertex.
 	 * @return the branch vertex instance, properly initialized.
 	 */
-	public abstract BV init( final BV bv, final V v );
+	public abstract BV init( final BV branchVertex, final V branchStart, final V branchEnd );
 
 	/**
 	 * Performs initialization tasks of the specified branch edge, just after it
@@ -568,14 +584,14 @@ public abstract class BranchGraphImp<
 	 * that the <code>init()</code> "constructor" method of the edge is called,
 	 * using fields from the specified linked edge.
 	 *
-	 * @param be
+	 * @param branchEdge
 	 *            the branch edge or edge to initialize.
-	 * @param e
+	 * @param edge
 	 *            the linked edge corresponding to the branch edge in the source
 	 *            graph. Used for reading fields, not modified.
 	 * @return the branch edge instance, properly initialized.
 	 */
-	public abstract BE init( final BE be, final E e );
+	public abstract BE init( final BE branchEdge, final E edge );
 
 	/*
 	 * INNER CLASSES
@@ -584,43 +600,56 @@ public abstract class BranchGraphImp<
 	private final class VertexBranchIterator implements Iterator< V >
 	{
 
+		private BV branchVertex;
+
 		private V next;
 
-		private E e;
+		boolean hasNext;
+
+		private E edge;
 
 		private final V vref;
 
-		private final V branchEnd;
+		private final BV bvRef;
 
-		private final E eref;
-
-		public VertexBranchIterator( final BE edge )
+		public VertexBranchIterator()
 		{
-			this.vref = graph.vertexRef();
-			this.eref = graph.edgeRef();
-			e = getLinkedEdge( edge, eref );
-			next = e.getSource( vref );
+			vref = graph.vertexRef();
+			bvRef = vertexRef();
+			hasNext = false;
+		}
 
-			final BV bvref1 = vertexRef();
-			final BV bv1 = edge.getTarget( bvref1 );
-			final V vref1 = graph.vertexRef();
-			branchEnd = getLinkedVertex( bv1, vref1 );
-			releaseRef( bvref1 );
+		public void reset( BV branchVertex )
+		{
+
+			this.branchVertex = branchVertex;
+			next = getFirstLinkedVertex( branchVertex, vref );
+			edge = null;
+			hasNext = (next != null);
 		}
 
 		@Override
 		public boolean hasNext()
 		{
-			return e != null && !next.equals( branchEnd );
+			return hasNext;
 		}
 
 		@Override
 		public V next()
 		{
-			if ( !hasNext() )
+			if ( ! hasNext )
 				throw new NoSuchElementException();
-			next = e.getTarget( vref );
-			e = next.outgoingEdges().isEmpty() ? null : next.outgoingEdges().get( 0, eref );
+			if( edge != null )
+			{
+				next = edge.getTarget(vref);
+			}
+			if(next.outgoingEdges().isEmpty())
+				hasNext = false;
+			else
+			{
+				edge = next.outgoingEdges().iterator().next();
+				hasNext = branchVertex.equals( getBranchVertex( edge, bvRef ) );
+			}
 			return next;
 		}
 	}
@@ -628,39 +657,69 @@ public abstract class BranchGraphImp<
 	private final class EdgeBranchIterator implements Iterator< E >
 	{
 
-		private final V vref;
-
-		private final E eref;
-
-		private final BV bvref;
+		private BV branchVertex;
 
 		private E next;
 
-		private V target;
+		private V v;
 
-		public EdgeBranchIterator( final BE edge )
+		private V end;
+
+		boolean hasNext;
+
+		private final V vref1;
+
+		private final V vref2;
+
+		private final BV bvRef;
+
+		public EdgeBranchIterator()
 		{
-			this.vref = graph.vertexRef();
-			this.eref = graph.edgeRef();
-			this.bvref = vertexRef();
-			next = getLinkedEdge( edge, eref );
-			target = next.getTarget( vref );
+			vref1 = graph.vertexRef();
+			vref2 = graph.vertexRef();
+			bvRef = vertexRef();
+		}
+
+		public void reset( final BV branchVertex )
+		{
+
+			this.branchVertex = branchVertex;
+			next = null;
+			v = getFirstLinkedVertex( branchVertex, vref1 );
+			end = getLastLinkedVertex( branchVertex, vref2 );
+			hasNext = (v != null) && (end != null) && ! end.equals( v );
 		}
 
 		@Override
 		public boolean hasNext()
 		{
-			return getBranchVertex( target, bvref ) == null;
+			return hasNext;
 		}
 
 		@Override
 		public E next()
 		{
-			if ( !hasNext() )
-				throw new NoSuchElementException();
-			next = target.outgoingEdges().get( 0, eref );
-			target = next.getTarget( vref );
+			next = v.outgoingEdges().iterator().next();
+			v = next.getTarget(vref1);
+			hasNext = ! end.equals( v ) && branchVertex.equals( getBranchVertex( v, bvRef ) );
 			return next;
 		}
+
+	}
+
+	private static boolean sizeEqualsOne(Edges<?> edges) {
+		if(edges.isEmpty())
+			return false;
+		Iterator<?> iterator = edges.iterator();
+		iterator.next();
+		return ! iterator.hasNext();
+	}
+
+	private static boolean sizeIsGreaterThanOne(Edges<?> edges) {
+		if(edges.isEmpty())
+			return false;
+		Iterator<?> iterator = edges.iterator();
+		iterator.next();
+		return iterator.hasNext();
 	}
 }
