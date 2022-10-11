@@ -6,13 +6,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,35 +28,36 @@
  */
 package org.mastodon.graph.branch;
 
-import org.mastodon.graph.ListenableGraph;
-import org.mastodon.graph.ListenableTestEdge;
-import org.mastodon.graph.ListenableTestVertex;
-import org.mastodon.pool.ByteMappedElement;
+import org.mastodon.graph.Edge;
+import org.mastodon.graph.ReadOnlyGraph;
+import org.mastodon.graph.Vertex;
 
-public class BranchTestGraph extends BranchGraphImp<
-	ListenableTestVertex,
-	ListenableTestEdge,
-	BranchTestVertex,
-	BranchTestEdge,
-	BranchTestVertexPool,
-	BranchTestEdgePool,
-	ByteMappedElement >
+import java.util.StringJoiner;
+import java.util.function.Function;
+
+public class GraphToString
 {
-
-	public BranchTestGraph( final ListenableGraph< ListenableTestVertex, ListenableTestEdge > graph )
-	{
-		super( graph, new BranchTestEdgePool( 10, new BranchTestVertexPool( 10 ) ) );
-	}
-
-	@Override
-	public BranchTestVertex init( final BranchTestVertex branchVertex, final ListenableTestVertex branchStart, final ListenableTestVertex branchEnd )
-	{
-		return branchVertex.init( branchStart.getId(), branchStart.getTimepoint() );
-	}
-
-	@Override
-	public BranchTestEdge init( final BranchTestEdge branchEdge, final ListenableTestEdge edge )
-	{
-		return branchEdge.init();
+	public static <V extends Vertex<E>, E extends Edge<V>> String toString( ReadOnlyGraph<V, E> graph, Function<V, String> vertexToString) {
+		V sRef = graph.vertexRef();
+		V tRef = graph.vertexRef();
+		try {
+			StringJoiner joiner = new StringJoiner( ", " );
+			graph.edges().stream()
+					.map( edge -> vertexToString.apply( edge.getSource(sRef) ) + "->" +
+							vertexToString.apply( edge.getTarget(tRef ) ) )
+					.sorted()
+					.forEach( joiner::add );
+			graph.vertices().stream()
+					.filter( vertex -> vertex.incomingEdges().isEmpty() && vertex.outgoingEdges().isEmpty() )
+					.map( vertexToString )
+					.sorted()
+					.forEach( joiner::add );
+			return joiner.toString();
+		}
+		finally
+		{
+			graph.releaseRef( sRef );
+			graph.releaseRef( tRef );
+		}
 	}
 }
