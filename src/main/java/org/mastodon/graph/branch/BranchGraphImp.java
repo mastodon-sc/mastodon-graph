@@ -344,22 +344,34 @@ public abstract class BranchGraphImp<
 	@Override
 	public void graphRebuilt()
 	{
-		clear();
+		boolean emitEvents = this.emitEvents;
+		if(emitEvents)
+			pauseListeners();
 
-		// A branch starts at a node that has a number of incoming edges
-		// other than one, or as a child of a node with number of outgoing
-		// edges more than one.
-		for( V vertex : graph.vertices() ) {
-			if(!sizeEqualsOne( vertex.incomingEdges() ))
-				builtBranch(vertex);
-			if( sizeIsGreaterThanOne( vertex.outgoingEdges() ))
-				builtChildBranches(vertex);
+		try {
+			clear();
+
+			// A branch starts at a node that has a number of incoming edges
+			// other than one, or as a child of a node with number of outgoing
+			// edges more than one.
+			for ( V vertex : graph.vertices() )
+			{
+				if ( !sizeEqualsOne( vertex.incomingEdges() ) )
+					builtBranch( vertex );
+				if ( sizeIsGreaterThanOne( vertex.outgoingEdges() ) )
+					builtChildBranches( vertex );
+			}
+			for ( V vertex : graph.vertices() )
+			{
+				if ( sizeIsGreaterThanOne( vertex.incomingEdges() ) )
+					builtGraphAddEdges( vertex.incomingEdges() );
+				if ( sizeIsGreaterThanOne( vertex.outgoingEdges() ) )
+					builtGraphAddEdges( vertex.outgoingEdges() );
+			}
 		}
-		for( V vertex : graph.vertices() ) {
-			if( sizeIsGreaterThanOne( vertex.incomingEdges() ))
-				builtGraphAddEdges(vertex.incomingEdges());
-			if( sizeIsGreaterThanOne( vertex.outgoingEdges() ))
-				builtGraphAddEdges(vertex.outgoingEdges());
+		finally {
+			if(emitEvents)
+				resumeListeners();
 		}
 		notifyGraphChanged();
 	}
