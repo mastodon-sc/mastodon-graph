@@ -95,7 +95,7 @@ public class AllEdges< E extends AbstractEdge< E, ?, ?, ? > > implements Edges< 
 
 	// garbage-free version
 	@Override
-	public E get( final int i, final E edge )
+	public E get( int i, final E edge )
 	{
 		boolean in = true;
 		int edgeIndex = vertex.getFirstInEdgeIndex();
@@ -105,7 +105,7 @@ public class AllEdges< E extends AbstractEdge< E, ?, ?, ? > > implements Edges< 
 			edgeIndex = vertex.getFirstOutEdgeIndex();
 		}
 		edgePool.getObject( edgeIndex, edge );
-		while( i > 0 )
+		while( i-- > 0 )
 		{
 			if ( in )
 			{
