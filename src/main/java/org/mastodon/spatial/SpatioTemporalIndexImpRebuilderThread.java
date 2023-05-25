@@ -99,16 +99,13 @@ public class SpatioTemporalIndexImpRebuilderThread extends Thread
 			// Otherwise, the index would never be garbage-collected.
 			index = null;
 
-			synchronized ( this )
+			try
 			{
-				try
-				{
-					wait( timeout );
-				}
-				catch ( final InterruptedException e )
-				{
-					break;
-				}
+				Thread.sleep( timeout );
+			}
+			catch ( final InterruptedException e )
+			{
+				break;
 			}
 
 			// Restore the strong reference to the index. It will still be null if
