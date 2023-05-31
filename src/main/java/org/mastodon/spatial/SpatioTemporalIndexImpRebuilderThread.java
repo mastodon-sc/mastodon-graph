@@ -39,13 +39,15 @@ import java.lang.ref.WeakReference;
  */
 public class SpatioTemporalIndexImpRebuilderThread extends Thread
 {
-	private final WeakReference< SpatioTemporalIndexImp< ?, ? > > index;
+	private final WeakReference< SpatioTemporalIndexImp< ?, ? > > weakReference;
 
 	private final int modCountThreshold;
 
 	private final long timeout;
 
 	private final boolean rebuildAll;
+
+	private SpatioTemporalIndexImp< ?, ? > index;
 
 	/**
 	 * Create a new spatio-temporal index rebuilder thread. In its {@code run()}
@@ -78,7 +80,8 @@ public class SpatioTemporalIndexImpRebuilderThread extends Thread
 	{
 		super( name );
 		setDaemon( true );
-		this.index = new WeakReference<>( index );
+		this.index = index;
+		this.weakReference = new WeakReference<>( index );
 		this.modCountThreshold = modCountThreshold;
 		this.timeout = timeout;
 		this.rebuildAll = rebuildAll;
@@ -87,26 +90,27 @@ public class SpatioTemporalIndexImpRebuilderThread extends Thread
 	@Override
 	public void run()
 	{
-		while ( !isInterrupted() )
+		while ( index != null && !isInterrupted() )
 		{
-			final SpatioTemporalIndexImp< ?, ? > i = index.get();
-			if ( i == null )
-				break;
-
-			while ( i.rebuildAny( modCountThreshold ) && rebuildAll )
+			while ( index.rebuildAny( modCountThreshold ) && rebuildAll )
 			{}
 
-			synchronized ( this )
+			// NB: The strong reference to the index must be cleared before waiting.
+			// Otherwise, the index would never be garbage-collected.
+			index = null;
+
+			try
 			{
-				try
-				{
-					wait( timeout );
-				}
-				catch ( final InterruptedException e )
-				{
-					break;
-				}
+				Thread.sleep( timeout );
 			}
+			catch ( final InterruptedException e )
+			{
+				break;
+			}
+
+			// Restore the strong reference to the index. It will still be null if
+			// the spatio-temporal index was garbage-collected during waiting.
+			index = weakReference.get();
 		}
 	}
 
