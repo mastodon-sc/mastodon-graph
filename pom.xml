@@ -10,7 +10,7 @@
 
 	<groupId>org.mastodon</groupId>
 	<artifactId>mastodon-graph</artifactId>
-	<version>1.0.0-beta-26-SNAPSHOT</version>
+	<version>1.0.0-beta-26</version>
 
 	<name>Mastodon Graphs</name>
 	<description>Graph interfaces, object- and pool-based implementations, graph algorithms, undo framework.</description>
@@ -62,7 +62,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/mastodon-sc/mastodon-graph</connection>
 		<developerConnection>scm:git:git@github.com:mastodon-sc/mastodon-graph</developerConnection>
-		<tag>HEAD</tag>
+		<tag>mastodon-graph-1.0.0-beta-26</tag>
 		<url>https://github.com/mastodon-sc/mastodon-graph</url>
 	</scm>
 	<issueManagement>
