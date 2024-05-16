@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>34.1.0</version>
+		<version>37.0.0</version>
 	</parent>
 
 	<groupId>org.mastodon</groupId>
 	<artifactId>mastodon-graph</artifactId>
-	<version>1.0.0-beta-25-SNAPSHOT</version>
+	<version>1.0.0-beta-26-SNAPSHOT</version>
 
 	<name>Mastodon Graphs</name>
 	<description>Graph interfaces, object- and pool-based implementations, graph algorithms, undo framework.</description>
@@ -81,7 +81,6 @@
 		<license.projectName>Mastodon Graphs</license.projectName>
 		<license.organizationName>Mastodon authors</license.organizationName>
 		<license.copyrightOwners>Tobias Pietzsch, Jean-Yves Tinevez</license.copyrightOwners>
-
 		<mastodon-collection.version>1.0.0-beta-26</mastodon-collection.version>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
