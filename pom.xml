@@ -10,7 +10,7 @@
 
 	<groupId>org.mastodon</groupId>
 	<artifactId>mastodon-graph</artifactId>
-	<version>1.0.0-beta-27-SNAPSHOT</version>
+	<version>1.0.0-beta-28-SNAPSHOT</version>
 
 	<name>Mastodon Graphs</name>
 	<description>Graph interfaces, object- and pool-based implementations, graph algorithms, undo framework.</description>
