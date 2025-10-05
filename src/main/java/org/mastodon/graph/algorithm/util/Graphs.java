@@ -31,14 +31,54 @@ package org.mastodon.graph.algorithm.util;
 import java.util.Comparator;
 
 import org.mastodon.collection.RefList;
+import org.mastodon.collection.RefSet;
 import org.mastodon.graph.Edge;
+import org.mastodon.graph.ReadOnlyGraph;
 import org.mastodon.graph.Vertex;
+import org.mastodon.graph.algorithm.RootFinder;
+import org.mastodon.graph.algorithm.traversal.DepthFirstIterator;
 
 /**
  * A collection of utilities to assist with graph manipulation.
  */
 public class Graphs
 {
+
+	/**
+	 * Returns the max depth of the graph, i.e. the maximum number of branching
+	 * points on any path from a root to a leaf, when iterating depth-first, in
+	 * a directed manner.
+	 * 
+	 * @param <V>
+	 *            the vertex type
+	 * @param <E>
+	 *            the edge type
+	 * @param graph
+	 *            the graph to analyze.
+	 * @return the max depth of the graph.
+	 */
+	public static < V extends Vertex< E >, E extends Edge< V > > int maxDepth( final ReadOnlyGraph< V, E > graph )
+	{
+		final DepthFirstIterator< V, E > it = new DepthFirstIterator<>( graph );
+		final RefSet< V > roots = RootFinder.getRoots( graph );
+		int maxDepth = 0;
+		for ( final V root : roots )
+		{
+			it.reset( root );
+			int depth = 0;
+			while ( it.hasNext() )
+			{
+				final V v = it.next();
+				if ( v.outgoingEdges().size() > 1 )
+					depth++;
+			}
+			if ( depth > maxDepth )
+				maxDepth = depth;
+
+		}
+		return maxDepth;
+	}
+
 	/**
 	 * Gets the vertex opposite another vertex across an edge.
 	 * <p>
